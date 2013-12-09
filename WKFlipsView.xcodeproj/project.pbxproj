@@ -21,6 +21,8 @@
 		6808BE991855E24900A8E552 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6808BE7B1855E24900A8E552 /* UIKit.framework */; };
 		6808BEA11855E24900A8E552 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6808BE9F1855E24900A8E552 /* InfoPlist.strings */; };
 		6808BEA31855E24900A8E552 /* WKFlipsViewTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6808BEA21855E24900A8E552 /* WKFlipsViewTests.m */; };
+		6808BEAF1855E2BC00A8E552 /* WKFlipPageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6808BEAE1855E2BC00A8E552 /* WKFlipPageView.m */; };
+		6808BEB31855E39000A8E552 /* WKFlipsView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6808BEB21855E39000A8E552 /* WKFlipsView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +55,11 @@
 		6808BE9E1855E24900A8E552 /* WKFlipsViewTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "WKFlipsViewTests-Info.plist"; sourceTree = "<group>"; };
 		6808BEA01855E24900A8E552 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		6808BEA21855E24900A8E552 /* WKFlipsViewTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WKFlipsViewTests.m; sourceTree = "<group>"; };
+		6808BEAD1855E2BC00A8E552 /* WKFlipPageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKFlipPageView.h; path = WKFlipPageView/WKFlipPageView.h; sourceTree = "<group>"; };
+		6808BEAE1855E2BC00A8E552 /* WKFlipPageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WKFlipPageView.m; path = WKFlipPageView/WKFlipPageView.m; sourceTree = "<group>"; };
+		6808BEB01855E2E200A8E552 /* WK.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WK.h; path = WKFlipPageView/WK.h; sourceTree = "<group>"; };
+		6808BEB11855E39000A8E552 /* WKFlipsView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKFlipsView.h; path = WKFlipPageView/WKFlipsView.h; sourceTree = "<group>"; };
+		6808BEB21855E39000A8E552 /* WKFlipsView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WKFlipsView.m; path = WKFlipPageView/WKFlipsView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,6 +119,7 @@
 		6808BE7D1855E24900A8E552 /* WKFlipsView */ = {
 			isa = PBXGroup;
 			children = (
+				6808BEAC1855E25800A8E552 /* WKFlipsView */,
 				6808BE861855E24900A8E552 /* AppDelegate.h */,
 				6808BE871855E24900A8E552 /* AppDelegate.m */,
 				6808BE891855E24900A8E552 /* Main.storyboard */,
@@ -150,6 +158,18 @@
 				6808BE9F1855E24900A8E552 /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		6808BEAC1855E25800A8E552 /* WKFlipsView */ = {
+			isa = PBXGroup;
+			children = (
+				6808BEB01855E2E200A8E552 /* WK.h */,
+				6808BEAD1855E2BC00A8E552 /* WKFlipPageView.h */,
+				6808BEAE1855E2BC00A8E552 /* WKFlipPageView.m */,
+				6808BEB11855E39000A8E552 /* WKFlipsView.h */,
+				6808BEB21855E39000A8E552 /* WKFlipsView.m */,
+			);
+			name = WKFlipsView;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -249,6 +269,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6808BEAF1855E2BC00A8E552 /* WKFlipPageView.m in Sources */,
+				6808BEB31855E39000A8E552 /* WKFlipsView.m in Sources */,
 				6808BE8E1855E24900A8E552 /* ViewController.m in Sources */,
 				6808BE881855E24900A8E552 /* AppDelegate.m in Sources */,
 				6808BE841855E24900A8E552 /* main.m in Sources */,
@@ -378,6 +400,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_ENABLE_OBJC_ARC = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "WKFlipsView/WKFlipsView-Prefix.pch";
 				INFOPLIST_FILE = "WKFlipsView/WKFlipsView-Info.plist";
@@ -391,6 +414,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_ENABLE_OBJC_ARC = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "WKFlipsView/WKFlipsView-Prefix.pch";
 				INFOPLIST_FILE = "WKFlipsView/WKFlipsView-Info.plist";
