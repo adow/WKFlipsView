@@ -26,8 +26,15 @@
 @property (nonatomic,assign) id<WKFlipsViewDataSource> dataSource;
 ///委托
 @property (nonatomic,assign) id<WKFlipsViewDelegate> delegate;
+@property (nonatomic,retain) UIView* currentPageView;
+///当前的页面
+@property (nonatomic,assign) int pageIndex;
+#pragma mark - page
 ///注册页面class
--(void)resigerClass:(Class)class forPageWithReuseIdentifier:(NSString*)reuseIdentifier;
+-(void)registerClass:(Class)class forPageWithReuseIdentifier:(NSString*)reuseIdentifier;
 ///获取一个已经使用的page
 -(WKFlipPageView*)dequeueReusablePageWithReuseIdentifier:(NSString*)reuseIdentifier;
+#pragma mark - action
+///显示第几页内容
+-(void)showAtPageIndex:(int)pageIndex;
 @end

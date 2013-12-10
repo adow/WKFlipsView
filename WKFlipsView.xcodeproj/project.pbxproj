@@ -23,6 +23,7 @@
 		6808BEA31855E24900A8E552 /* WKFlipsViewTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6808BEA21855E24900A8E552 /* WKFlipsViewTests.m */; };
 		6808BEAF1855E2BC00A8E552 /* WKFlipPageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6808BEAE1855E2BC00A8E552 /* WKFlipPageView.m */; };
 		6808BEB31855E39000A8E552 /* WKFlipsView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6808BEB21855E39000A8E552 /* WKFlipsView.m */; };
+		6808BF28185768EC00A8E552 /* TestFlipPageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6808BF27185768EC00A8E552 /* TestFlipPageView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -60,6 +61,8 @@
 		6808BEB01855E2E200A8E552 /* WK.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WK.h; path = WKFlipPageView/WK.h; sourceTree = "<group>"; };
 		6808BEB11855E39000A8E552 /* WKFlipsView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKFlipsView.h; path = WKFlipPageView/WKFlipsView.h; sourceTree = "<group>"; };
 		6808BEB21855E39000A8E552 /* WKFlipsView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WKFlipsView.m; path = WKFlipPageView/WKFlipsView.m; sourceTree = "<group>"; };
+		6808BF26185768EC00A8E552 /* TestFlipPageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestFlipPageView.h; sourceTree = "<group>"; };
+		6808BF27185768EC00A8E552 /* TestFlipPageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestFlipPageView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -127,6 +130,8 @@
 				6808BE8D1855E24900A8E552 /* ViewController.m */,
 				6808BE8F1855E24900A8E552 /* Images.xcassets */,
 				6808BE7E1855E24900A8E552 /* Supporting Files */,
+				6808BF26185768EC00A8E552 /* TestFlipPageView.h */,
+				6808BF27185768EC00A8E552 /* TestFlipPageView.m */,
 			);
 			path = WKFlipsView;
 			sourceTree = "<group>";
@@ -273,6 +278,7 @@
 				6808BEB31855E39000A8E552 /* WKFlipsView.m in Sources */,
 				6808BE8E1855E24900A8E552 /* ViewController.m in Sources */,
 				6808BE881855E24900A8E552 /* AppDelegate.m in Sources */,
+				6808BF28185768EC00A8E552 /* TestFlipPageView.m in Sources */,
 				6808BE841855E24900A8E552 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -484,6 +490,7 @@
 				6808BEA81855E24900A8E552 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		6808BEA91855E24900A8E552 /* Build configuration list for PBXNativeTarget "WKFlipsViewTests" */ = {
 			isa = XCConfigurationList;
@@ -492,6 +499,7 @@
 				6808BEAB1855E24900A8E552 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
