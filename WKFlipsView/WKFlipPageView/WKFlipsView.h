@@ -38,4 +38,6 @@
 #pragma mark - action
 ///显示第几页内容
 -(void)showAtPageIndex:(int)pageIndex;
+///准备页面缓存
+-(void)preparePageCachesFromPageIndex:(int)startPageIndex toPageIndex:(int)toPageIndex;
 @end

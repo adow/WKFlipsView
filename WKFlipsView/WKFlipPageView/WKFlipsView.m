@@ -56,6 +56,7 @@
     _pageIndex=pageIndex;
     WKFlipPageView* pageView=[self.dataSource flipsView:self pageAtPageIndex:pageIndex];
     [self.currentPageView addSubview:pageView];
+    [pageView prepareCacheImage];
     ///test
     [self _test_update_cache_for_page:pageView];
 //    double delayInSeconds = 0.001;
@@ -64,6 +65,12 @@
 //        [self _test_update_cache_for_page:pageView];
 //        
 //    });
+}
+-(void)preparePageCachesFromPageIndex:(int)startPageIndex toPageIndex:(int)toPageIndex{
+    for (int pageIndex=startPageIndex; pageIndex<=toPageIndex; pageIndex++) {
+        WKFlipPageView* pageView=[self.dataSource flipsView:self pageAtPageIndex:pageIndex];
+        [pageView prepareCacheImage];
+    }
 }
 #pragma mark - Test
 ///更新换乘图片显示

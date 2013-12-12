@@ -26,6 +26,8 @@
 @property (nonatomic,readonly) UIImage* cacheImageHTop;
 ///下半部分缓存的图片
 @property (nonatomic,readonly) UIImage* cacheImageHBottom;
+///预先生成缓存图片
+-(void)prepareCacheImage;
 ///批量删除缓存图片
 +(void)removeCacheImagesByCacheNames:(NSArray*)cacheNames;
 @end

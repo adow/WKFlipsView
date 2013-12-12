@@ -41,6 +41,9 @@
     [buttonNext addTarget:self action:@selector(onButtonNext:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:buttonNext];
 
+    ///test prepare cache
+    //[_flipsView preparePageCachesFromPageIndex:0 toPageIndex:3];
+    
     ///test remove cache
 //    NSMutableArray* removeArray=[NSMutableArray array];
 //    for (int i=0; i<100; i++) {

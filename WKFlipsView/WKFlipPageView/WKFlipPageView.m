@@ -104,6 +104,10 @@
         return imageHBottom;
     }
 }
+-(void)prepareCacheImage{
+    [self cacheImageHTop];
+    [self cacheImageHBottom];
+}
 +(void)removeCacheImagesByCacheNames:(NSArray *)cacheNames{
     for (NSString* cacheName in cacheNames) {
         NSString *cacheNameHTop=[NSString stringWithFormat:@"%@-top",cacheName];
