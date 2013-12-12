@@ -31,6 +31,6 @@
     for (UIView* view in self.subviews) {
         [view removeFromSuperview];
     }
-    self.backgroundColor=[UIColor lightTextColor];
+    self.backgroundColor=[UIColor darkGrayColor];
 }
 @end

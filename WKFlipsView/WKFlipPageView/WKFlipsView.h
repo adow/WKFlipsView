@@ -21,6 +21,7 @@
 @end
 @interface WKFlipsView : UIView{
     NSMutableDictionary* _reusedPageViewDictionary;
+    UIView* _testCacheView;
 }
 ///数据源
 @property (nonatomic,assign) id<WKFlipsViewDataSource> dataSource;

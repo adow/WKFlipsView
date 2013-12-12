@@ -1,4 +1,5 @@
 //
+
 //  ViewController.m
 //  WKFlipsView
 //
@@ -39,6 +40,19 @@
     buttonNext.backgroundColor=[UIColor lightGrayColor];
     [buttonNext addTarget:self action:@selector(onButtonNext:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:buttonNext];
+
+    ///test remove cache
+//    NSMutableArray* removeArray=[NSMutableArray array];
+//    for (int i=0; i<100; i++) {
+//        NSString* cacheName=[NSString stringWithFormat:@"cache-%d",i];
+//        [removeArray addObject:cacheName];
+//    }
+//    double delayInSeconds = 10.0;
+//    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+//    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+//        NSLog(@"remove page caches");
+//        [WKFlipPageView removeCacheImagesByCacheNames:removeArray];
+//    });
 }
 
 - (void)didReceiveMemoryWarning
@@ -57,6 +71,7 @@
     static NSString* identity=@"page";
     //WKFlipPageView* pageView=[flipsView dequeueReusablePageWithReuseIdentifier:identity];
     TestFlipPageView* pageView=(TestFlipPageView*)[flipsView dequeueReusablePageWithReuseIdentifier:identity];
+    pageView.cacheName=[NSString stringWithFormat:@"cache-%d",pageIndex];
     UIButton* button=[UIButton buttonWithType:UIButtonTypeCustom];
     button.frame=CGRectMake(10.0f, 100.0f, 300.0f, 50.0f);
     button.backgroundColor=[UIColor whiteColor];
