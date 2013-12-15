@@ -24,6 +24,7 @@
 		6808BEAF1855E2BC00A8E552 /* WKFlipPageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6808BEAE1855E2BC00A8E552 /* WKFlipPageView.m */; };
 		6808BEB31855E39000A8E552 /* WKFlipsView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6808BEB21855E39000A8E552 /* WKFlipsView.m */; };
 		6808BF28185768EC00A8E552 /* TestFlipPageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6808BF27185768EC00A8E552 /* TestFlipPageView.m */; };
+		6869ED22185B2903008613FE /* WKFlipsLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 6869ED21185B2903008613FE /* WKFlipsLayer.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,6 +64,8 @@
 		6808BEB21855E39000A8E552 /* WKFlipsView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WKFlipsView.m; path = WKFlipPageView/WKFlipsView.m; sourceTree = "<group>"; };
 		6808BF26185768EC00A8E552 /* TestFlipPageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestFlipPageView.h; sourceTree = "<group>"; };
 		6808BF27185768EC00A8E552 /* TestFlipPageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestFlipPageView.m; sourceTree = "<group>"; };
+		6869ED20185B2903008613FE /* WKFlipsLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKFlipsLayer.h; path = WKFlipPageView/WKFlipsLayer.h; sourceTree = "<group>"; };
+		6869ED21185B2903008613FE /* WKFlipsLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WKFlipsLayer.m; path = WKFlipPageView/WKFlipsLayer.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -173,6 +176,8 @@
 				6808BEAE1855E2BC00A8E552 /* WKFlipPageView.m */,
 				6808BEB11855E39000A8E552 /* WKFlipsView.h */,
 				6808BEB21855E39000A8E552 /* WKFlipsView.m */,
+				6869ED20185B2903008613FE /* WKFlipsLayer.h */,
+				6869ED21185B2903008613FE /* WKFlipsLayer.m */,
 			);
 			name = WKFlipsView;
 			sourceTree = "<group>";
@@ -275,6 +280,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6808BEAF1855E2BC00A8E552 /* WKFlipPageView.m in Sources */,
+				6869ED22185B2903008613FE /* WKFlipsLayer.m in Sources */,
 				6808BEB31855E39000A8E552 /* WKFlipsView.m in Sources */,
 				6808BE8E1855E24900A8E552 /* ViewController.m in Sources */,
 				6808BE881855E24900A8E552 /* AppDelegate.m in Sources */,

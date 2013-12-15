@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "WKFlipPageView.h"
+#import "WKFlipsLayer.h"
 @class WKFlipsView;
 @protocol WKFlipsViewDataSource <NSObject>
 ///每一页内容
@@ -30,6 +31,7 @@
 @property (nonatomic,retain) UIView* currentPageView;
 ///当前的页面
 @property (nonatomic,assign) int pageIndex;
+@property (nonatomic,retain) _WKFlipsLayerView* flippingView;
 #pragma mark - page
 ///注册页面class
 -(void)registerClass:(Class)class forPageWithReuseIdentifier:(NSString*)reuseIdentifier;

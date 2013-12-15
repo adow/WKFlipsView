@@ -18,9 +18,13 @@
         _reusedPageViewDictionary=[[NSMutableDictionary alloc]init];
         _currentPageView=[[UIView alloc]initWithFrame:self.bounds];
         [self addSubview:_currentPageView];
-        _testCacheView=[[UIView alloc]initWithFrame:self.bounds];
-        _testCacheView.backgroundColor=[UIColor whiteColor];
-        [self addSubview:_testCacheView];
+        _flippingView=[[_WKFlipsLayerView alloc]initWithFrame:self.bounds];
+        [self addSubview:_flippingView];
+//        _testCacheView=[[UIView alloc]initWithFrame:self.bounds];
+//        _testCacheView.backgroundColor=[UIColor whiteColor];
+//        [self addSubview:_testCacheView];
+        UIPanGestureRecognizer* panGeture=[[[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(flippingPanGesture:)] autorelease];
+        [self addGestureRecognizer:panGeture];
     }
     return self;
 }
@@ -28,7 +32,7 @@
 -(void)dealloc{
     [_reusedPageViewDictionary release];
     [_currentPageView release];
-    [_testCacheView release];
+    //[_testCacheView release];
     [super dealloc];
 }
 #pragma mark - page
@@ -55,21 +59,30 @@
     }
     _pageIndex=pageIndex;
     WKFlipPageView* pageView=[self.dataSource flipsView:self pageAtPageIndex:pageIndex];
+    ///TODO:这里可能需要禁止动画
     [self.currentPageView addSubview:pageView];
     [pageView prepareCacheImage];
     ///test
-    [self _test_update_cache_for_page:pageView];
-//    double delayInSeconds = 0.001;
-//    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
-//    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-//        [self _test_update_cache_for_page:pageView];
-//        
-//    });
+//    [self _test_update_cache_for_page:pageView];
 }
 -(void)preparePageCachesFromPageIndex:(int)startPageIndex toPageIndex:(int)toPageIndex{
     for (int pageIndex=startPageIndex; pageIndex<=toPageIndex; pageIndex++) {
         WKFlipPageView* pageView=[self.dataSource flipsView:self pageAtPageIndex:pageIndex];
         [pageView prepareCacheImage];
+    }
+}
+#pragma mark - touches
+
+-(void)flippingPanGesture:(UIPanGestureRecognizer*)recognizer{
+    if (recognizer.state==UIGestureRecognizerStateBegan){
+        [self.flippingView dragBegan];
+    }
+    else if (recognizer.state==UIGestureRecognizerStateCancelled|| recognizer.state==UIGestureRecognizerStateEnded){
+        [self.flippingView dragEnded];
+    }
+    else if (recognizer.state==UIGestureRecognizerStateChanged){
+        CGPoint translation=[recognizer translationInView:self];
+        [self.flippingView draggingWithTranslation:translation];
     }
 }
 #pragma mark - Test
