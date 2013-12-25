@@ -18,7 +18,7 @@
         _reusedPageViewDictionary=[[NSMutableDictionary alloc]init];
         _currentPageView=[[UIView alloc]initWithFrame:self.bounds];
         [self addSubview:_currentPageView];
-        _flippingView=[[_WKFlipsLayerView alloc]initWithFrame:self.bounds];
+        _flippingView=[[_WKFlipsLayerView alloc] initWithFlipsView:self];
         [self addSubview:_flippingView];
 //        _testCacheView=[[UIView alloc]initWithFrame:self.bounds];
 //        _testCacheView.backgroundColor=[UIColor whiteColor];
@@ -52,6 +52,9 @@
     return pageView;
 }
 #pragma mark - action
+-(void)reloadPages{
+    [_flippingView buildLayers];
+}
 //显示第几页内容
 -(void)showAtPageIndex:(int)pageIndex{
     for (UIView* view in self.currentPageView.subviews) {
@@ -72,7 +75,6 @@
     }
 }
 #pragma mark - touches
-
 -(void)flippingPanGesture:(UIPanGestureRecognizer*)recognizer{
     if (recognizer.state==UIGestureRecognizerStateBegan){
         [self.flippingView dragBegan];

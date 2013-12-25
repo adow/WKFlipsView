@@ -7,6 +7,7 @@
 //
 
 #import <QuartzCore/QuartzCore.h>
+#import <CoreText/CoreText.h>
 #import "WK.h"
 #pragma makr - WKFlipsLayerView
 ///翻页的状态
@@ -18,12 +19,23 @@ typedef enum WKFlipsLayerViewRunState:NSUInteger{
     ///翻页动画中
     WKFlipsLayerViewRunStateAnimation=2,
 }WKFlipsLayerViewRunState;
+@class WKFlipsLayer;
+@class WKFlipsView;
 ///用来放那些WKFlipsLayer
 @interface _WKFlipsLayerView:UIView{
     
 }
+///使用flipsView
+-(id)initWithFlipsView:(WKFlipsView*)flipsView;
 ///翻页的状态
 @property (nonatomic,assign) WKFlipsLayerViewRunState runState;
+///引用flipsView
+@property (nonatomic,assign) WKFlipsView* flipsView;
+///重建所有页面
+-(void)buildLayers;
+#pragma mark - FlipAnimation
+-(void)flipToPageIndex:(int)pageIndex;
+-(void)flipToPageIndex:(int)pageIndex completion:(void(^)(BOOL))completionBlock;
 #pragma mark - Drag
 ///开始拖动
 -(void)dragBegan;
@@ -41,6 +53,10 @@ typedef enum WKFlipsLayerViewRunState:NSUInteger{
 @property (nonatomic,retain) CALayer* backLayer;
 -(id)initWithFrame:(CGRect)frame;
 @property (nonatomic,assign) CGFloat rotateDegree;
-///动画设置翻转
--(void)setRotateDegree:(CGFloat)rotateDegree completion:(void(^)())completion;
+///动画设置翻转角度
+-(void)setRotateDegree:(CGFloat)rotateDegree duration:(CGFloat)duration afterDelay:(NSTimeInterval)delay completion:(void(^)())completion;
+///在现有的角度上翻动指定的角度
+-(void)rotate:(CGFloat)rotateDegree afterDelay:(NSTimeInterval)delay completion:(void(^)())completion;
+///画出来测试用的文字
+-(void)drawWords:(NSString*)words onPosition:(int)position;
 @end

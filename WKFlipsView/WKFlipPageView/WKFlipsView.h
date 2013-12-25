@@ -38,6 +38,8 @@
 ///获取一个已经使用的page
 -(WKFlipPageView*)dequeueReusablePageWithReuseIdentifier:(NSString*)reuseIdentifier;
 #pragma mark - action
+///载入页面
+-(void)reloadPages;
 ///显示第几页内容
 -(void)showAtPageIndex:(int)pageIndex;
 ///准备页面缓存

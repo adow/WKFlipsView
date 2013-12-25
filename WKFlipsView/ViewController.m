@@ -31,6 +31,7 @@
         [self.view addSubview:_flipsView];
 
     }
+    [_flipsView reloadPages];
     [_flipsView showAtPageIndex:0];
 
     UIButton* buttonNext=[UIButton buttonWithType:UIButtonTypeCustom];
