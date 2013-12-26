@@ -55,8 +55,6 @@ typedef enum WKFlipsLayerViewRunState:NSUInteger{
 @property (nonatomic,assign) CGFloat rotateDegree;
 ///动画设置翻转角度
 -(void)setRotateDegree:(CGFloat)rotateDegree duration:(CGFloat)duration afterDelay:(NSTimeInterval)delay completion:(void(^)())completion;
-///在现有的角度上翻动指定的角度
--(void)rotate:(CGFloat)rotateDegree afterDelay:(NSTimeInterval)delay completion:(void(^)())completion;
 ///画出来测试用的文字
 -(void)drawWords:(NSString*)words onPosition:(int)position;
 @end
