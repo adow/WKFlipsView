@@ -35,7 +35,7 @@ typedef enum WKFlipsLayerViewRunState:NSUInteger{
 -(void)buildLayers;
 #pragma mark - FlipAnimation
 -(void)flipToPageIndex:(int)pageIndex;
--(void)flipToPageIndex:(int)pageIndex completion:(void(^)(BOOL))completionBlock;
+-(void)flipToPageIndex:(int)pageIndex completion:(void(^)(BOOL completed))completionBlock;
 #pragma mark - Drag
 ///开始拖动
 -(void)dragBegan;

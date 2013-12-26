@@ -99,26 +99,36 @@
     [self flipToPageIndex:3 completion:^(BOOL completed) {
         [self flipToPageIndex:1 completion:^(BOOL completed) {
             [self flipToPageIndex:2 completion:^(BOOL completed) {
-                
+                double delayInSeconds = 2.0;
+                dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+                dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+                    [self flipToPageIndex:0];
+                });
             }];
         }];
     }];
 }
 #pragma mark - flips
+///无动画的翻页
 -(void)flipToPageIndex:(int)pageIndex{
+    int layersNumber=[self.flipsView.dataSource numberOfPagesForFlipsView:self.flipsView]*2;
     ///往前翻页，也就是把上半部分的页面往下面翻
     if (pageIndex<self.flipsView.pageIndex){
-        for (int layerIndex=self.flipsView.pageIndex; layerIndex<pageIndex; layerIndex--) {
-            WKFlipsLayer* flipLayer=self.layer.sublayers[layerIndex];
-            flipLayer.rotateDegree=0.0f;
+        for (int layerIndex=0; layerIndex<layersNumber; layerIndex++) {
+            CGFloat rotateDegree=[self calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:pageIndex];
+            WKFlipsLayer *flipLayer=self.layer.sublayers[layerIndex];
+            flipLayer.rotateDegree=rotateDegree;
         }
     }
-    else if (pageIndex>self.flipsView.pageIndex){ ///往后面翻页,也就是把下半部分的往上面翻
-        for (int layerIndex=self.flipsView.pageIndex+1; layerIndex<=pageIndex; layerIndex++) {
+    ///往后面翻页,也就是把下半部分的往上面翻
+    else if (pageIndex>self.flipsView.pageIndex){
+        for (int layerIndex=layersNumber-1; layerIndex>=0; layerIndex--) {
+            CGFloat rotateDegree=[self calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:pageIndex];
             WKFlipsLayer* flipLayer=self.layer.sublayers[layerIndex];
-            flipLayer.rotateDegree=180.0f;
+            flipLayer.rotateDegree=rotateDegree;
         }
     }
+    self.flipsView.pageIndex=pageIndex;
 }
 -(void)flipToPageIndex:(int)pageIndex completion:(void (^)(BOOL completed))completionBlock{
     
