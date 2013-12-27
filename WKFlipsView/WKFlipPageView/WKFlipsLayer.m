@@ -97,15 +97,15 @@
 //        }];
 //    }
     [self flipToPageIndex:3 completion:^(BOOL completed) {
-        [self flipToPageIndex:1 completion:^(BOOL completed) {
-            [self flipToPageIndex:2 completion:^(BOOL completed) {
-                double delayInSeconds = 2.0;
-                dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
-                dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-                    [self flipToPageIndex:0];
-                });
-            }];
-        }];
+//        [self flipToPageIndex:1 completion:^(BOOL completed) {
+//            [self flipToPageIndex:2 completion:^(BOOL completed) {
+//                double delayInSeconds = 2.0;
+//                dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+//                dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+//                    [self flipToPageIndex:0];
+//                });
+//            }];
+//        }];
     }];
 }
 #pragma mark - flips
@@ -131,7 +131,9 @@
     self.flipsView.pageIndex=pageIndex;
 }
 -(void)flipToPageIndex:(int)pageIndex completion:(void (^)(BOOL completed))completionBlock{
-    
+    if(self.runState==WKFlipsLayerViewRunStateAnimation)
+        return;
+    self.runState=WKFlipsLayerViewRunStateAnimation;
     ///往前翻页，也就是把上半部分往下面翻页
     CGFloat durationLong=3.0f;
     CGFloat durationShort=0.1f;
@@ -150,6 +152,7 @@
                     if (++complete_hits>=layersNumber){
                         NSLog(@"flip completed");
                         self.flipsView.pageIndex=pageIndex;
+                        self.runState=WKFlipsLayerViewRunStateStop;
                         completionBlock(YES);
                     }
                 }];
@@ -159,6 +162,7 @@
                     if (++complete_hits>=layersNumber){
                         NSLog(@"flip completed");
                         self.flipsView.pageIndex=pageIndex;
+                        self.runState=WKFlipsLayerViewRunStateStop;
                         completionBlock(YES);
                     }
                 }];
@@ -177,6 +181,7 @@
                     if (++complete_hits>=layersNumber){
                         NSLog(@"flip completed");
                         self.flipsView.pageIndex=pageIndex;
+                        self.runState=WKFlipsLayerViewRunStateStop;
                         completionBlock(YES);
                     }
                 }];
@@ -186,6 +191,7 @@
                     if (++complete_hits>=layersNumber){
                         NSLog(@"flip completed");
                         self.flipsView.pageIndex=pageIndex;
+                        self.runState=WKFlipsLayerViewRunStateStop;
                         completionBlock(YES);
                     }
                 }];
@@ -213,12 +219,86 @@
 #pragma mark - Drag
 -(void)dragBegan{
     NSLog(@"dragBegan");
+    if (self.runState!=WKFlipsLayerViewRunStateStop)
+        return;
+    self.runState=WKFlipsLayerViewRunStateDragging;
 }
 -(void)dragEnded{
     NSLog(@"dragEnded");
+    if (self.runState!=WKFlipsLayerViewRunStateDragging)
+        return;
+    if (_dragging_position==WKFlipsLayerDragAtPositionTop){
+        ///返回现在的页面
+        if (_dragging_layer.rotateDegree>=90.0f){
+           [self flipToPageIndex:self.flipsView.pageIndex completion:^(BOOL completed) {
+               _dragging_layer=nil;
+               self.runState=WKFlipsLayerViewRunStateStop;
+           }];
+        }
+        else{///到前一页
+            [self flipToPageIndex:self.flipsView.pageIndex-1 completion:^(BOOL completed) {
+                _dragging_layer=nil;
+                self.runState=WKFlipsLayerViewRunStateStop;
+            }];
+        }
+    }
+    else{
+        ///到后一页
+        if (_dragging_layer.rotateDegree>=90.0f){
+            [self flipToPageIndex:self.flipsView.pageIndex+1 completion:^(BOOL completed) {
+                _dragging_layer=nil;
+                self.runState=WKFlipsLayerViewRunStateStop;
+            }];
+        }
+        else{///返回到现在的页面
+            [self flipToPageIndex:self.flipsView.pageIndex completion:^(BOOL completed) {
+                _dragging_layer=nil;
+                self.runState=WKFlipsLayerViewRunStateStop;
+            }];
+        }
+    }
+    
 }
 -(void)draggingWithTranslation:(CGPoint)translation{
-    NSLog(@"dragging");
+    //NSLog(@"dragging:%f",translation.y);
+    if (self.runState!=WKFlipsLayerViewRunStateDragging)
+        return;
+    if (!_dragging_layer){
+        int layersNumber=[self.flipsView.dataSource numberOfPagesForFlipsView:self.flipsView]*2;
+        int stopLayerIndexAtTop=layersNumber-1-self.flipsView.pageIndex;
+        int stopLayerIndexAtBottom=stopLayerIndexAtTop-1;
+        if (translation.y>0){
+            _dragging_layer=self.layer.sublayers[stopLayerIndexAtTop];
+            _dragging_position=WKFlipsLayerDragAtPositionTop;
+        }
+        else{
+            _dragging_layer=self.layer.sublayers[stopLayerIndexAtBottom];
+            _dragging_position=WKFlipsLayerDragAtPositionBottom;
+        }
+    }
+    ///往下面翻
+    
+    if (_dragging_position==WKFlipsLayerDragAtPositionTop){
+        if (translation.y>0){
+            CGFloat percent=translation.y/self.frame.size.height*2;
+            CGFloat rotateDegree=180.0f-180.0f*percent;
+            rotateDegree=fminf(rotateDegree, 180.0f);
+            rotateDegree=fmaxf(rotateDegree, 0.0f);
+            NSLog(@"dragging down:%f,%f",rotateDegree,percent);
+            _dragging_layer.rotateDegree=rotateDegree;
+        }
+    }
+    else{ ///往上面翻
+        if (translation.y<0){
+            CGFloat percent=fabsf(translation.y)/self.frame.size.height*2;
+            CGFloat rotateDegree=180.0f*percent;
+            rotateDegree=fminf(rotateDegree, 180.0f);
+            rotateDegree=fmaxf(rotateDegree, 0.0f);
+            NSLog(@"dragging up:%f,%f",rotateDegree,percent);
+            _dragging_layer.rotateDegree=rotateDegree;
+        }
+    }
+    
 }
 @end
 

@@ -19,11 +19,20 @@ typedef enum WKFlipsLayerViewRunState:NSUInteger{
     ///翻页动画中
     WKFlipsLayerViewRunStateAnimation=2,
 }WKFlipsLayerViewRunState;
+typedef enum WKFlipsLayerDragAtPosition:NSUInteger{
+    ///拖动上面的
+    WKFlipsLayerDragAtPositionTop=0,
+    ///拖动底部的
+    WKFlipsLayerDragAtPositionBottom=1,
+}WKFlipsLayerDragAtPosition;
 @class WKFlipsLayer;
 @class WKFlipsView;
 ///用来放那些WKFlipsLayer
 @interface _WKFlipsLayerView:UIView{
-    
+    ///正在被拖动的页面
+    WKFlipsLayer* _dragging_layer;
+    ///正在被拖动的页面的位置，上面的，还是下面的
+    WKFlipsLayerDragAtPosition _dragging_position;
 }
 ///使用flipsView
 -(id)initWithFlipsView:(WKFlipsView*)flipsView;
