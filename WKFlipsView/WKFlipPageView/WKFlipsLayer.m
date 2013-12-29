@@ -142,12 +142,13 @@
     __block int complete_hits=0;
     if (pageIndex<self.flipsView.pageIndex){
         for (int layerIndex=0; layerIndex<layersNumber; layerIndex++) {
-            delay+=0.3f;
             CGFloat rotateDegree=[self calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:pageIndex];
             NSLog(@"layerIndex:%d,%f",layerIndex,rotateDegree);
             WKFlipsLayer *flipLayer=self.layer.sublayers[layerIndex];
+            CGFloat rotateDistance=fabsf(rotateDegree-flipLayer.rotateDegree);
             ///翻转比较大的角度,用的时间比较多
-            if (fabsf(rotateDegree-flipLayer.rotateDegree)>=60.0f){
+            if (rotateDistance>=60.0f){
+                delay+=0.3;
                 [flipLayer setRotateDegree:rotateDegree duration:durationLong afterDelay:delay completion:^{
                     if (++complete_hits>=layersNumber){
                         NSLog(@"flip completed");
@@ -158,6 +159,12 @@
                 }];
             }
             else{   ///翻转比较小的角度，用的时间更少
+                if (rotateDistance>0.0f){
+                    delay+=0.1f;
+                }
+                else{
+                    delay+=0.0f;
+                }
                 [flipLayer setRotateDegree:rotateDegree duration:durationShort afterDelay:delay completion:^{
                     if (++complete_hits>=layersNumber){
                         NSLog(@"flip completed");
@@ -172,11 +179,12 @@
     }
     else{
         for (int layerIndex=layersNumber-1; layerIndex>=0; layerIndex--) {
-            delay+=0.3f;
             CGFloat rotateDegree=[self calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:pageIndex];
             NSLog(@"layerIndex:%d,%f",layerIndex,rotateDegree);
             WKFlipsLayer* flipLayer=self.layer.sublayers[layerIndex];
-            if (fabs(rotateDegree-flipLayer.rotateDegree)>=60.0f){
+            CGFloat rotateDistance=fabsf(rotateDegree-flipLayer.rotateDegree);
+            if (rotateDistance>=60.0f){
+                delay+=0.3f;
                 [flipLayer setRotateDegree:rotateDegree duration:durationLong afterDelay:delay completion:^{
                     if (++complete_hits>=layersNumber){
                         NSLog(@"flip completed");
@@ -187,6 +195,12 @@
                 }];
             }
             else{
+                if (rotateDistance>0.0f){
+                    delay+=0.1f;
+                }
+                else{
+                    delay+=0.0f;
+                }
                 [flipLayer setRotateDegree:rotateDegree duration:durationShort afterDelay:delay completion:^{
                     if (++complete_hits>=layersNumber){
                         NSLog(@"flip completed");
