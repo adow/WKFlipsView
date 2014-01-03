@@ -33,6 +33,9 @@ typedef enum WKFlipsLayerDragAtPosition:NSUInteger{
     WKFlipsLayer* _dragging_layer;
     ///正在被拖动的页面的位置，上面的，还是下面的
     WKFlipsLayerDragAtPosition _dragging_position;
+    ///上一次的位置
+    CGFloat _dragging_last_translation_y;
+    
 }
 ///使用flipsView
 -(id)initWithFlipsView:(WKFlipsView*)flipsView;
@@ -64,6 +67,11 @@ typedef enum WKFlipsLayerDragAtPosition:NSUInteger{
 @property (nonatomic,assign) CGFloat rotateDegree;
 ///动画设置翻转角度
 -(void)setRotateDegree:(CGFloat)rotateDegree duration:(CGFloat)duration afterDelay:(NSTimeInterval)delay completion:(void(^)())completion;
+///动画是否被取消
+@property (nonatomic,assign) BOOL isAnimationCancelled;
+@property (nonatomic,assign) CATransform3D cancelledTransform;
+///取消拖动后的动画
+-(void)cancelDragAnimation;
 ///画出来测试用的文字
 -(void)drawWords:(NSString*)words onPosition:(int)position;
 @end

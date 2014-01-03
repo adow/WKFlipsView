@@ -96,7 +96,7 @@
 //            
 //        }];
 //    }
-    [self flipToPageIndex:3 completion:^(BOOL completed) {
+    [self flipToPageIndex:1 completion:^(BOOL completed) {
 //        [self flipToPageIndex:1 completion:^(BOOL completed) {
 //            [self flipToPageIndex:2 completion:^(BOOL completed) {
 //                double delayInSeconds = 2.0;
@@ -198,45 +198,79 @@
 #pragma mark - Drag
 -(void)dragBegan{
     NSLog(@"dragBegan");
-    if (self.runState!=WKFlipsLayerViewRunStateStop)
+//    if (self.runState!=WKFlipsLayerViewRunStateStop)
+//        return;
+    if (self.runState==WKFlipsLayerViewRunStateAnimation) ///如果正在连续动画就不拖动
         return;
+    [_dragging_layer cancelDragAnimation];///如果有_dragging_layer的话，取消拖动的动画
     self.runState=WKFlipsLayerViewRunStateDragging;
 }
 -(void)dragEnded{
     NSLog(@"dragEnded");
     if (self.runState!=WKFlipsLayerViewRunStateDragging)
         return;
+    CGFloat durationFull=3.0f;
     if (_dragging_position==WKFlipsLayerDragAtPositionTop){
         ///返回现在的页面
         if (_dragging_layer.rotateDegree>=90.0f){
-           [self flipToPageIndex:self.flipsView.pageIndex completion:^(BOOL completed) {
-               _dragging_layer=nil;
-               self.runState=WKFlipsLayerViewRunStateStop;
-           }];
-        }
-        else{///到前一页
-            [self flipToPageIndex:self.flipsView.pageIndex-1 completion:^(BOOL completed) {
+            int layerIndex=[self.layer.sublayers indexOfObject:_dragging_layer];
+            CGFloat oldRotateDegree=[self calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:self.flipsView.pageIndex];
+            CGFloat duration=fabsf(oldRotateDegree-_dragging_layer.rotateDegree)/180.0f*durationFull;
+            [_dragging_layer setRotateDegree:oldRotateDegree duration:duration afterDelay:0.0f completion:^{
                 _dragging_layer=nil;
                 self.runState=WKFlipsLayerViewRunStateStop;
+            }];
+        }
+        else{///到前一页
+            int previousPageIndex=self.flipsView.pageIndex-1;
+            int layersNumber=[self.flipsView.dataSource numberOfPagesForFlipsView:self.flipsView]*2;
+            for (int layerIndex=0; layerIndex<layersNumber; layerIndex++) {
+                CGFloat rotateDegree=[self calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:previousPageIndex];
+                WKFlipsLayer* flipLayer=self.layer.sublayers[layerIndex];
+                if (flipLayer!=_dragging_layer){
+                    [flipLayer setRotateDegree:rotateDegree];
+                }
+            }
+            int layerIndex=[self.layer.sublayers indexOfObject:_dragging_layer];
+            CGFloat newRotateDegree=[self calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:previousPageIndex];
+            CGFloat duration=fabsf(newRotateDegree-_dragging_layer.rotateDegree)/180.0f*durationFull;
+            [_dragging_layer setRotateDegree:newRotateDegree duration:duration afterDelay:0.0f completion:^{
+                _dragging_layer=nil;
+                self.runState=WKFlipsLayerViewRunStateStop;
+                self.flipsView.pageIndex=previousPageIndex;
             }];
         }
     }
     else{
         ///到后一页
         if (_dragging_layer.rotateDegree>=90.0f){
-            [self flipToPageIndex:self.flipsView.pageIndex+1 completion:^(BOOL completed) {
+            int nextPageIndex=self.flipsView.pageIndex+1;
+            int layersNUmber=[self.flipsView.dataSource numberOfPagesForFlipsView:self.flipsView]*2;
+            for (int layerIndex=layersNUmber-1; layerIndex>=0; layerIndex--) {
+                CGFloat rotateDegree=[self calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:nextPageIndex];
+                WKFlipsLayer* flipLayer=self.layer.sublayers[layerIndex];
+                if (flipLayer!=_dragging_layer)
+                    [flipLayer setRotateDegree:rotateDegree];
+            }
+            int layerIndex=[self.layer.sublayers indexOfObject:_dragging_layer];
+            CGFloat newRotateDegree=[self calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:nextPageIndex];
+            CGFloat duration=fabsf(newRotateDegree-_dragging_layer.rotateDegree)/180.0f*durationFull;
+            [_dragging_layer setRotateDegree:newRotateDegree duration:duration afterDelay:0.0f completion:^{
                 _dragging_layer=nil;
                 self.runState=WKFlipsLayerViewRunStateStop;
+                self.flipsView.pageIndex=nextPageIndex;
             }];
         }
         else{///返回到现在的页面
-            [self flipToPageIndex:self.flipsView.pageIndex completion:^(BOOL completed) {
+            int layerIndex=[self.layer.sublayers indexOfObject:_dragging_layer];
+            CGFloat oldRotateDegree=[self calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:self.flipsView.pageIndex];
+            CGFloat duration=fabsf(oldRotateDegree-_dragging_layer.rotateDegree)/180.0f*durationFull;
+            [_dragging_layer setRotateDegree:oldRotateDegree duration:duration afterDelay:0.0f completion:^{
                 _dragging_layer=nil;
                 self.runState=WKFlipsLayerViewRunStateStop;
             }];
         }
     }
-    
 }
 -(void)draggingWithTranslation:(CGPoint)translation{
     //NSLog(@"dragging:%f",translation.y);
@@ -254,29 +288,21 @@
             _dragging_layer=self.layer.sublayers[stopLayerIndexAtBottom];
             _dragging_position=WKFlipsLayerDragAtPositionBottom;
         }
-    }
+}
     ///往下面翻
-    
     if (_dragging_position==WKFlipsLayerDragAtPositionTop){
-        if (translation.y>0){
-            CGFloat percent=translation.y/self.frame.size.height*2;
-            CGFloat rotateDegree=180.0f-180.0f*percent;
-            rotateDegree=fminf(rotateDegree, 180.0f);
-            rotateDegree=fmaxf(rotateDegree, 0.0f);
-            NSLog(@"dragging down:%f,%f",rotateDegree,percent);
-            _dragging_layer.rotateDegree=rotateDegree;
-        }
+        CGFloat rotateDegree=_dragging_layer.rotateDegree-(translation.y-_dragging_last_translation_y)*0.5;
+        rotateDegree=fminf(rotateDegree, 180.0f);
+        rotateDegree=fmaxf(rotateDegree, 0.0f);
+        _dragging_layer.rotateDegree=rotateDegree;
     }
     else{ ///往上面翻
-        if (translation.y<0){
-            CGFloat percent=fabsf(translation.y)/self.frame.size.height*2;
-            CGFloat rotateDegree=180.0f*percent;
-            rotateDegree=fminf(rotateDegree, 180.0f);
-            rotateDegree=fmaxf(rotateDegree, 0.0f);
-            NSLog(@"dragging up:%f,%f",rotateDegree,percent);
-            _dragging_layer.rotateDegree=rotateDegree;
-        }
+        CGFloat rotateDegree=_dragging_layer.rotateDegree-(translation.y-_dragging_last_translation_y)*0.5f;
+        rotateDegree=fminf(rotateDegree, 180.0f);
+        rotateDegree=fmaxf(rotateDegree, 0.0f);
+        _dragging_layer.rotateDegree=rotateDegree;
     }
+    _dragging_last_translation_y=translation.y;
     
 }
 @end
@@ -353,6 +379,11 @@
         [self.backLayer addSublayer:wordsLayer];
     }
 }
+-(void)cancelDragAnimation{
+    self.cancelledTransform=((CALayer*)self.presentationLayer).transform;
+    self.isAnimationCancelled=YES;
+    [self removeAllAnimations];
+}
 #pragma mark - rotateDegree
 -(void)setRotateDegree:(CGFloat)rotateDegree{
     _rotateDegree=rotateDegree;
@@ -361,13 +392,12 @@
 -(CGFloat)rotateDegree{
     return _rotateDegree;
 }
-
 -(void)setRotateDegree:(CGFloat)rotateDegree duration:(CGFloat)duration afterDelay:(NSTimeInterval)delay completion:(void (^)())completion{
     CATransform3D fromTrnasform=self.transform;
     CGFloat halfRotateDegree=self.rotateDegree+(rotateDegree-self.rotateDegree)/2.0f;
     CATransform3D halfTransform=WKFlipCATransform3DPerspectSimpleWithRotate(halfRotateDegree);
     CATransform3D toTransform=WKFlipCATransform3DPerspectSimpleWithRotate(rotateDegree);
-    NSLog(@"%f,%f,%f",self.rotateDegree,halfRotateDegree,rotateDegree);
+    //NSLog(@"%f,%f,%f",self.rotateDegree,halfRotateDegree,rotateDegree);
     [CATransaction begin];
     [CATransaction setValue:[NSNumber numberWithBool:YES] forKey:kCATransactionDisableActions];
     CAKeyframeAnimation* flipAnimation=[CAKeyframeAnimation animationWithKeyPath:@"transform"];
@@ -380,11 +410,18 @@
     flipAnimation.values=@[[NSValue valueWithCATransform3D:fromTrnasform],[NSValue valueWithCATransform3D:halfTransform],
                            [NSValue valueWithCATransform3D:toTransform]];
     [CATransaction setCompletionBlock:^{
+        if (!_isAnimationCancelled){
+            self.rotateDegree=rotateDegree;
+            completion();
+        }
+        else{
+            self.transform=self.cancelledTransform;///动画被取消，停在当前的位置,也不要回调
+        }
         [self removeAllAnimations];
-        self.rotateDegree=rotateDegree;
-        completion();
+        
+        _isAnimationCancelled=NO;
     }];
-    [self addAnimation:flipAnimation forKey:@"animation-flip-continues-down"];
+    [self addAnimation:flipAnimation forKey:@"animation-flip"];
     [CATransaction commit];
 }
 @end
