@@ -35,6 +35,7 @@
 -(void)dealloc{
     [super dealloc];
 }
+#pragma mark - build
 -(int)numbersOfLayers{
     //return [self.flipsView.dataSource numberOfPagesForFlipsView:self.flipsView]*2;
     return [self.flipsView.dataSource numberOfPagesForFlipsView:self.flipsView]+1;
@@ -59,19 +60,52 @@
         [layer drawWords:[NSString stringWithFormat:@"layer %d back",(layersNumber-a-1)] onPosition:1];
         layer.rotateDegree=0.0f;
     }
-    ///为部分页面创建缓存页面和贴图
+    [self _pasteImagesToLayersInSeconds:3.0f];///重建时可以使用更多的时间来贴图
+    ///TEST
+    [self flipToPageIndex:1 completion:^(BOOL completed) {
+    }];
+}
+///在允许的时间范围内为尽可能多的layer贴图,如果maxSeconds是0那就忽略时间
+///TODO: 应该从当前页面两边优先贴图
+-(void)_pasteImagesToLayersInSeconds:(double)maxSeconds{
+    double startTime=CFAbsoluteTimeGetCurrent();
+    double duration=0;
     int totalPages=[self.flipsView.dataSource numberOfPagesForFlipsView:self.flipsView];
+    ///统计贴图的页面数和跳过的页面数(WKFlipsLayer的正反面)
+    int numbersPastes=0,numbersSkips=0;
     for (int pageIndex=0; pageIndex<totalPages; pageIndex++) {
-        WKFlipPageView* page=[self.flipsView.dataSource flipsView:self.flipsView pageAtPageIndex:pageIndex];
+        duration=CFAbsoluteTimeGetCurrent()-startTime;
+        if (maxSeconds>0 && duration>=maxSeconds){
+            NSLog(@"duration:%f",duration);
+            break;
+        }
         int layerIndexForTop=totalPages-pageIndex;
         int layerIndexForBottom=layerIndexForTop-1;
         WKFlipsLayer* layerForTop=self.layer.sublayers[layerIndexForTop];
         WKFlipsLayer* layerForBottom=self.layer.sublayers[layerIndexForBottom];
-        layerForTop.backLayer.contents=(id)page.cacheImageHTop.CGImage;
-        layerForBottom.frontLayer.contents=(id)page.cacheImageHBottom.CGImage;
+        ///如果已经有贴图了就跳过
+        if (layerForTop.backLayer.contents && layerForBottom.frontLayer.contents){
+            numbersSkips+=2;
+            continue;
+        }
+        WKFlipPageView* page=[self.flipsView.dataSource flipsView:self.flipsView pageAtPageIndex:pageIndex];
+        if (!layerForTop.backLayer.contents){
+            layerForTop.backLayer.contents=(id)page.cacheImageHTop.CGImage;
+            numbersPastes+=1;
+        }
+        else{
+            numbersSkips+=1;
+        }
+        if (!layerForBottom.frontLayer.contents){
+            layerForBottom.frontLayer.contents=(id)page.cacheImageHBottom.CGImage;
+            numbersPastes+=1;
+        }
+        else{
+            numbersSkips+=1;
+        }
+        
     }
-    [self flipToPageIndex:1 completion:^(BOOL completed) {
-    }];
+    NSLog(@"pastes:%d,skips:%d",numbersPastes,numbersSkips);
 }
 #pragma mark - flips
 ///无动画的翻页
@@ -119,6 +153,7 @@
                         self.flipsView.pageIndex=pageIndex;
                         self.runState=WKFlipsLayerViewRunStateStop;
                         completionBlock(YES);
+                        [self _pasteImagesToLayersInSeconds:1.0f];
                     }
             }];
             
@@ -138,6 +173,7 @@
                         self.flipsView.pageIndex=pageIndex;
                         self.runState=WKFlipsLayerViewRunStateStop;
                         completionBlock(YES);
+                        [self _pasteImagesToLayersInSeconds:1.0f];
                     }
             }];
         }
@@ -203,6 +239,7 @@
                 _dragging_layer=nil;
                 self.runState=WKFlipsLayerViewRunStateStop;
                 self.flipsView.pageIndex=previousPageIndex;
+                [self _pasteImagesToLayersInSeconds:1.0f];
             }];
         }
     }
@@ -224,6 +261,7 @@
                 _dragging_layer=nil;
                 self.runState=WKFlipsLayerViewRunStateStop;
                 self.flipsView.pageIndex=nextPageIndex;
+                [self _pasteImagesToLayersInSeconds:1.0f];
             }];
         }
         else{///返回到现在的页面
