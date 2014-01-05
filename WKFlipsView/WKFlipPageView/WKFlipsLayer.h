@@ -43,6 +43,8 @@ typedef enum WKFlipsLayerDragAtPosition:NSUInteger{
 @property (nonatomic,assign) WKFlipsLayerViewRunState runState;
 ///引用flipsView
 @property (nonatomic,assign) WKFlipsView* flipsView;
+///页面数
+@property (nonatomic,readonly) int numbersOfLayers;
 ///重建所有页面
 -(void)buildLayers;
 #pragma mark - FlipAnimation

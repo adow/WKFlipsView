@@ -15,6 +15,7 @@
 
 @end
 @implementation _WKFlipsLayerView
+@dynamic numbersOfLayers;
 -(id)initWithFrame:(CGRect)frame{
     self=[super initWithFrame:frame];
     if (self){
@@ -35,17 +36,18 @@
     [super dealloc];
 }
 -(int)numbersOfLayers{
-    return [self.flipsView.dataSource numberOfPagesForFlipsView:self.flipsView]*2;
+    //return [self.flipsView.dataSource numberOfPagesForFlipsView:self.flipsView]*2;
+    return [self.flipsView.dataSource numberOfPagesForFlipsView:self.flipsView]+1;
 }
 -(void)buildLayers{
     ///先删除现有的layer
     for (CALayer *layer in self.layer.sublayers) {
         [layer removeFromSuperlayer];
     }
-    ///layer的总数比页面数要多1
-    int layersNumber=[self.flipsView.dataSource numberOfPagesForFlipsView:self.flipsView]*2;
+    ///layer的总数
+    int layersNumber=[self numbersOfLayers];
 //    int layersNumber=1;
-    ///在重新创建新的layer
+    ///在重新创建新的layer,一开始的位置都在屏幕下半部分
     CGRect layerFrame=CGRectMake(0.0f, self.bounds.size.height/2, self.bounds.size.width, self.bounds.size.height/2);
     for (int a=0; a<layersNumber; a++) {
         WKFlipsLayer* layer=[[[WKFlipsLayer alloc]initWithFrame:layerFrame] autorelease];
@@ -56,62 +58,25 @@
         [layer drawWords:[NSString stringWithFormat:@"layer %d front",(layersNumber-a-1)] onPosition:0];
         [layer drawWords:[NSString stringWithFormat:@"layer %d back",(layersNumber-a-1)] onPosition:1];
         layer.rotateDegree=0.0f;
-        ///在当前页面之前的页面全部翻页到上面
-//        if (a<1){
-//            [layer setRotateDegree:180.0f];
-//        }
     }
-//    [self flipToPageIndex:1 completion:^(BOOL completion) {
-//        
-//    }];
-//    WKFlipsLayer* firstLayer=self.layer.sublayers[5];
-//    [firstLayer setRotateDegree:182.0f duration:3.0f afterDelay:3.0f completion:^{
-//        
-//    }];
-//    WKFlipsLayer* secondLayer=self.layer.sublayers[4];
-//    [secondLayer setRotateDegree:181.0f duration:3.0f afterDelay:3.5f completion:^{
-//        
-//    }];
-//    WKFlipsLayer* thirdLayer=self.layer.sublayers[3];
-//    [thirdLayer setRotateDegree:180.0f duration:3.0f afterDelay:3.8f completion:^{
-//        
-//    }];
-//    [firstLayer setRotateDegreeV2:182.0f afterDelay:3.0f completion:^{
-//        WKFlipsLayer* secondLayer=self.layer.sublayers[4];
-//        [secondLayer setRotateDegreeV2:181.0f afterDelay:1.0f completion:^{
-//            WKFlipsLayer* thirdLayer=self.layer.sublayers[3];
-//            [thirdLayer setRotateDegreeV2:180.0f afterDelay:1.0f completion:^{
-//                
-//            }];
-//        }];
-//        
-//    }];
-//    CGFloat delay=0.0f;
-//    CGFloat duration=3.0f;
-//    for (int layerIndex=layersNumber-1; layerIndex>0; layerIndex--) {
-//        delay+=0.3f;
-//        WKFlipsLayer* flipLayer=self.layer.sublayers[layerIndex];
-//        CGFloat rotateDegree=[self calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:1];
-//        [flipLayer setRotateDegree:rotateDegree duration:duration afterDelay:delay completion:^{
-//            
-//        }];
-//    }
+    ///为部分页面创建缓存页面和贴图
+    int totalPages=[self.flipsView.dataSource numberOfPagesForFlipsView:self.flipsView];
+    for (int pageIndex=0; pageIndex<totalPages; pageIndex++) {
+        WKFlipPageView* page=[self.flipsView.dataSource flipsView:self.flipsView pageAtPageIndex:pageIndex];
+        int layerIndexForTop=totalPages-pageIndex;
+        int layerIndexForBottom=layerIndexForTop-1;
+        WKFlipsLayer* layerForTop=self.layer.sublayers[layerIndexForTop];
+        WKFlipsLayer* layerForBottom=self.layer.sublayers[layerIndexForBottom];
+        layerForTop.backLayer.contents=(id)page.cacheImageHTop.CGImage;
+        layerForBottom.frontLayer.contents=(id)page.cacheImageHBottom.CGImage;
+    }
     [self flipToPageIndex:1 completion:^(BOOL completed) {
-//        [self flipToPageIndex:1 completion:^(BOOL completed) {
-//            [self flipToPageIndex:2 completion:^(BOOL completed) {
-//                double delayInSeconds = 2.0;
-//                dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
-//                dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-//                    [self flipToPageIndex:0];
-//                });
-//            }];
-//        }];
     }];
 }
 #pragma mark - flips
 ///无动画的翻页
 -(void)flipToPageIndex:(int)pageIndex{
-    int layersNumber=[self.flipsView.dataSource numberOfPagesForFlipsView:self.flipsView]*2;
+    int layersNumber=[self numbersOfLayers];
     ///往前翻页，也就是把上半部分的页面往下面翻
     if (pageIndex<self.flipsView.pageIndex){
         for (int layerIndex=0; layerIndex<layersNumber; layerIndex++) {
@@ -131,14 +96,14 @@
     self.flipsView.pageIndex=pageIndex;
 }
 -(void)flipToPageIndex:(int)pageIndex completion:(void (^)(BOOL completed))completionBlock{
-    if(self.runState==WKFlipsLayerViewRunStateAnimation)
+    if(self.runState!=WKFlipsLayerViewRunStateStop)
         return;
     self.runState=WKFlipsLayerViewRunStateAnimation;
     CGFloat durationFull=3.0f;
     CGFloat delayFromDuration=0.05f;
     ///往前翻页，也就是把上半部分往下面翻页
     CGFloat delay=0.0f;
-    int layersNumber=[self.flipsView.dataSource numberOfPagesForFlipsView:self.flipsView]*2;
+    int layersNumber=[self numbersOfLayers];
     __block int complete_hits=0;
     if (pageIndex<self.flipsView.pageIndex){
         for (int layerIndex=0; layerIndex<layersNumber; layerIndex++) {
@@ -180,7 +145,7 @@
 }
 ///当翻页到一个pageIndex,为每个layer计算角度
 -(CGFloat)calculateRotateDegreeForLayerIndex:(int)layerIndex toTargetPageIndex:(int)pageIndex{
-    int layersNumber=[self.flipsView.dataSource numberOfPagesForFlipsView:self.flipsView]*2;
+    int layersNumber=[self numbersOfLayers];
     int stopLayerIndexAtTop=layersNumber-1-pageIndex;
     int stopLayerIndexAtBottom=stopLayerIndexAtTop-1;
     CGFloat spaceRotate=1.0f;
@@ -197,7 +162,7 @@
 }
 #pragma mark - Drag
 -(void)dragBegan{
-    NSLog(@"dragBegan");
+//    NSLog(@"dragBegan");
 //    if (self.runState!=WKFlipsLayerViewRunStateStop)
 //        return;
     if (self.runState==WKFlipsLayerViewRunStateAnimation) ///如果正在连续动画就不拖动
@@ -206,10 +171,10 @@
     self.runState=WKFlipsLayerViewRunStateDragging;
 }
 -(void)dragEnded{
-    NSLog(@"dragEnded");
+//    NSLog(@"dragEnded");
     if (self.runState!=WKFlipsLayerViewRunStateDragging)
         return;
-    CGFloat durationFull=3.0f;
+    CGFloat durationFull=1.0f;
     if (_dragging_position==WKFlipsLayerDragAtPositionTop){
         ///返回现在的页面
         if (_dragging_layer.rotateDegree>=90.0f){
@@ -223,7 +188,7 @@
         }
         else{///到前一页
             int previousPageIndex=self.flipsView.pageIndex-1;
-            int layersNumber=[self.flipsView.dataSource numberOfPagesForFlipsView:self.flipsView]*2;
+            int layersNumber=[self numbersOfLayers];
             for (int layerIndex=0; layerIndex<layersNumber; layerIndex++) {
                 CGFloat rotateDegree=[self calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:previousPageIndex];
                 WKFlipsLayer* flipLayer=self.layer.sublayers[layerIndex];
@@ -245,7 +210,7 @@
         ///到后一页
         if (_dragging_layer.rotateDegree>=90.0f){
             int nextPageIndex=self.flipsView.pageIndex+1;
-            int layersNUmber=[self.flipsView.dataSource numberOfPagesForFlipsView:self.flipsView]*2;
+            int layersNUmber=[self numbersOfLayers];
             for (int layerIndex=layersNUmber-1; layerIndex>=0; layerIndex--) {
                 CGFloat rotateDegree=[self calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:nextPageIndex];
                 WKFlipsLayer* flipLayer=self.layer.sublayers[layerIndex];
@@ -277,7 +242,7 @@
     if (self.runState!=WKFlipsLayerViewRunStateDragging)
         return;
     if (!_dragging_layer){
-        int layersNumber=[self.flipsView.dataSource numberOfPagesForFlipsView:self.flipsView]*2;
+        int layersNumber=[self numbersOfLayers];
         int stopLayerIndexAtTop=layersNumber-1-self.flipsView.pageIndex;
         int stopLayerIndexAtBottom=stopLayerIndexAtTop-1;
         if (translation.y>0){
