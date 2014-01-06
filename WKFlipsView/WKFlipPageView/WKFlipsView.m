@@ -10,7 +10,7 @@
 
 
 @implementation WKFlipsView
-
+@dynamic pageIndex;
 - (id)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
@@ -19,17 +19,14 @@
         _reusedPageViewDictionary=[[NSMutableDictionary alloc]init];
         _currentPageView=[[UIView alloc]initWithFrame:self.bounds];
         [self addSubview:_currentPageView];
-        _flippingView=[[_WKFlipsLayerView alloc] initWithFlipsView:self];
-        [self addSubview:_flippingView];
-//        _testCacheView=[[UIView alloc]initWithFrame:self.bounds];
-//        _testCacheView.backgroundColor=[UIColor whiteColor];
-//        [self addSubview:_testCacheView];
+        _flippingLayersView=[[_WKFlipsLayerView alloc] initWithFlipsView:self];
+        [self addSubview:_flippingLayersView];
+        _flippingLayersView.hidden=YES;
         UIPanGestureRecognizer* panGeture=[[[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(flippingPanGesture:)] autorelease];
         [self addGestureRecognizer:panGeture];
     }
     return self;
 }
-
 -(void)dealloc{
     [_reusedPageViewDictionary release];
     [_currentPageView release];
@@ -54,10 +51,16 @@
 }
 #pragma mark - action
 -(void)reloadPages{
-    [_flippingView buildLayers];
+    [_flippingLayersView buildLayers];
 }
-//显示第几页内容
--(void)showAtPageIndex:(int)pageIndex{
+#pragma mark pageIndex
+-(int)pageIndex{
+    return _pageIndex;
+}
+///设置正在显示的页面,会更改正在显示的内容
+-(void)setPageIndex:(int)pageIndex{
+    if (_pageIndex==pageIndex)
+        return;
     for (UIView* view in self.currentPageView.subviews) {
         [view removeFromSuperview];
     }
@@ -66,9 +69,12 @@
     ///TODO:这里可能需要禁止动画
     [self.currentPageView addSubview:pageView];
     [pageView prepareCacheImage];
-    ///test
-//    [self _test_update_cache_for_page:pageView];
 }
+-(void)flipToPageIndex:(int)pageIndex completion:(void (^)())completion{
+    [_flippingLayersView flipToPageIndex:pageIndex completion:^(BOOL completed) {
+    }];
+}
+#pragma mark - cache
 -(void)preparePageCachesFromPageIndex:(int)startPageIndex toPageIndex:(int)toPageIndex{
     for (int pageIndex=startPageIndex; pageIndex<=toPageIndex; pageIndex++) {
         WKFlipPageView* pageView=[self.dataSource flipsView:self pageAtPageIndex:pageIndex];
@@ -78,14 +84,14 @@
 #pragma mark - touches
 -(void)flippingPanGesture:(UIPanGestureRecognizer*)recognizer{
     if (recognizer.state==UIGestureRecognizerStateBegan){
-        [self.flippingView dragBegan];
+        [self.flippingLayersView dragBegan];
     }
     else if (recognizer.state==UIGestureRecognizerStateCancelled|| recognizer.state==UIGestureRecognizerStateEnded){
-        [self.flippingView dragEnded];
+        [self.flippingLayersView dragEnded];
     }
     else if (recognizer.state==UIGestureRecognizerStateChanged){
         CGPoint translation=[recognizer translationInView:self];
-        [self.flippingView draggingWithTranslation:translation];
+        [self.flippingLayersView draggingWithTranslation:translation];
     }
 }
 #pragma mark - Test

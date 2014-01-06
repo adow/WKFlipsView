@@ -23,15 +23,17 @@
 @interface WKFlipsView : UIView{
     NSMutableDictionary* _reusedPageViewDictionary;
     UIView* _testCacheView;
+    int _pageIndex;
 }
 ///数据源
 @property (nonatomic,assign) id<WKFlipsViewDataSource> dataSource;
 ///委托
 @property (nonatomic,assign) id<WKFlipsViewDelegate> delegate;
+///当前正在显示的页面内容
 @property (nonatomic,retain) UIView* currentPageView;
 ///当前的页面
 @property (nonatomic,assign) int pageIndex;
-@property (nonatomic,retain) _WKFlipsLayerView* flippingView;
+@property (nonatomic,retain) _WKFlipsLayerView* flippingLayersView;
 #pragma mark - page
 ///注册页面class
 -(void)registerClass:(Class)class forPageWithReuseIdentifier:(NSString*)reuseIdentifier;
@@ -40,8 +42,8 @@
 #pragma mark - action
 ///载入页面
 -(void)reloadPages;
-///显示第几页内容
--(void)showAtPageIndex:(int)pageIndex;
 ///准备页面缓存
 -(void)preparePageCachesFromPageIndex:(int)startPageIndex toPageIndex:(int)toPageIndex;
+///动画翻页到一个指定的页面
+-(void)flipToPageIndex:(int)pageIndex completion:(void(^)())completion;
 @end

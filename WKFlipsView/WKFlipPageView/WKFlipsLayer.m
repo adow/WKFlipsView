@@ -15,6 +15,7 @@
 
 @end
 @implementation _WKFlipsLayerView
+@dynamic runState;
 @dynamic numbersOfLayers;
 -(id)initWithFrame:(CGRect)frame{
     self=[super initWithFrame:frame];
@@ -34,6 +35,25 @@
 }
 -(void)dealloc{
     [super dealloc];
+}
+-(void)setRunState:(WKFlipsLayerViewRunState)runState{
+    _runState=runState;
+    switch (runState) {
+        case WKFlipsLayerViewRunStateAnimation:
+            self.hidden=NO;
+            break;
+        case WKFlipsLayerViewRunStateDragging:
+            self.hidden=NO;
+            break;
+        case WKFlipsLayerViewRunStateStop:
+            self.hidden=YES;
+            break;
+        default:
+            break;
+    }
+}
+-(WKFlipsLayerViewRunState)runState{
+    return _runState;
 }
 #pragma mark - build
 -(int)numbersOfLayers{
@@ -62,8 +82,10 @@
     }
     [self _pasteImagesToLayersInSeconds:3.0f];///重建时可以使用更多的时间来贴图
     ///TEST
-    [self flipToPageIndex:1 completion:^(BOOL completed) {
-    }];
+//    [self flipToPageIndex:1 completion:^(BOOL completed) {
+//    }];
+    ///直接已经翻页到现在的页面
+    [self flipToPageIndex:self.flipsView.pageIndex];
 }
 ///在允许的时间范围内为尽可能多的layer贴图,如果maxSeconds是0那就忽略时间
 ///TODO: 应该从当前页面两边优先贴图
@@ -120,7 +142,7 @@
         }
     }
     ///往后面翻页,也就是把下半部分的往上面翻
-    else if (pageIndex>self.flipsView.pageIndex){
+    else{
         for (int layerIndex=layersNumber-1; layerIndex>=0; layerIndex--) {
             CGFloat rotateDegree=[self calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:pageIndex];
             WKFlipsLayer* flipLayer=self.layer.sublayers[layerIndex];

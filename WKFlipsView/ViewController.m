@@ -32,7 +32,7 @@
 
     }
     [_flipsView reloadPages];
-    [_flipsView showAtPageIndex:0];
+    _flipsView.pageIndex=0;
 
     UIButton* buttonNext=[UIButton buttonWithType:UIButtonTypeCustom];
     buttonNext.frame=CGRectMake(10.0f, 400.0f, 300.0f, 50.0f);
@@ -57,6 +57,13 @@
 //        NSLog(@"remove page caches");
 //        [WKFlipPageView removeCacheImagesByCacheNames:removeArray];
 //    });
+    double delayInSeconds = 2.0;
+    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+        [_flipsView flipToPageIndex:1 completion:^{
+            
+        }];
+    });
 }
 
 - (void)didReceiveMemoryWarning
@@ -65,7 +72,8 @@
     // Dispose of any resources that can be recreated.
 }
 -(IBAction)onButtonNext:(id)sender{
-    [_flipsView showAtPageIndex:_flipsView.pageIndex+1];
+    _flipsView.pageIndex+=1;
+    
 }
 #pragma mark - WKFlipsViewDataSource & WKFlipsViewDelegate
 -(NSInteger)numberOfPagesForFlipsView:(WKFlipsView *)flipsView{
