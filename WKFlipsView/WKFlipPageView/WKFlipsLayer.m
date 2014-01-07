@@ -114,6 +114,7 @@
         if (!layerForTop.backLayer.contents){
             layerForTop.backLayer.contents=(id)page.cacheImageHTop.CGImage;
             numbersPastes+=1;
+            NSLog(@"new image pasted");
         }
         else{
             numbersSkips+=1;
@@ -121,6 +122,7 @@
         if (!layerForBottom.frontLayer.contents){
             layerForBottom.frontLayer.contents=(id)page.cacheImageHBottom.CGImage;
             numbersPastes+=1;
+            NSLog(@"new images pasted");
         }
         else{
             numbersSkips+=1;
@@ -132,6 +134,8 @@
 #pragma mark - flips
 ///无动画的翻页
 -(void)flipToPageIndex:(int)pageIndex{
+    if (pageIndex==self.flipsView.pageIndex)
+        return;
     int layersNumber=[self numbersOfLayers];
     ///往前翻页，也就是把上半部分的页面往下面翻
     if (pageIndex<self.flipsView.pageIndex){
@@ -153,6 +157,8 @@
 }
 -(void)flipToPageIndex:(int)pageIndex completion:(void (^)(BOOL completed))completionBlock{
     if(self.runState!=WKFlipsLayerViewRunStateStop)
+        return;
+    if (pageIndex==self.flipsView.pageIndex)
         return;
     self.runState=WKFlipsLayerViewRunStateAnimation;
     CGFloat durationFull=3.0f;
