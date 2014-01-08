@@ -10,6 +10,7 @@
 #import "ViewController.h"
 #import "WKFlipsView.h"
 #import "TestFlipPageView.h"
+#import "TestImagePageView.h"
 @interface ViewController ()<WKFlipsViewDataSource,WKFlipsViewDelegate>{
     WKFlipsView* _flipsView;
 }
@@ -27,7 +28,8 @@
         _flipsView.dataSource=self;
         _flipsView.delegate=self;
         //[_flipsView registerClass:[WKFlipPageView class] forPageWithReuseIdentifier:@"page"];
-        [_flipsView registerClass:[TestFlipPageView class] forPageWithReuseIdentifier:@"page"];
+        //[_flipsView registerClass:[TestFlipPageView class] forPageWithReuseIdentifier:@"page"];
+        [_flipsView registerClass:[TestImagePageView class] forPageWithReuseIdentifier:@"page"];
         [self.view addSubview:_flipsView];
 
     }
@@ -82,14 +84,18 @@
 -(WKFlipPageView*)flipsView:(WKFlipsView *)flipsView pageAtPageIndex:(int)pageIndex{
     static NSString* identity=@"page";
     //WKFlipPageView* pageView=[flipsView dequeueReusablePageWithReuseIdentifier:identity];
-    TestFlipPageView* pageView=(TestFlipPageView*)[flipsView dequeueReusablePageWithReuseIdentifier:identity];
-    pageView.cacheName=[NSString stringWithFormat:@"cache-%d",pageIndex];
-    UIButton* button=[UIButton buttonWithType:UIButtonTypeCustom];
-    button.frame=CGRectMake(10.0f, 100.0f, 300.0f, 50.0f);
-    button.backgroundColor=[UIColor whiteColor];
-    [button setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
-    [button setTitle:[NSString stringWithFormat:@"page-%d",pageIndex] forState:UIControlStateNormal];
-    [pageView addSubview:button];
+//    TestFlipPageView* pageView=(TestFlipPageView*)[flipsView dequeueReusablePageWithReuseIdentifier:identity];
+//    pageView.cacheName=[NSString stringWithFormat:@"cache-%d",pageIndex];
+//    UIButton* button=[UIButton buttonWithType:UIButtonTypeCustom];
+//    button.frame=CGRectMake(10.0f, 100.0f, 300.0f, 50.0f);
+//    button.backgroundColor=[UIColor whiteColor];
+//    [button setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
+//    [button setTitle:[NSString stringWithFormat:@"page-%d",pageIndex] forState:UIControlStateNormal];
+//    [pageView addSubview:button];
+    TestImagePageView* pageView=(TestImagePageView*)[flipsView dequeueReusablePageWithReuseIdentifier:identity];
+    pageView.cacheName=[NSString stringWithFormat:@"image-cache-%d",pageIndex];
+    UIImage* image=[UIImage imageNamed:[NSString stringWithFormat:@"%d",pageIndex]];
+    pageView.testImageView.image=image;
     return pageView;
 }
 @end

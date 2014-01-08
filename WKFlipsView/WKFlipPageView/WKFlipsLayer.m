@@ -41,12 +41,15 @@
     switch (runState) {
         case WKFlipsLayerViewRunStateAnimation:
             self.hidden=NO;
+            self.flipsView.currentPageView.hidden=YES;
             break;
         case WKFlipsLayerViewRunStateDragging:
             self.hidden=NO;
+            self.flipsView.currentPageView.hidden=YES;
             break;
         case WKFlipsLayerViewRunStateStop:
             self.hidden=YES;
+            self.flipsView.currentPageView.hidden=NO;
             break;
         default:
             break;
@@ -255,6 +258,7 @@
             int layersNumber=[self numbersOfLayers];
             for (int layerIndex=0; layerIndex<layersNumber; layerIndex++) {
                 CGFloat rotateDegree=[self calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:previousPageIndex];
+                NSLog(@"layerIndex:%d,rotateDegree:%f",layerIndex,rotateDegree);
                 WKFlipsLayer* flipLayer=self.layer.sublayers[layerIndex];
                 if (flipLayer!=_dragging_layer){
                     [flipLayer setRotateDegree:rotateDegree];
