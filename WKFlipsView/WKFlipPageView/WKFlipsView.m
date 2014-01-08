@@ -11,14 +11,14 @@
 
 @implementation WKFlipsView
 @dynamic pageIndex;
-- (id)initWithFrame:(CGRect)frame
-{
+- (id)initWithFrame:(CGRect)frame atPageIndex:(int)pageIndex{
     self = [super initWithFrame:frame];
     if (self) {
         // Initialization code
         _reusedPageViewDictionary=[[NSMutableDictionary alloc]init];
         _currentPageView=[[UIView alloc]initWithFrame:self.bounds];
         [self addSubview:_currentPageView];
+        self.pageIndex=pageIndex;
         _flippingLayersView=[[_WKFlipsLayerView alloc] initWithFlipsView:self];
         [self addSubview:_flippingLayersView];
         _flippingLayersView.hidden=YES;
@@ -59,8 +59,8 @@
 }
 ///设置正在显示的页面,会更改正在显示的内容
 -(void)setPageIndex:(int)pageIndex{
-    if (_pageIndex==pageIndex)
-        return;
+//    if (_pageIndex && _pageIndex==pageIndex)
+//        return;
     for (UIView* view in self.currentPageView.subviews) {
         [view removeFromSuperview];
     }
@@ -68,7 +68,7 @@
     WKFlipPageView* pageView=[self.dataSource flipsView:self pageAtPageIndex:pageIndex];
     ///TODO:这里可能需要禁止动画
     [self.currentPageView addSubview:pageView];
-    [pageView prepareCacheImage];
+    //[pageView prepareCacheImage];
 }
 -(void)flipToPageIndex:(int)pageIndex completion:(void (^)())completion{
     [_flippingLayersView flipToPageIndex:pageIndex completion:^(BOOL completed) {

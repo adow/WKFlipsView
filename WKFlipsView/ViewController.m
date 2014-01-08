@@ -23,7 +23,7 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
     if (!_flipsView){
-        _flipsView=[[WKFlipsView alloc]initWithFrame:self.view.bounds];
+        _flipsView=[[WKFlipsView alloc]initWithFrame:self.view.bounds atPageIndex:1];
         _flipsView.backgroundColor=[UIColor darkGrayColor];
         _flipsView.dataSource=self;
         _flipsView.delegate=self;
@@ -34,7 +34,6 @@
 
     }
     [_flipsView reloadPages];
-    _flipsView.pageIndex=0;
 
     UIButton* buttonNext=[UIButton buttonWithType:UIButtonTypeCustom];
     buttonNext.frame=CGRectMake(10.0f, 400.0f, 300.0f, 50.0f);
@@ -62,7 +61,7 @@
     double delayInSeconds = 2.0;
     dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
     dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-        [_flipsView flipToPageIndex:1 completion:^{
+        [_flipsView flipToPageIndex:0 completion:^{
             
         }];
     });

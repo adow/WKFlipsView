@@ -25,16 +25,17 @@
     UIView* _testCacheView;
     int _pageIndex;
 }
+-(id)initWithFrame:(CGRect)frame atPageIndex:(int)pageIndex;
 ///数据源
 @property (nonatomic,assign) id<WKFlipsViewDataSource> dataSource;
 ///委托
 @property (nonatomic,assign) id<WKFlipsViewDelegate> delegate;
+@property (nonatomic,retain) _WKFlipsLayerView* flippingLayersView;
+#pragma mark - page
 ///当前正在显示的页面内容
 @property (nonatomic,retain) UIView* currentPageView;
 ///当前的页面
 @property (nonatomic,assign) int pageIndex;
-@property (nonatomic,retain) _WKFlipsLayerView* flippingLayersView;
-#pragma mark - page
 ///注册页面class
 -(void)registerClass:(Class)class forPageWithReuseIdentifier:(NSString*)reuseIdentifier;
 ///获取一个已经使用的page

@@ -88,6 +88,7 @@
 //    [self flipToPageIndex:1 completion:^(BOOL completed) {
 //    }];
     ///直接已经翻页到现在的页面
+    //[self flipToPageIndex:self.flipsView.pageIndex];
     [self flipToPageIndex:self.flipsView.pageIndex];
 }
 ///在允许的时间范围内为尽可能多的layer贴图,如果maxSeconds是0那就忽略时间
@@ -137,8 +138,8 @@
 #pragma mark - flips
 ///无动画的翻页
 -(void)flipToPageIndex:(int)pageIndex{
-    if (pageIndex==self.flipsView.pageIndex)
-        return;
+//    if (pageIndex && pageIndex==self.flipsView.pageIndex)
+//        return;
     int layersNumber=[self numbersOfLayers];
     ///往前翻页，也就是把上半部分的页面往下面翻
     if (pageIndex<self.flipsView.pageIndex){
