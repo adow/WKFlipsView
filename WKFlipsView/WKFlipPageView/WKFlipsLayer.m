@@ -328,14 +328,14 @@
     ///往下面翻
     if (_dragging_position==WKFlipsLayerDragAtPositionTop){
         CGFloat rotateDegree=_dragging_layer.rotateDegree-(translation.y-_dragging_last_translation_y)*0.5;
-        rotateDegree=fminf(rotateDegree, 180.0f);
-        rotateDegree=fmaxf(rotateDegree, 0.0f);
+        rotateDegree=fminf(rotateDegree, 179.0f);
+        rotateDegree=fmaxf(rotateDegree, 1.0f);
         _dragging_layer.rotateDegree=rotateDegree;
     }
     else{ ///往上面翻
         CGFloat rotateDegree=_dragging_layer.rotateDegree-(translation.y-_dragging_last_translation_y)*0.5f;
-        rotateDegree=fminf(rotateDegree, 180.0f);
-        rotateDegree=fmaxf(rotateDegree, 0.0f);
+        rotateDegree=fminf(rotateDegree, 179.0f);
+        rotateDegree=fmaxf(rotateDegree, 1.0f);
         _dragging_layer.rotateDegree=rotateDegree;
     }
     _dragging_last_translation_y=translation.y;
