@@ -8,13 +8,13 @@
 
 #import "WKFlipsLayer.h"
 #import "WKFlipsView.h"
-#pragma makr - _WKFlipsLayerView
-@interface _WKFlipsLayerView(){
+#pragma makr - WKFlipsLayerView
+@interface WKFlipsLayerView(){
     
 }
 
 @end
-@implementation _WKFlipsLayerView
+@implementation WKFlipsLayerView
 @dynamic runState;
 @dynamic numbersOfLayers;
 -(id)initWithFrame:(CGRect)frame{

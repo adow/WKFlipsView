@@ -28,7 +28,7 @@ typedef enum WKFlipsLayerDragAtPosition:NSUInteger{
 @class WKFlipsLayer;
 @class WKFlipsView;
 ///用来放那些WKFlipsLayer，多个页面的集合，全部用layer
-@interface _WKFlipsLayerView:UIView{
+@interface WKFlipsLayerView:UIView{
     WKFlipsLayerViewRunState _runState;
     ///正在被拖动的页面
     WKFlipsLayer* _dragging_layer;

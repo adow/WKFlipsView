@@ -30,7 +30,7 @@
 @property (nonatomic,assign) id<WKFlipsViewDataSource> dataSource;
 ///委托
 @property (nonatomic,assign) id<WKFlipsViewDelegate> delegate;
-@property (nonatomic,retain) _WKFlipsLayerView* flippingLayersView;
+@property (nonatomic,retain) WKFlipsLayerView* flippingLayersView;
 #pragma mark - page
 ///当前正在显示的页面内容
 @property (nonatomic,retain) UIView* currentPageView;

@@ -19,7 +19,7 @@
         _currentPageView=[[UIView alloc]initWithFrame:self.bounds];
         [self addSubview:_currentPageView];
         self.pageIndex=pageIndex;
-        _flippingLayersView=[[_WKFlipsLayerView alloc] initWithFlipsView:self];
+        _flippingLayersView=[[WKFlipsLayerView alloc] initWithFlipsView:self];
         [self addSubview:_flippingLayersView];
         _flippingLayersView.hidden=YES;
         UIPanGestureRecognizer* panGeture=[[[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(flippingPanGesture:)] autorelease];
