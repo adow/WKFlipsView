@@ -61,6 +61,9 @@
 -(void)setPageIndex:(int)pageIndex{
 //    if (_pageIndex && _pageIndex==pageIndex)
 //        return;
+//    if (pageIndex<0 || pageIndex>=[self.dataSource numberOfPagesForFlipsView:self]){
+//        return;
+//    }
     for (UIView* view in self.currentPageView.subviews) {
         [view removeFromSuperview];
     }
@@ -70,7 +73,16 @@
     [self.currentPageView addSubview:pageView];
     //[pageView prepareCacheImage];
 }
+-(void)flipToPageIndex:(int)pageIndex{
+    if (pageIndex<0 || pageIndex>=[self.dataSource numberOfPagesForFlipsView:self]){
+        return;
+    }
+    [_flippingLayersView flipToPageIndex:pageIndex];
+}
 -(void)flipToPageIndex:(int)pageIndex completion:(void (^)())completion{
+    if (pageIndex<0 || pageIndex>=[self.dataSource numberOfPagesForFlipsView:self]){
+        return;
+    }
     [_flippingLayersView flipToPageIndex:pageIndex completion:^(BOOL completed) {
     }];
 }

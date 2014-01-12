@@ -34,7 +34,7 @@
 #pragma mark - page
 ///当前正在显示的页面内容
 @property (nonatomic,retain) UIView* currentPageView;
-///当前的页面
+///当前的页面,不能直接由外部设置这个页面，因为没有重新计算角度，这个方法只能有_flippingLayersView在flip结束后进行更新
 @property (nonatomic,assign) int pageIndex;
 ///注册页面class
 -(void)registerClass:(Class)class forPageWithReuseIdentifier:(NSString*)reuseIdentifier;
@@ -45,6 +45,8 @@
 -(void)reloadPages;
 ///准备页面缓存
 -(void)preparePageCachesFromPageIndex:(int)startPageIndex toPageIndex:(int)toPageIndex;
+///无动画的翻页
+-(void)flipToPageIndex:(int)pageIndex;
 ///动画翻页到一个指定的页面
 -(void)flipToPageIndex:(int)pageIndex completion:(void(^)())completion;
 @end

@@ -73,8 +73,11 @@
     // Dispose of any resources that can be recreated.
 }
 -(IBAction)onButtonNext:(id)sender{
-    _flipsView.pageIndex+=1;
-    
+    //_flipsView.pageIndex+=1;
+//    [_flipsView flipToPageIndex:_flipsView.pageIndex+1 completion:^{
+//        
+//    }];
+    [_flipsView flipToPageIndex:_flipsView.pageIndex+1];
 }
 #pragma mark - WKFlipsViewDataSource & WKFlipsViewDelegate
 -(NSInteger)numberOfPagesForFlipsView:(WKFlipsView *)flipsView{
