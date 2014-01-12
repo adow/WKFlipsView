@@ -43,8 +43,6 @@
 #pragma mark - action
 ///载入页面
 -(void)reloadPages;
-///准备页面缓存
--(void)preparePageCachesFromPageIndex:(int)startPageIndex toPageIndex:(int)toPageIndex;
 ///无动画的翻页
 -(void)flipToPageIndex:(int)pageIndex;
 ///动画翻页到一个指定的页面

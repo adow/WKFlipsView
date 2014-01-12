@@ -27,7 +27,7 @@ typedef enum WKFlipsLayerDragAtPosition:NSUInteger{
 }WKFlipsLayerDragAtPosition;
 @class WKFlipsLayer;
 @class WKFlipsView;
-///用来放那些WKFlipsLayer
+///用来放那些WKFlipsLayer，多个页面的集合，全部用layer
 @interface _WKFlipsLayerView:UIView{
     WKFlipsLayerViewRunState _runState;
     ///正在被拖动的页面
@@ -60,6 +60,7 @@ typedef enum WKFlipsLayerDragAtPosition:NSUInteger{
 -(void)draggingWithTranslation:(CGPoint)translation;
 @end
 #pragma mark - WKFlipsLayer
+///单个页面，layer,每个页面有两面，翻页是已经被翻转过的
 @interface WKFlipsLayer : CATransformLayer{
     CGFloat _rotateDegree;
 }
@@ -67,11 +68,13 @@ typedef enum WKFlipsLayerDragAtPosition:NSUInteger{
 @property (nonatomic,retain) CALayer* frontLayer;
 @property (nonatomic,retain) CALayer* backLayer;
 -(id)initWithFrame:(CGRect)frame;
+///设置翻转角度，因为一开始的位置是在底部，所以在底部时0度，翻转到上面时变成180度
 @property (nonatomic,assign) CGFloat rotateDegree;
 ///动画设置翻转角度
 -(void)setRotateDegree:(CGFloat)rotateDegree duration:(CGFloat)duration afterDelay:(NSTimeInterval)delay completion:(void(^)())completion;
 ///动画是否被取消
 @property (nonatomic,assign) BOOL isAnimationCancelled;
+///正在取消拖动时，记录当前的位置
 @property (nonatomic,assign) CATransform3D cancelledTransform;
 ///取消拖动后的动画
 -(void)cancelDragAnimation;

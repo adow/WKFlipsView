@@ -87,12 +87,6 @@
     }];
 }
 #pragma mark - cache
--(void)preparePageCachesFromPageIndex:(int)startPageIndex toPageIndex:(int)toPageIndex{
-    for (int pageIndex=startPageIndex; pageIndex<=toPageIndex; pageIndex++) {
-        WKFlipPageView* pageView=[self.dataSource flipsView:self pageAtPageIndex:pageIndex];
-        [pageView prepareCacheImage];
-    }
-}
 #pragma mark - touches
 -(void)flippingPanGesture:(UIPanGestureRecognizer*)recognizer{
     if (recognizer.state==UIGestureRecognizerStateBegan){

@@ -392,6 +392,7 @@
     [_backLayer release];
     [super dealloc];
 }
+#pragma mark - Test
 -(void)drawWords:(NSString *)words onPosition:(int)position{
     UIGraphicsBeginImageContext(self.frame.size);
     CGContextRef context=UIGraphicsGetCurrentContext();
@@ -427,12 +428,14 @@
         [self.backLayer addSublayer:wordsLayer];
     }
 }
+#pragma mark - Cancel Drag
 -(void)cancelDragAnimation{
     self.cancelledTransform=((CALayer*)self.presentationLayer).transform;
     self.isAnimationCancelled=YES;
     [self removeAllAnimations];
 }
 #pragma mark - rotateDegree
+#pragma mark rotateDegree
 -(void)setRotateDegree:(CGFloat)rotateDegree{
     _rotateDegree=rotateDegree;
     self.transform=WKFlipCATransform3DPerspectSimpleWithRotate(rotateDegree);
@@ -440,6 +443,7 @@
 -(CGFloat)rotateDegree{
     return _rotateDegree;
 }
+#pragma mark rotateDegree animation
 -(void)setRotateDegree:(CGFloat)rotateDegree duration:(CGFloat)duration afterDelay:(NSTimeInterval)delay completion:(void (^)())completion{
     CATransform3D fromTrnasform=self.transform;
     CGFloat halfRotateDegree=self.rotateDegree+(rotateDegree-self.rotateDegree)/2.0f;

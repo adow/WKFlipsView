@@ -61,7 +61,7 @@
     double delayInSeconds = 2.0;
     dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
     dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-        [_flipsView flipToPageIndex:0 completion:^{
+        [_flipsView flipToPageIndex:9 completion:^{
             
         }];
     });
@@ -73,15 +73,11 @@
     // Dispose of any resources that can be recreated.
 }
 -(IBAction)onButtonNext:(id)sender{
-    //_flipsView.pageIndex+=1;
-//    [_flipsView flipToPageIndex:_flipsView.pageIndex+1 completion:^{
-//        
-//    }];
     [_flipsView flipToPageIndex:_flipsView.pageIndex+1];
 }
 #pragma mark - WKFlipsViewDataSource & WKFlipsViewDelegate
 -(NSInteger)numberOfPagesForFlipsView:(WKFlipsView *)flipsView{
-    return 3;
+    return 23;
 }
 -(WKFlipPageView*)flipsView:(WKFlipsView *)flipsView pageAtPageIndex:(int)pageIndex{
     static NSString* identity=@"page";
