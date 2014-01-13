@@ -83,7 +83,7 @@
         [layer drawWords:[NSString stringWithFormat:@"layer %d back",(layersNumber-a-1)] onPosition:1];
         layer.rotateDegree=0.0f;
     }
-    [self _pasteImagesToLayersInSeconds:3.0f];///重建时可以使用更多的时间来贴图
+    [self _pasteImagesToLayersInSeconds:0.3f];///重建时可以使用更多的时间来贴图
     ///TEST
 //    [self flipToPageIndex:1 completion:^(BOOL completed) {
 //    }];
@@ -101,9 +101,12 @@
     int numbersPastes=0,numbersSkips=0;
     for (int pageIndex=0; pageIndex<totalPages; pageIndex++) {
         duration=CFAbsoluteTimeGetCurrent()-startTime;
+        ///超出设定时间了，跳过贴图
         if (maxSeconds>0 && duration>=maxSeconds){
-            NSLog(@"duration:%f",duration);
-            break;
+            //NSLog(@"duration:%f",duration);
+            //break;
+            numbersSkips+=2;
+            continue;
         }
         int layerIndexForTop=totalPages-pageIndex;
         int layerIndexForBottom=layerIndexForTop-1;
@@ -133,7 +136,8 @@
         }
         
     }
-    NSLog(@"pastes:%d,skips:%d",numbersPastes,numbersSkips);
+    duration=CFAbsoluteTimeGetCurrent()-startTime;
+    NSLog(@"pastes:%d,skips:%d,duration:%f",numbersPastes,numbersSkips,duration);
 }
 #pragma mark - flips
 ///无动画的翻页
@@ -174,18 +178,19 @@
     if (pageIndex<self.flipsView.pageIndex){
         for (int layerIndex=0; layerIndex<layersNumber; layerIndex++) {
             CGFloat rotateDegree=[self calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:pageIndex];
-            NSLog(@"layerIndex:%d,%f",layerIndex,rotateDegree);
+            //NSLog(@"layerIndex:%d,%f",layerIndex,rotateDegree);
             WKFlipsLayer *flipLayer=self.layer.sublayers[layerIndex];
             CGFloat rotateDistance=fabsf(rotateDegree-flipLayer.rotateDegree);
             CGFloat duration=rotateDistance/180.0f*durationFull;
             delay+=duration*delayFromDuration;
             [flipLayer setRotateDegree:rotateDegree duration:duration afterDelay:delay completion:^{
                 if (++complete_hits>=layersNumber){
-                        NSLog(@"flip completed");
-                        self.flipsView.pageIndex=pageIndex;
-                        self.runState=WKFlipsLayerViewRunStateStop;
-                        completionBlock(YES);
+                        //NSLog(@"flip completed");
+                        ///先创建贴图在设置pageIndex
                         [self _pasteImagesToLayersInSeconds:1.0f];
+                        self.flipsView.pageIndex=pageIndex;
+                        completionBlock(YES);
+                        self.runState=WKFlipsLayerViewRunStateStop;
                     }
             }];
             
@@ -194,18 +199,20 @@
     else{
         for (int layerIndex=layersNumber-1; layerIndex>=0; layerIndex--) {
             CGFloat rotateDegree=[self calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:pageIndex];
-            NSLog(@"layerIndex:%d,%f",layerIndex,rotateDegree);
+            //NSLog(@"layerIndex:%d,%f",layerIndex,rotateDegree);
             WKFlipsLayer* flipLayer=self.layer.sublayers[layerIndex];
             CGFloat rotateDistance=fabsf(rotateDegree-flipLayer.rotateDegree);
             CGFloat duration=rotateDistance/180.0f*durationFull;
             delay+=duration*delayFromDuration;
             [flipLayer setRotateDegree:rotateDegree duration:duration afterDelay:delay completion:^{
                 if (++complete_hits>=layersNumber){
-                        NSLog(@"flip completed");
-                        self.flipsView.pageIndex=pageIndex;
-                        self.runState=WKFlipsLayerViewRunStateStop;
-                        completionBlock(YES);
+                        //NSLog(@"flip completed");
+                        ///先创建贴图在设置pageIndex
                         [self _pasteImagesToLayersInSeconds:1.0f];
+                        self.flipsView.pageIndex=pageIndex;
+                        completionBlock(YES);
+                        self.runState=WKFlipsLayerViewRunStateStop;
+                    
                     }
             }];
         }
@@ -259,7 +266,7 @@
             int layersNumber=[self numbersOfLayers];
             for (int layerIndex=0; layerIndex<layersNumber; layerIndex++) {
                 CGFloat rotateDegree=[self calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:previousPageIndex];
-                NSLog(@"layerIndex:%d,rotateDegree:%f",layerIndex,rotateDegree);
+                //NSLog(@"layerIndex:%d,rotateDegree:%f",layerIndex,rotateDegree);
                 WKFlipsLayer* flipLayer=self.layer.sublayers[layerIndex];
                 if (flipLayer!=_dragging_layer){
                     [flipLayer setRotateDegree:rotateDegree];
@@ -270,9 +277,10 @@
             CGFloat duration=fabsf(newRotateDegree-_dragging_layer.rotateDegree)/180.0f*durationFull;
             [_dragging_layer setRotateDegree:newRotateDegree duration:duration afterDelay:0.0f completion:^{
                 _dragging_layer=nil;
-                self.runState=WKFlipsLayerViewRunStateStop;
-                self.flipsView.pageIndex=previousPageIndex;
+                ///先创建贴图在设置pageIndex
                 [self _pasteImagesToLayersInSeconds:1.0f];
+                self.flipsView.pageIndex=previousPageIndex;
+                self.runState=WKFlipsLayerViewRunStateStop;
             }];
         }
     }
@@ -292,9 +300,11 @@
             CGFloat duration=fabsf(newRotateDegree-_dragging_layer.rotateDegree)/180.0f*durationFull;
             [_dragging_layer setRotateDegree:newRotateDegree duration:duration afterDelay:0.0f completion:^{
                 _dragging_layer=nil;
-                self.runState=WKFlipsLayerViewRunStateStop;
-                self.flipsView.pageIndex=nextPageIndex;
+                ///先创建贴图在设置pageIndex
                 [self _pasteImagesToLayersInSeconds:1.0f];
+                self.flipsView.pageIndex=nextPageIndex;
+                self.runState=WKFlipsLayerViewRunStateStop;
+                
             }];
         }
         else{///返回到现在的页面
