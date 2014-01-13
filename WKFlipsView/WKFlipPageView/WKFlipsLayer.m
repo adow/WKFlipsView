@@ -223,7 +223,8 @@
     int layersNumber=[self numbersOfLayers];
     int stopLayerIndexAtTop=layersNumber-1-pageIndex;
     int stopLayerIndexAtBottom=stopLayerIndexAtTop-1;
-    CGFloat spaceRotate=1.0f;
+    //CGFloat spaceRotate=1.0f;
+    CGFloat spaceRotate=0.01f;
     if (layerIndex>=stopLayerIndexAtTop){
         return 180.0f+(layerIndex-stopLayerIndexAtTop)*spaceRotate;
     }
