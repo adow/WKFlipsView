@@ -15,6 +15,8 @@
 -(WKFlipPageView*)flipsView:(WKFlipsView*)flipsView pageAtPageIndex:(int)pageIndex;
 ///总页数
 -(NSInteger)numberOfPagesForFlipsView:(WKFlipsView*)flipsView;
+///每一页的唯一索引键值
+-(NSString*)flipsView:(WKFlipsView*)flipsView keyAtPageIndex:(int)pageIndex;
 @end
 @protocol WKFlipsViewDelegate <NSObject>
 
@@ -38,8 +40,10 @@
 @property (nonatomic,assign) int pageIndex;
 ///注册页面class
 -(void)registerClass:(Class)class forPageWithReuseIdentifier:(NSString*)reuseIdentifier;
-///获取一个已经使用的page
+///获取一个已经使用的page，这个需要收工添加cacheName，可以使用带pageIndex的代替
 -(WKFlipPageView*)dequeueReusablePageWithReuseIdentifier:(NSString*)reuseIdentifier;
+///获取一个已经使用的page，带有pageIndex参数，可以为他设置cacheName
+-(WKFlipPageView*)dequeueReusablePageWithReuseIdentifier:(NSString*)reuseIdentifier forPageIndex:(int)pageIndex;
 #pragma mark - action
 ///载入页面
 -(void)reloadPages;

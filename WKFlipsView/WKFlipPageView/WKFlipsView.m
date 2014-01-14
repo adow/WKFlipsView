@@ -49,6 +49,11 @@
     [pageView prepareForReuse];
     return pageView;
 }
+-(WKFlipPageView*)dequeueReusablePageWithReuseIdentifier:(NSString *)reuseIdentifier forPageIndex:(int)pageIndex{
+    WKFlipPageView* pageView=[self dequeueReusablePageWithReuseIdentifier:reuseIdentifier];
+    pageView.cacheName=[self.dataSource flipsView:self keyAtPageIndex:pageIndex];
+    return pageView;
+}
 #pragma mark - action
 -(void)reloadPages{
     [_flippingLayersView buildLayers];

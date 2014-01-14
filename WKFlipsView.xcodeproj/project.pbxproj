@@ -25,6 +25,7 @@
 		6808BEB31855E39000A8E552 /* WKFlipsView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6808BEB21855E39000A8E552 /* WKFlipsView.m */; };
 		6808BF28185768EC00A8E552 /* TestFlipPageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6808BF27185768EC00A8E552 /* TestFlipPageView.m */; };
 		6869ED22185B2903008613FE /* WKFlipsLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 6869ED21185B2903008613FE /* WKFlipsLayer.m */; };
+		68B8712D18843C42001E2563 /* WKFlipsPageIndexes.m in Sources */ = {isa = PBXBuildFile; fileRef = 68B8712C18843C42001E2563 /* WKFlipsPageIndexes.m */; };
 		68FF4B91187C5499009301E2 /* TestImagePageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 68FF4B90187C5499009301E2 /* TestImagePageView.m */; };
 /* End PBXBuildFile section */
 
@@ -67,6 +68,8 @@
 		6808BF27185768EC00A8E552 /* TestFlipPageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestFlipPageView.m; sourceTree = "<group>"; };
 		6869ED20185B2903008613FE /* WKFlipsLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKFlipsLayer.h; path = WKFlipPageView/WKFlipsLayer.h; sourceTree = "<group>"; };
 		6869ED21185B2903008613FE /* WKFlipsLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WKFlipsLayer.m; path = WKFlipPageView/WKFlipsLayer.m; sourceTree = "<group>"; };
+		68B8712B18843C42001E2563 /* WKFlipsPageIndexes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKFlipsPageIndexes.h; path = WKFlipPageView/WKFlipsPageIndexes.h; sourceTree = "<group>"; };
+		68B8712C18843C42001E2563 /* WKFlipsPageIndexes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WKFlipsPageIndexes.m; path = WKFlipPageView/WKFlipsPageIndexes.m; sourceTree = "<group>"; };
 		68FF4B8F187C5499009301E2 /* TestImagePageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestImagePageView.h; sourceTree = "<group>"; };
 		68FF4B90187C5499009301E2 /* TestImagePageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestImagePageView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -183,6 +186,8 @@
 				6808BEB21855E39000A8E552 /* WKFlipsView.m */,
 				6869ED20185B2903008613FE /* WKFlipsLayer.h */,
 				6869ED21185B2903008613FE /* WKFlipsLayer.m */,
+				68B8712B18843C42001E2563 /* WKFlipsPageIndexes.h */,
+				68B8712C18843C42001E2563 /* WKFlipsPageIndexes.m */,
 			);
 			name = WKFlipsView;
 			sourceTree = "<group>";
@@ -292,6 +297,7 @@
 				6808BE881855E24900A8E552 /* AppDelegate.m in Sources */,
 				6808BF28185768EC00A8E552 /* TestFlipPageView.m in Sources */,
 				6808BE841855E24900A8E552 /* main.m in Sources */,
+				68B8712D18843C42001E2563 /* WKFlipsPageIndexes.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
