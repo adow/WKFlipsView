@@ -51,7 +51,7 @@
 }
 -(WKFlipPageView*)dequeueReusablePageWithReuseIdentifier:(NSString *)reuseIdentifier forPageIndex:(int)pageIndex{
     WKFlipPageView* pageView=[self dequeueReusablePageWithReuseIdentifier:reuseIdentifier];
-    pageView.cacheName=[self.dataSource flipsView:self keyAtPageIndex:pageIndex];
+    pageView.cacheName=[NSString stringWithFormat:@"%@-cache",[self.dataSource flipsView:self keyAtPageIndex:pageIndex]];
     return pageView;
 }
 #pragma mark - action

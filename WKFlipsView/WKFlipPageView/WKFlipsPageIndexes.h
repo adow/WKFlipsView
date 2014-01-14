@@ -22,9 +22,14 @@
 +(BOOL)pageIndexesFileExisted:(NSString*)filename;
 ///更新文件
 -(void)write;
+///添加页面
 -(void)addPageIndex:(NSString*)index;
--(void)insertPageIndex:(NSString*)index atPos:(int)pos;
--(int)posForPageIndex:(NSString*)index;
--(NSString*)indexAtPos:(int)pos;
+///插入页面
+-(void)insertPageIndex:(NSString*)index atPageNumber:(int)pageNumber;
+///获取页面位置
+-(int)pageNumberForPageIndex:(NSString*)index;
+///获取页面所以
+-(NSString*)indexAtPageNumber:(int)pageNumber;
+///删除页面
 -(void)deletePageIndex:(NSString*)index;
 @end

@@ -52,15 +52,15 @@
     [self.indexList addObject:index];
     [self write];
 }
--(void)insertPageIndex:(NSString *)index atPos:(int)pos{
-    [self.indexList insertObject:index atIndex:pos];
+-(void)insertPageIndex:(NSString*)index atPageNumber:(int)pageNumber{
+    [self.indexList insertObject:index atIndex:pageNumber];
     [self write];
 }
--(int)posForPageIndex:(NSString *)index{
+-(int)pageNumberForPageIndex:(NSString*)index{
     return [self.indexList indexOfObject:index];
 }
--(NSString*)indexAtPos:(int)pos{
-    return self.indexList[pos];
+-(NSString*)indexAtPageNumber:(int)pageNumber{
+    return self.indexList[pageNumber];
 }
 -(void)deletePageIndex:(NSString *)index{
     [self.indexList removeObject:index];

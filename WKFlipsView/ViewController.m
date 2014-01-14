@@ -113,6 +113,6 @@
     return pageView;
 }
 -(NSString*)flipsView:(WKFlipsView *)flipsView keyAtPageIndex:(int)pageIndex{
-    return [_pageIndexes indexAtPos:pageIndex];
+    return [_pageIndexes indexAtPageNumber:pageIndex];
 }
 @end
