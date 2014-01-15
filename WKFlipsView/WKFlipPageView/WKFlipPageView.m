@@ -118,6 +118,10 @@
     [self cacheImageHTop];
     [self cacheImageHBottom];
 }
+-(void)removeCacheImage{
+    [[NSFileManager defaultManager] removeItemAtPath:self.filenameForCacheHTop error:NULL];
+    [[NSFileManager defaultManager] removeItemAtPath:self.filenameForCacheHBottom error:NULL];
+}
 +(void)removeCacheImagesByCacheNames:(NSArray *)cacheNames{
     for (NSString* cacheName in cacheNames) {
         NSString *cacheNameHTop=[NSString stringWithFormat:@"%@-top",cacheName];

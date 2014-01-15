@@ -30,6 +30,8 @@
 @property (nonatomic,readonly) UIImage* cacheImageHBottom;
 ///预先生成缓存图片
 -(void)prepareCacheImage;
+///删除该页的缓存图片
+-(void)removeCacheImage;
 ///批量删除缓存图片
 +(void)removeCacheImagesByCacheNames:(NSArray*)cacheNames;
 @end

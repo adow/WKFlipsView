@@ -32,8 +32,10 @@
 @property (nonatomic,assign) id<WKFlipsViewDelegate> delegate;
 @property (nonatomic,retain) WKFlipsLayerView* flippingLayersView;
 #pragma mark - page
-///当前正在显示的页面内容
+///用来显示页面
 @property (nonatomic,retain) UIView* currentPageView;
+///正在显示的页面
+@property (nonatomic,readonly) WKFlipPageView* currentFlipPageView;
 ///当前的页面,不能直接由外部设置这个页面，因为没有重新计算角度，这个方法只能有_flippingLayersView在flip结束后进行更新
 @property (nonatomic,assign) int pageIndex;
 ///注册页面class

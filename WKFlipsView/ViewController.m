@@ -16,6 +16,7 @@
     WKFlipsView* _flipsView;
     ///索引
     WKFlipsPageIdentitiesFile* _pageIdentitiesFile;
+    NSMutableArray* _images;
 }
 @end
 
@@ -25,6 +26,10 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
+    _images=[[NSMutableArray alloc]init];
+    for (int a=0; a<23; a++) {
+        [_images addObject:[UIImage imageNamed:[NSString stringWithFormat:@"%d",a]]];
+    }
     NSString* filename=[NSString stringWithFormat:@"%@/pages.identities",WK_PATH_DOCUMENT];
     _pageIdentitiesFile=[[WKFlipsPageIdentitiesFile loadPageIdentitiesFile:filename] retain];
     if (!_pageIdentitiesFile){
@@ -84,6 +89,7 @@
     // Dispose of any resources that can be recreated.
 }
 -(void)dealloc{
+    [_images release];
     [_pageIdentitiesFile release];
     [super dealloc];
 }
@@ -91,11 +97,15 @@
     [_flipsView flipToPageIndex:_flipsView.pageIndex+1];
 }
 -(IBAction)onButtonDelete:(id)sender{
-    
+    WKFlipPageView* flipPageView=[_flipsView currentFlipPageView];
+    [_images removeObjectAtIndex:_flipsView.pageIndex];
+    [flipPageView removeCacheImage];
+    [_pageIdentitiesFile deletePageIdentity:flipPageView.pageIdentity];
+    [_flipsView reloadPages];
 }
 #pragma mark - WKFlipsViewDataSource & WKFlipsViewDelegate
 -(NSInteger)numberOfPagesForFlipsView:(WKFlipsView *)flipsView{
-    return 23;
+    return _images.count;
 }
 -(WKFlipPageView*)flipsView:(WKFlipsView *)flipsView pageAtPageIndex:(int)pageIndex{
     static NSString* identity=@"page";
@@ -112,7 +122,7 @@
     pageView.pageIdentity=[_pageIdentitiesFile pageIdentityAtPageIndex:pageIndex];
     //pageView.cacheName=[NSString stringWithFormat:@"image-cache-%d",pageIndex];
 //    pageView.cacheName=[self flipsView:flipsView keyAtPageIndex:pageIndex];
-    UIImage* image=[UIImage imageNamed:[NSString stringWithFormat:@"%d",pageIndex]];
+    UIImage* image=_images[pageIndex];;
     pageView.testImageView.image=image;
     UIButton* button=[UIButton buttonWithType:UIButtonTypeCustom];
     button.frame=CGRectMake(10.0f, 30.0f+20*pageIndex, 300.0f, 50.0f);

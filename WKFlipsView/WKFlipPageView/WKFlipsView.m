@@ -74,6 +74,12 @@
     [self.currentPageView addSubview:pageView];
     //[pageView prepareCacheImage];
 }
+-(WKFlipPageView*)currentFlipPageView{
+    if(self.currentPageView.subviews.count>0){
+        return (WKFlipPageView*)self.currentPageView.subviews[0];
+    }
+    return nil;
+}
 -(void)flipToPageIndex:(int)pageIndex{
     if (pageIndex<0 || pageIndex>=[self.dataSource numberOfPagesForFlipsView:self]){
         return;

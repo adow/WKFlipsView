@@ -65,9 +65,11 @@
 }
 -(void)buildLayers{
     ///先删除现有的layer
-    for (CALayer *layer in self.layer.sublayers) {
+    NSMutableArray* layerArray=[self.layer.sublayers mutableCopy];
+    for (CALayer *layer in layerArray) {
         [layer removeFromSuperlayer];
     }
+    
     ///layer的总数
     int layersNumber=[self numbersOfLayers];
 //    int layersNumber=1;
