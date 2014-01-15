@@ -9,13 +9,13 @@
 
 #import "ViewController.h"
 #import "WKFlipsView.h"
-#import "WKFlipsPageIndexes.h"
+#import "WKFlipsPageIdentitiesFile.h"
 #import "TestFlipPageView.h"
 #import "TestImagePageView.h"
 @interface ViewController ()<WKFlipsViewDataSource,WKFlipsViewDelegate>{
     WKFlipsView* _flipsView;
     ///索引
-    WKFlipsPageIndexes* _pageIndexes;
+    WKFlipsPageIdentitiesFile* _pageIdentitiesFile;
 }
 @end
 
@@ -25,12 +25,12 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
-    NSString* filename=[NSString stringWithFormat:@"%@/pageindexes.indexes",WK_PATH_DOCUMENT];
-    _pageIndexes=[WKFlipsPageIndexes loadPageIndexesFile:filename];
-    if (!_pageIndexes){
-        _pageIndexes=[[WKFlipsPageIndexes createPageIndexesFile:filename] retain];
+    NSString* filename=[NSString stringWithFormat:@"%@/pages.identities",WK_PATH_DOCUMENT];
+    _pageIdentitiesFile=[[WKFlipsPageIdentitiesFile loadPageIdentitiesFile:filename] retain];
+    if (!_pageIdentitiesFile){
+        _pageIdentitiesFile=[[WKFlipsPageIdentitiesFile createPageIdentitiesFile:filename] retain];
         for (int a=0; a<23; a++) {
-            [_pageIndexes addPageIndex:[[NSUUID UUID] UUIDString]];
+            [_pageIdentitiesFile addPageIdentity:[[NSUUID UUID] UUIDString]];
         }
     }
     if (!_flipsView){
@@ -84,11 +84,14 @@
     // Dispose of any resources that can be recreated.
 }
 -(void)dealloc{
-    [_pageIndexes release];
+    [_pageIdentitiesFile release];
     [super dealloc];
 }
 -(IBAction)onButtonNext:(id)sender{
     [_flipsView flipToPageIndex:_flipsView.pageIndex+1];
+}
+-(IBAction)onButtonDelete:(id)sender{
+    
 }
 #pragma mark - WKFlipsViewDataSource & WKFlipsViewDelegate
 -(NSInteger)numberOfPagesForFlipsView:(WKFlipsView *)flipsView{
@@ -105,14 +108,19 @@
 //    [button setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
 //    [button setTitle:[NSString stringWithFormat:@"page-%d",pageIndex] forState:UIControlStateNormal];
 //    [pageView addSubview:button];
-    TestImagePageView* pageView=(TestImagePageView*)[flipsView dequeueReusablePageWithReuseIdentifier:identity forPageIndex:pageIndex];
+    TestImagePageView* pageView=(TestImagePageView*)[flipsView dequeueReusablePageWithReuseIdentifier:identity];
+    pageView.pageIdentity=[_pageIdentitiesFile pageIdentityAtPageIndex:pageIndex];
     //pageView.cacheName=[NSString stringWithFormat:@"image-cache-%d",pageIndex];
 //    pageView.cacheName=[self flipsView:flipsView keyAtPageIndex:pageIndex];
     UIImage* image=[UIImage imageNamed:[NSString stringWithFormat:@"%d",pageIndex]];
     pageView.testImageView.image=image;
+    UIButton* button=[UIButton buttonWithType:UIButtonTypeCustom];
+    button.frame=CGRectMake(10.0f, 30.0f+20*pageIndex, 300.0f, 50.0f);
+    [button setTitle:@"delete" forState:UIControlStateNormal];
+    [button setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
+    button.backgroundColor=[UIColor whiteColor];
+    [button addTarget:self action:@selector(onButtonDelete:) forControlEvents:UIControlEventTouchUpInside];
+    [pageView addSubview:button];
     return pageView;
-}
--(NSString*)flipsView:(WKFlipsView *)flipsView keyAtPageIndex:(int)pageIndex{
-    return [_pageIndexes indexAtPageNumber:pageIndex];
 }
 @end

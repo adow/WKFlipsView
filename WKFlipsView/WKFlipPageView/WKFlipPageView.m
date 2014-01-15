@@ -21,7 +21,7 @@
 @property (nonatomic,readonly) NSString* filenameForCacheHBottom;
 @end
 @implementation WKFlipPageView
-
+@dynamic cacheName;
 - (id)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
@@ -46,11 +46,11 @@
 }
 */
 -(void)dealloc{
-    [_cacheName release];
+    [_pageIdentity release];
     [super dealloc];
 }
 -(void)prepareForReuse{
-    
+    [_pageIdentity release];
 }
 
 #pragma mark - SnapShot
@@ -61,6 +61,9 @@
     return WKFlip_make_hsplit_images_for_view(self);
 }
 #pragma mark - Cache
+-(NSString*)cacheName{
+    return [NSString stringWithFormat:@"%@-cache",self.pageIdentity];
+}
 -(NSString*)cacheNameHTop{
     return [NSString stringWithFormat:@"%@-top",self.cacheName];
 }

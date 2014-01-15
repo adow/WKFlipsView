@@ -21,7 +21,9 @@
 -(NSArray*)makeHSnapShotImages;
 #pragma mark - Cache
 ///缓存名字
-@property (nonatomic,copy) NSString* cacheName;
+@property (nonatomic,readonly) NSString* cacheName;
+///页面标识
+@property (nonatomic,copy) NSString* pageIdentity;
 ///上半部分缓存图片
 @property (nonatomic,readonly) UIImage* cacheImageHTop;
 ///下半部分缓存的图片

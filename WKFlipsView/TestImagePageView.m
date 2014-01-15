@@ -42,5 +42,10 @@
         _testImageView=[[UIImageView alloc]initWithFrame:self.bounds];
         [self addSubview:_testImageView];
     }
+    for (UIView* view in self.subviews) {
+        if (view!=_testImageView){
+            [view removeFromSuperview];
+        }
+    }
 }
 @end
