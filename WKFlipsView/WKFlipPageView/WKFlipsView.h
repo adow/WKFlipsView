@@ -9,15 +9,17 @@
 #import <UIKit/UIKit.h>
 #import "WKFlipPageView.h"
 #import "WKFlipsLayer.h"
+#import "_WKFlipsViewCache.h"
 @class WKFlipsView;
 @protocol WKFlipsViewDataSource <NSObject>
 ///每一页内容
 -(WKFlipPageView*)flipsView:(WKFlipsView*)flipsView pageAtPageIndex:(int)pageIndex;
 ///总页数
 -(NSInteger)numberOfPagesForFlipsView:(WKFlipsView*)flipsView;
+
 @end
 @protocol WKFlipsViewDelegate <NSObject>
-
+-(void)flipwView:(WKFlipsView*)flipsView willDeletePageAtPageIndex:(int)pageIndex;
 
 @end
 @interface WKFlipsView : UIView{
@@ -25,12 +27,15 @@
     UIView* _testCacheView;
     int _pageIndex;
 }
--(id)initWithFrame:(CGRect)frame atPageIndex:(int)pageIndex;
+-(id)initWithFrame:(CGRect)frame atPageIndex:(int)pageIndex withCacheIdentity:(NSString*)cacheIdentity;
 ///数据源
 @property (nonatomic,assign) id<WKFlipsViewDataSource> dataSource;
 ///委托
 @property (nonatomic,assign) id<WKFlipsViewDelegate> delegate;
+///翻页集
 @property (nonatomic,retain) WKFlipsLayerView* flippingLayersView;
+///缓存管理
+@property (nonatomic,retain) _WKFlipsViewCache* cache;
 #pragma mark - page
 ///用来显示页面
 @property (nonatomic,retain) UIView* currentPageView;
@@ -49,4 +54,6 @@
 -(void)flipToPageIndex:(int)pageIndex;
 ///动画翻页到一个指定的页面
 -(void)flipToPageIndex:(int)pageIndex completion:(void(^)())completion;
+#pragma mark create update and delete
+-(void)deleteCurrentPage;
 @end

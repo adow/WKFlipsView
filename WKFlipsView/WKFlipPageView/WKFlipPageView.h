@@ -6,6 +6,7 @@
 //  Copyright (c) 2013年 秦 道平. All rights reserved.
 //
 
+
 #import <UIKit/UIKit.h>
 #import "WK.h"
 @interface WKFlipPageView : UIView{
@@ -19,19 +20,4 @@
 -(UIImage*)makeSnapShotImage;
 ///创建截图并且横向分割
 -(NSArray*)makeHSnapShotImages;
-#pragma mark - Cache
-///缓存名字
-@property (nonatomic,readonly) NSString* cacheName;
-///页面标识
-@property (nonatomic,copy) NSString* pageIdentity;
-///上半部分缓存图片
-@property (nonatomic,readonly) UIImage* cacheImageHTop;
-///下半部分缓存的图片
-@property (nonatomic,readonly) UIImage* cacheImageHBottom;
-///预先生成缓存图片
--(void)prepareCacheImage;
-///删除该页的缓存图片
--(void)removeCacheImage;
-///批量删除缓存图片
-+(void)removeCacheImagesByCacheNames:(NSArray*)cacheNames;
 @end

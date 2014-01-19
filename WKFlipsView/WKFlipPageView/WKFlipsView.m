@@ -11,10 +11,11 @@
 
 @implementation WKFlipsView
 @dynamic pageIndex;
-- (id)initWithFrame:(CGRect)frame atPageIndex:(int)pageIndex{
+- (id)initWithFrame:(CGRect)frame atPageIndex:(int)pageIndex withCacheIdentity:(NSString *)cacheIdentity{
     self = [super initWithFrame:frame];
     if (self) {
         // Initialization code
+        _cache=[[_WKFlipsViewCache alloc]initWithIdentity:cacheIdentity];
         _reusedPageViewDictionary=[[NSMutableDictionary alloc]init];
         _currentPageView=[[UIView alloc]initWithFrame:self.bounds];
         [self addSubview:_currentPageView];
@@ -30,6 +31,7 @@
 -(void)dealloc{
     [_reusedPageViewDictionary release];
     [_currentPageView release];
+    [_cache release];
     //[_testCacheView release];
     [super dealloc];
 }
@@ -50,7 +52,7 @@
     return pageView;
 }
 #pragma mark - action
--(void)reloadPages{
+-(void)reloadPages{    
     [_flippingLayersView buildLayers];
 }
 #pragma mark pageIndex
@@ -93,6 +95,15 @@
     [_flippingLayersView flipToPageIndex:pageIndex completion:^(BOOL completed) {
     }];
 }
+#pragma mark create update and detele
+-(void)deleteCurrentPage{
+    ///删除数据
+    [self.delegate flipwView:self willDeletePageAtPageIndex:self.pageIndex];
+    ///删除缓存
+    [self.cache removeAtPageIndex:self.pageIndex];
+    ///重建页面
+    [self reloadPages];
+}
 #pragma mark - cache
 #pragma mark - touches
 -(void)flippingPanGesture:(UIPanGestureRecognizer*)recognizer{
@@ -109,21 +120,21 @@
 }
 #pragma mark - Test
 ///更新换乘图片显示
--(void)_test_update_cache_for_page:(WKFlipPageView*)pageView{
-    for (UIView* view in _testCacheView.subviews) {
-        [view removeFromSuperview];
-    }
-    UIImageView* imageViewTop=[[[UIImageView alloc]initWithImage:pageView.cacheImageHTop] autorelease];
-    CGRect imageViewTopFrame=imageViewTop.frame;
-    imageViewTopFrame.origin.x=100.0f;
-    imageViewTopFrame.origin.y=200.0f;
-    imageViewTop.frame=imageViewTopFrame;
-    [_testCacheView addSubview:imageViewTop];
-    UIImageView* imageViewBottom=[[[UIImageView alloc]initWithImage:pageView.cacheImageHBottom] autorelease];
-    CGRect imageViewBottomFrame=imageViewBottom.frame;
-    imageViewBottomFrame.origin.x=100.0f;
-    imageViewBottomFrame.origin.y=CGRectGetMaxY(imageViewTopFrame);
-    imageViewBottom.frame=imageViewBottomFrame;
-    [_testCacheView addSubview:imageViewBottom];
-}
+//-(void)_test_update_cache_for_page:(WKFlipPageView*)pageView{
+//    for (UIView* view in _testCacheView.subviews) {
+//        [view removeFromSuperview];
+//    }
+//    UIImageView* imageViewTop=[[[UIImageView alloc]initWithImage:pageView.cacheImageHTop] autorelease];
+//    CGRect imageViewTopFrame=imageViewTop.frame;
+//    imageViewTopFrame.origin.x=100.0f;
+//    imageViewTopFrame.origin.y=200.0f;
+//    imageViewTop.frame=imageViewTopFrame;
+//    [_testCacheView addSubview:imageViewTop];
+//    UIImageView* imageViewBottom=[[[UIImageView alloc]initWithImage:pageView.cacheImageHBottom] autorelease];
+//    CGRect imageViewBottomFrame=imageViewBottom.frame;
+//    imageViewBottomFrame.origin.x=100.0f;
+//    imageViewBottomFrame.origin.y=CGRectGetMaxY(imageViewTopFrame);
+//    imageViewBottom.frame=imageViewBottomFrame;
+//    [_testCacheView addSubview:imageViewBottom];
+//}
 @end

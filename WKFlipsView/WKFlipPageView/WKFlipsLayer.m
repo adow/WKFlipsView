@@ -120,18 +120,37 @@
             continue;
         }
         WKFlipPageView* page=[self.flipsView.dataSource flipsView:self.flipsView pageAtPageIndex:pageIndex];
+        ///如果没有缓存键值就添加一个
+        _WKFlipPageViewCache* pageCache=[self.flipsView.cache pageCacheAtPageIndex:pageIndex];
+        if (!pageCache){
+            NSLog(@"new pageCache:%d",pageIndex);
+            pageCache=[self.flipsView.cache addPage];
+        }
+        NSArray* images=nil;
         if (!layerForTop.backLayer.contents){
-            layerForTop.backLayer.contents=(id)page.cacheImageHTop.CGImage;
+            ///没有缓存
+            if (!pageCache.topImage){
+                images=[page makeHSnapShotImages];
+                [pageCache setTopImage:images[0]];
+            }
+            layerForTop.backLayer.contents=(id)pageCache.topImage.CGImage;
             numbersPastes+=1;
-            NSLog(@"new image pasted");
+            //NSLog(@"new image pasted");
         }
         else{
             numbersSkips+=1;
         }
         if (!layerForBottom.frontLayer.contents){
-            layerForBottom.frontLayer.contents=(id)page.cacheImageHBottom.CGImage;
+            if (!pageCache.bottomImage){
+                ///如果已经有截图了就不要重新创建了
+                if (!images){
+                    images=[page makeHSnapShotImages];
+                }
+                [pageCache setBottomImage:images[1]];
+            }
+            layerForBottom.frontLayer.contents=(id)pageCache.bottomImage.CGImage;
             numbersPastes+=1;
-            NSLog(@"new images pasted");
+            //NSLog(@"new images pasted");
         }
         else{
             numbersSkips+=1;

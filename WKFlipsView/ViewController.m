@@ -9,13 +9,11 @@
 
 #import "ViewController.h"
 #import "WKFlipsView.h"
-#import "WKFlipsPageIdentitiesFile.h"
+#import "_WKFlipsViewCache.h"
 #import "TestFlipPageView.h"
 #import "TestImagePageView.h"
 @interface ViewController ()<WKFlipsViewDataSource,WKFlipsViewDelegate>{
     WKFlipsView* _flipsView;
-    ///索引
-    WKFlipsPageIdentitiesFile* _pageIdentitiesFile;
     NSMutableArray* _images;
 }
 @end
@@ -26,20 +24,14 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
+    
     _images=[[NSMutableArray alloc]init];
     for (int a=0; a<23; a++) {
         [_images addObject:[UIImage imageNamed:[NSString stringWithFormat:@"%d",a]]];
     }
-    NSString* filename=[NSString stringWithFormat:@"%@/pages.identities",WK_PATH_DOCUMENT];
-    _pageIdentitiesFile=[[WKFlipsPageIdentitiesFile loadPageIdentitiesFile:filename] retain];
-    if (!_pageIdentitiesFile){
-        _pageIdentitiesFile=[[WKFlipsPageIdentitiesFile createPageIdentitiesFile:filename] retain];
-        for (int a=0; a<23; a++) {
-            [_pageIdentitiesFile addPageIdentity:[[NSUUID UUID] UUIDString]];
-        }
-    }
+    
     if (!_flipsView){
-        _flipsView=[[WKFlipsView alloc]initWithFrame:self.view.bounds atPageIndex:1];
+        _flipsView=[[WKFlipsView alloc]initWithFrame:self.view.bounds atPageIndex:1 withCacheIdentity:@"test"];
         _flipsView.backgroundColor=[UIColor darkGrayColor];
         _flipsView.dataSource=self;
         _flipsView.delegate=self;
@@ -90,18 +82,13 @@
 }
 -(void)dealloc{
     [_images release];
-    [_pageIdentitiesFile release];
     [super dealloc];
 }
 -(IBAction)onButtonNext:(id)sender{
     [_flipsView flipToPageIndex:_flipsView.pageIndex+1];
 }
 -(IBAction)onButtonDelete:(id)sender{
-    WKFlipPageView* flipPageView=[_flipsView currentFlipPageView];
-    [_images removeObjectAtIndex:_flipsView.pageIndex];
-    [flipPageView removeCacheImage];
-    [_pageIdentitiesFile deletePageIdentity:flipPageView.pageIdentity];
-    [_flipsView reloadPages];
+    [_flipsView deleteCurrentPage];
 }
 #pragma mark - WKFlipsViewDataSource & WKFlipsViewDelegate
 -(NSInteger)numberOfPagesForFlipsView:(WKFlipsView *)flipsView{
@@ -119,7 +106,6 @@
 //    [button setTitle:[NSString stringWithFormat:@"page-%d",pageIndex] forState:UIControlStateNormal];
 //    [pageView addSubview:button];
     TestImagePageView* pageView=(TestImagePageView*)[flipsView dequeueReusablePageWithReuseIdentifier:identity];
-    pageView.pageIdentity=[_pageIdentitiesFile pageIdentityAtPageIndex:pageIndex];
     //pageView.cacheName=[NSString stringWithFormat:@"image-cache-%d",pageIndex];
 //    pageView.cacheName=[self flipsView:flipsView keyAtPageIndex:pageIndex];
     UIImage* image=_images[pageIndex];;
@@ -132,5 +118,9 @@
     [button addTarget:self action:@selector(onButtonDelete:) forControlEvents:UIControlEventTouchUpInside];
     [pageView addSubview:button];
     return pageView;
+
+}
+-(void)flipwView:(WKFlipsView *)flipsView willDeletePageAtPageIndex:(int)pageIndex{
+    [_images removeObjectAtIndex:pageIndex];
 }
 @end
