@@ -25,10 +25,7 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
     
-    _images=[[NSMutableArray alloc]init];
-    for (int a=0; a<23; a++) {
-        [_images addObject:[UIImage imageNamed:[NSString stringWithFormat:@"%d",a]]];
-    }
+    [self testPrepareImages];
     
     if (!_flipsView){
         _flipsView=[[WKFlipsView alloc]initWithFrame:self.view.bounds atPageIndex:1 withCacheIdentity:@"test"];
@@ -108,7 +105,8 @@
     TestImagePageView* pageView=(TestImagePageView*)[flipsView dequeueReusablePageWithReuseIdentifier:identity];
     //pageView.cacheName=[NSString stringWithFormat:@"image-cache-%d",pageIndex];
 //    pageView.cacheName=[self flipsView:flipsView keyAtPageIndex:pageIndex];
-    UIImage* image=_images[pageIndex];;
+    //UIImage* image=_images[pageIndex];;
+    UIImage* image=[UIImage imageNamed:_images[pageIndex]];
     pageView.testImageView.image=image;
     UIButton* button=[UIButton buttonWithType:UIButtonTypeCustom];
     button.frame=CGRectMake(10.0f, 30.0f+20*pageIndex, 300.0f, 50.0f);
@@ -122,5 +120,47 @@
 }
 -(void)flipwView:(WKFlipsView *)flipsView willDeletePageAtPageIndex:(int)pageIndex{
     [_images removeObjectAtIndex:pageIndex];
+    [self testWriteImages];
+}
+#pragma mark - Test
+-(void)testPrepareImages{
+    if (!_images){
+        _images=[[NSMutableArray alloc]init];
+    }
+    [_images removeAllObjects];
+    NSString* filename=[NSString stringWithFormat:@"%@/test.images",WK_PATH_DOCUMENT];
+    if ([[NSFileManager defaultManager] fileExistsAtPath:filename]){
+        NSLog(@"load test images");
+        NSString* string=[NSString stringWithContentsOfFile:filename encoding:NSUTF8StringEncoding error:NULL];
+        NSArray* array=[string componentsSeparatedByString:@"\n"];
+        [_images addObjectsFromArray:array];
+        NSMutableArray* delete_array=[NSMutableArray array];
+        for (NSString* one_image in _images) {
+            if (!one_image || [one_image isEqualToString:@""]){
+                [delete_array addObject:one_image];
+            }
+        }
+        [_images removeObjectsInArray:delete_array];
+    }
+    else{
+        NSLog(@"new images");
+        for (int a=0; a<23; a++) {
+            [_images addObject:[NSString stringWithFormat:@"%d.png",a]];
+        }
+        [self testWriteImages];
+    }
+}
+-(void)testWriteImages{
+    NSString* filename=[NSString stringWithFormat:@"%@/test.images",WK_PATH_DOCUMENT];
+    NSMutableString* string=[NSMutableString string];
+    for (NSString* one_image in _images) {
+        if ([one_image isEqualToString:@""]){
+            continue;
+        }
+        [string appendFormat:@"%@\n",one_image];
+    }
+    NSData* data=[string dataUsingEncoding:NSUTF8StringEncoding];
+    [data writeToFile:filename atomically:YES];
+    NSLog(@"writeImages:%@",filename);
 }
 @end
