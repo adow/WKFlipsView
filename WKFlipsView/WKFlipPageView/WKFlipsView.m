@@ -63,18 +63,16 @@
 -(void)setPageIndex:(int)pageIndex{
 //    if (_pageIndex && _pageIndex==pageIndex)
 //        return;
-//    if (pageIndex<0 || pageIndex>=[self.dataSource numberOfPagesForFlipsView:self]){
-//        return;
-//    }
     for (UIView* view in self.currentPageView.subviews) {
         [view removeFromSuperview];
     }
     _pageIndex=pageIndex;
     ///这里的pageView也从deque中获取，所以是一个实例，如果其他地方在创建贴图时也调用了下面这个方法，会导致实例进行更新，所以正在实际显示的页面会被修改.这就要求，在设置pageIndex的前面就应该调用完成创建贴图的过程
-    WKFlipPageView* pageView=[self.dataSource flipsView:self pageAtPageIndex:pageIndex];
-    ///TODO:这里可能需要禁止动画
-    [self.currentPageView addSubview:pageView];
-    //[pageView prepareCacheImage];
+    if (pageIndex>=0 && pageIndex<[self.dataSource numberOfPagesForFlipsView:self]){
+        WKFlipPageView* pageView=[self.dataSource flipsView:self pageAtPageIndex:pageIndex];
+        ///TODO:这里可能需要禁止动画
+        [self.currentPageView addSubview:pageView];
+    }
 }
 -(WKFlipPageView*)currentFlipPageView{
     if(self.currentPageView.subviews.count>0){

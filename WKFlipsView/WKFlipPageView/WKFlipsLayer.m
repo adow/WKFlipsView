@@ -165,6 +165,8 @@
 -(void)flipToPageIndex:(int)pageIndex{
 //    if (pageIndex && pageIndex==self.flipsView.pageIndex)
 //        return;
+    pageIndex=MIN(pageIndex, [self.flipsView.dataSource numberOfPagesForFlipsView:self.flipsView]-1);
+    pageIndex=MAX(pageIndex, 0);
     int layersNumber=[self numbersOfLayers];
     ///往前翻页，也就是把上半部分的页面往下面翻
     if (pageIndex<self.flipsView.pageIndex){
@@ -187,6 +189,8 @@
 -(void)flipToPageIndex:(int)pageIndex completion:(void (^)(BOOL completed))completionBlock{
     if(self.runState!=WKFlipsLayerViewRunStateStop)
         return;
+    pageIndex=MIN(pageIndex, [self.flipsView.dataSource numberOfPagesForFlipsView:self.flipsView]-1);
+    pageIndex=MAX(pageIndex, 0);
     if (pageIndex==self.flipsView.pageIndex)
         return;
     self.runState=WKFlipsLayerViewRunStateAnimation;
