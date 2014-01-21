@@ -47,6 +47,14 @@
     buttonNext.backgroundColor=[UIColor lightGrayColor];
     [buttonNext addTarget:self action:@selector(onButtonNext:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:buttonNext];
+    
+    UIButton* buttonInsert=[UIButton buttonWithType:UIButtonTypeCustom];
+    buttonInsert.frame=CGRectMake(10.0f, 460.0f, 300.0f, 50.0f);
+    [buttonInsert setTitle:@"Insert" forState:UIControlStateNormal];
+    [buttonInsert setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    buttonInsert.backgroundColor=[UIColor lightGrayColor];
+    [buttonInsert addTarget:self action:@selector(onButtonInsert:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:buttonInsert];
 
     ///test prepare cache
     //[_flipsView preparePageCachesFromPageIndex:0 toPageIndex:3];
@@ -87,6 +95,9 @@
 -(IBAction)onButtonDelete:(id)sender{
     [_flipsView deleteCurrentPage];
 }
+-(IBAction)onButtonInsert:(id)sender{
+    [_flipsView insertPage];
+}
 #pragma mark - WKFlipsViewDataSource & WKFlipsViewDelegate
 -(NSInteger)numberOfPagesForFlipsView:(WKFlipsView *)flipsView{
     return _images.count;
@@ -120,6 +131,10 @@
 }
 -(void)flipwView:(WKFlipsView *)flipsView willDeletePageAtPageIndex:(int)pageIndex{
     [_images removeObjectAtIndex:pageIndex];
+    [self testWriteImages];
+}
+-(void)flipsView:(WKFlipsView *)flipsView willInsertPageAtPageIndex:(int)pageIndex{
+    [_images insertObject:@"a.png" atIndex:pageIndex];
     [self testWriteImages];
 }
 #pragma mark - Test

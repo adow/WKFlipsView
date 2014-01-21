@@ -20,7 +20,7 @@
 @end
 @protocol WKFlipsViewDelegate <NSObject>
 -(void)flipwView:(WKFlipsView*)flipsView willDeletePageAtPageIndex:(int)pageIndex;
-
+-(void)flipsView:(WKFlipsView*)flipsView willInsertPageAtPageIndex:(int)pageIndex;
 @end
 @interface WKFlipsView : UIView{
     NSMutableDictionary* _reusedPageViewDictionary;
@@ -55,5 +55,8 @@
 ///动画翻页到一个指定的页面
 -(void)flipToPageIndex:(int)pageIndex completion:(void(^)())completion;
 #pragma mark create update and delete
+///删除当前这个位置的页面
 -(void)deleteCurrentPage;
+///在当前的位置添加一个页面
+-(void)insertPage;
 @end

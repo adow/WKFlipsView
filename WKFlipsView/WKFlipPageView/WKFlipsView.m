@@ -102,6 +102,14 @@
     ///重建页面
     [self reloadPages];
 }
+-(void)insertPage{
+    ///更新数据
+    [self.delegate flipsView:self willInsertPageAtPageIndex:self.pageIndex];
+    ///添加缓存索引
+    [self.cache insertAtPageIndex:self.pageIndex];
+    ///重建页面
+    [self reloadPages];
+}
 #pragma mark - cache
 #pragma mark - touches
 -(void)flippingPanGesture:(UIPanGestureRecognizer*)recognizer{
