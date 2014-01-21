@@ -41,7 +41,7 @@
     [_flipsView reloadPages];
 
     UIButton* buttonNext=[UIButton buttonWithType:UIButtonTypeCustom];
-    buttonNext.frame=CGRectMake(10.0f, 400.0f, 300.0f, 50.0f);
+    buttonNext.frame=CGRectMake(10.0f, 300.0f, 300.0f, 50.0f);
     [buttonNext setTitle:@"Next" forState:UIControlStateNormal];
     [buttonNext setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     buttonNext.backgroundColor=[UIColor lightGrayColor];
@@ -49,12 +49,20 @@
     [self.view addSubview:buttonNext];
     
     UIButton* buttonInsert=[UIButton buttonWithType:UIButtonTypeCustom];
-    buttonInsert.frame=CGRectMake(10.0f, 460.0f, 300.0f, 50.0f);
+    buttonInsert.frame=CGRectMake(10.0f, 360.0f, 300.0f, 50.0f);
     [buttonInsert setTitle:@"Insert" forState:UIControlStateNormal];
     [buttonInsert setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     buttonInsert.backgroundColor=[UIColor lightGrayColor];
     [buttonInsert addTarget:self action:@selector(onButtonInsert:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:buttonInsert];
+    
+    UIButton* buttonUpdate=[UIButton buttonWithType:UIButtonTypeCustom];
+    buttonUpdate.frame=CGRectMake(10.0f, 420.0f, 300.0f, 50.0f);
+    [buttonUpdate setTitle:@"Update" forState:UIControlStateNormal];
+    [buttonUpdate setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    buttonUpdate.backgroundColor=[UIColor lightGrayColor];
+    [buttonUpdate addTarget:self action:@selector(onButtonUpdate:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:buttonUpdate];
 
     ///test prepare cache
     //[_flipsView preparePageCachesFromPageIndex:0 toPageIndex:3];
@@ -98,6 +106,9 @@
 -(IBAction)onButtonInsert:(id)sender{
     [_flipsView insertPage];
 }
+-(IBAction)onButtonUpdate:(id)sender{
+    [_flipsView updateCurrentPage];
+}
 #pragma mark - WKFlipsViewDataSource & WKFlipsViewDelegate
 -(NSInteger)numberOfPagesForFlipsView:(WKFlipsView *)flipsView{
     return _images.count;
@@ -135,6 +146,10 @@
 }
 -(void)flipsView:(WKFlipsView *)flipsView willInsertPageAtPageIndex:(int)pageIndex{
     [_images insertObject:@"a.png" atIndex:pageIndex];
+    [self testWriteImages];
+}
+-(void)flipsView:(WKFlipsView *)flipsView willUpdatePageAtPageIndex:(int)pageIndex{
+    _images[pageIndex]=@"b.png";
     [self testWriteImages];
 }
 #pragma mark - Test

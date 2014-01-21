@@ -45,6 +45,7 @@
 -(_WKFlipPageViewCache*)pageCacheAtPageIndex:(int)pageIndex;
 -(_WKFlipPageViewCache*)pageCacheForPageIdentity:(NSString*)pageIdentity;
 -(void)removeAtPageIndex:(int)pageIndex;
+-(void)removeCacheImageAtPageIndex:(int)pageIndex;
 -(_WKFlipPageViewCache*)insertAtPageIndex:(int)pageIndex;
 -(_WKFlipPageViewCache*)addPage;
 @end

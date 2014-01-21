@@ -110,6 +110,14 @@
     ///重建页面
     [self reloadPages];
 }
+-(void)updateCurrentPage{
+    ///更新数据
+    [self.delegate flipsView:self willUpdatePageAtPageIndex:self.pageIndex];
+    ////删除已有的缓存图片,索引还是原来的
+    [self.cache removeCacheImageAtPageIndex:self.pageIndex];
+    ///重建页面
+    [self reloadPages];
+}
 #pragma mark - cache
 #pragma mark - touches
 -(void)flippingPanGesture:(UIPanGestureRecognizer*)recognizer{

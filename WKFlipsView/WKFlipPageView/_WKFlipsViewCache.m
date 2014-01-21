@@ -155,6 +155,10 @@
     ///delete cache
     [pageCache removeCacheImage];
 }
+-(void)removeCacheImageAtPageIndex:(int)pageIndex{
+    _WKFlipPageViewCache* pageCache=[self pageCacheAtPageIndex:pageIndex];
+    [pageCache removeCacheImage];
+}
 -(_WKFlipPageViewCache*)insertAtPageIndex:(int)pageIndex{
     NSString* uuid=[[NSUUID UUID] UUIDString];
     [self.pageIdentityArray insertObject:uuid atIndex:pageIndex];
