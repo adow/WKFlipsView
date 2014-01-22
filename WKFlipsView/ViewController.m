@@ -24,7 +24,7 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
-    
+    //[self testSortPages];
     [self testPrepareImages];
     
     if (!_flipsView){
@@ -192,5 +192,28 @@
     NSData* data=[string dataUsingEncoding:NSUTF8StringEncoding];
     [data writeToFile:filename atomically:YES];
     NSLog(@"writeImages:%@",filename);
+}
+-(void)testSortPages{
+    NSMutableArray* pagesArray=[NSMutableArray array];
+    for (int a=0; a<23; a++) {
+        [pagesArray addObject:[NSNumber numberWithInt:a]];
+    }
+    int currentPageIndex=9;
+    NSLog(@"pagesArray:%@",pagesArray);
+    NSArray* sortedPagesArray=[pagesArray sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+        int page_1=[(NSNumber*)obj1 intValue];
+        int distance_1=abs(page_1-currentPageIndex);
+        int page_2=[(NSNumber*)obj2 intValue];
+        int distance_2=abs(page_2-currentPageIndex);
+        if (distance_1<distance_2){
+            return NSOrderedAscending;
+        }
+        else if (distance_1>distance_2){
+            return NSOrderedDescending;
+        }
+        else
+            return NSOrderedSame;
+    }];
+    NSLog(@"sortedPagesArray:%@",sortedPagesArray);
 }
 @end

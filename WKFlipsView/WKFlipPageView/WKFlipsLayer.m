@@ -85,7 +85,7 @@
         [layer drawWords:[NSString stringWithFormat:@"layer %d back",(layersNumber-a-1)] onPosition:1];
         layer.rotateDegree=0.0f;
     }
-    [self _pasteImagesToLayersInSeconds:0.3f];///重建时可以使用更多的时间来贴图
+    [self _pasteImagesToLayersForTargetPageIndex:self.flipsView.pageIndex inSeconds:0.3f];///重建时可以使用更多的时间来贴图
     ///TEST
 //    [self flipToPageIndex:1 completion:^(BOOL completed) {
 //    }];
@@ -95,13 +95,16 @@
 }
 ///在允许的时间范围内为尽可能多的layer贴图,如果maxSeconds是0那就忽略时间
 ///TODO: 应该从当前页面两边优先贴图
--(void)_pasteImagesToLayersInSeconds:(double)maxSeconds{
+-(void)_pasteImagesToLayersForTargetPageIndex:(int)targetPageIndex inSeconds:(double)maxSeconds{
     double startTime=CFAbsoluteTimeGetCurrent();
     double duration=0;
     int totalPages=[self.flipsView.dataSource numberOfPagesForFlipsView:self.flipsView];
+    ///对贴图顺序进行排序
+    NSArray* sortedPages=[self _sortedPagesForTargetPageIndex:targetPageIndex];
     ///统计贴图的页面数和跳过的页面数(WKFlipsLayer的正反面)
     int numbersPastes=0,numbersSkips=0;
-    for (int pageIndex=0; pageIndex<totalPages; pageIndex++) {
+    for(NSNumber* pageNumber in sortedPages) {
+        int pageIndex=[pageNumber intValue];
         duration=CFAbsoluteTimeGetCurrent()-startTime;
         ///超出设定时间了，跳过贴图
         if (maxSeconds>0 && duration>=maxSeconds){
@@ -160,6 +163,32 @@
     duration=CFAbsoluteTimeGetCurrent()-startTime;
     NSLog(@"pastes:%d,skips:%d,duration:%f",numbersPastes,numbersSkips,duration);
 }
+///对页面的贴图顺序进行排序，当前页面周边的优先贴图
+-(NSArray*)_sortedPagesForTargetPageIndex:(int)targetPageIndex{
+    NSMutableArray* pagesArray=[NSMutableArray array];
+    int numbersOfPages=[self.flipsView.dataSource numberOfPagesForFlipsView:self.flipsView];
+    for (int a=0; a<numbersOfPages; a++) {
+        [pagesArray addObject:[NSNumber numberWithInt:a]];
+    }
+    //NSLog(@"pagesArray:%@",pagesArray);
+    targetPageIndex=self.flipsView.pageIndex;
+    NSArray* sortedPagesArray=[pagesArray sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+        int page_1=[(NSNumber*)obj1 intValue];
+        int distance_1=abs(page_1-targetPageIndex);
+        int page_2=[(NSNumber*)obj2 intValue];
+        int distance_2=abs(page_2-targetPageIndex);
+        if (distance_1<distance_2){
+            return NSOrderedAscending;
+        }
+        else if (distance_1>distance_2){
+            return NSOrderedDescending;
+        }
+        else
+            return NSOrderedSame;
+    }];
+    //NSLog(@"sortedPagesArray:%@",sortedPagesArray);
+    return sortedPagesArray;
+}
 #pragma mark - flips
 ///无动画的翻页
 -(void)flipToPageIndex:(int)pageIndex{
@@ -212,7 +241,7 @@
                 if (++complete_hits>=layersNumber){
                         //NSLog(@"flip completed");
                         ///先创建贴图在设置pageIndex
-                        [self _pasteImagesToLayersInSeconds:1.0f];
+                        [self _pasteImagesToLayersForTargetPageIndex:pageIndex inSeconds:1.0f];
                         self.flipsView.pageIndex=pageIndex;
                         completionBlock(YES);
                         self.runState=WKFlipsLayerViewRunStateStop;
@@ -233,7 +262,7 @@
                 if (++complete_hits>=layersNumber){
                         //NSLog(@"flip completed");
                         ///先创建贴图在设置pageIndex
-                        [self _pasteImagesToLayersInSeconds:1.0f];
+                    [self _pasteImagesToLayersForTargetPageIndex:pageIndex inSeconds:1.0f];
                         self.flipsView.pageIndex=pageIndex;
                         completionBlock(YES);
                         self.runState=WKFlipsLayerViewRunStateStop;
@@ -304,7 +333,7 @@
             [_dragging_layer setRotateDegree:newRotateDegree duration:duration afterDelay:0.0f completion:^{
                 _dragging_layer=nil;
                 ///先创建贴图在设置pageIndex
-                [self _pasteImagesToLayersInSeconds:1.0f];
+                [self _pasteImagesToLayersForTargetPageIndex:previousPageIndex inSeconds:1.0f];
                 self.flipsView.pageIndex=previousPageIndex;
                 self.runState=WKFlipsLayerViewRunStateStop;
             }];
@@ -327,7 +356,7 @@
             [_dragging_layer setRotateDegree:newRotateDegree duration:duration afterDelay:0.0f completion:^{
                 _dragging_layer=nil;
                 ///先创建贴图在设置pageIndex
-                [self _pasteImagesToLayersInSeconds:1.0f];
+                [self _pasteImagesToLayersForTargetPageIndex:nextPageIndex inSeconds:1.0f];
                 self.flipsView.pageIndex=nextPageIndex;
                 self.runState=WKFlipsLayerViewRunStateStop;
                 

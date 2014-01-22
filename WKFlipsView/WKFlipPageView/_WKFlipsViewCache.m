@@ -53,6 +53,7 @@
         [[NSFileManager defaultManager] createDirectoryAtPath:self.folder withIntermediateDirectories:YES attributes:nil error:NULL];
     }
     NSData* data=UIImagePNGRepresentation(topImage);
+//    NSLog(@"%@",self.topImageFilename);
     [data writeToFile:self.topImageFilename atomically:YES];
 }
 -(UIImage*)bottomImage{
@@ -72,6 +73,7 @@
         [[NSFileManager defaultManager] createDirectoryAtPath:self.folder withIntermediateDirectories:YES attributes:nil error:NULL];
     }
     NSData* data=UIImagePNGRepresentation(bottomImage);
+//    NSLog(@"%@",self.bottomImageFilename);
     [data writeToFile:self.bottomImageFilename atomically:YES];
 }
 -(void)removeCacheImage{
