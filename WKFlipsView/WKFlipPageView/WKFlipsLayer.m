@@ -65,7 +65,7 @@
 }
 -(void)buildLayers{
     ///先删除现有的layer
-    NSMutableArray* layerArray=[self.layer.sublayers mutableCopy];
+    NSMutableArray* layerArray=[[self.layer.sublayers mutableCopy] autorelease];
     for (CALayer *layer in layerArray) {
         [layer removeFromSuperlayer];
     }
