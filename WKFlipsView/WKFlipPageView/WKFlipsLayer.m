@@ -94,7 +94,7 @@
     [self flipToPageIndex:self.flipsView.pageIndex];
 }
 ///在允许的时间范围内为尽可能多的layer贴图,如果maxSeconds是0那就忽略时间
-///TODO: 应该从当前页面两边优先贴图
+///应该从当前页面两边优先贴图
 -(void)_pasteImagesToLayersForTargetPageIndex:(int)targetPageIndex inSeconds:(double)maxSeconds{
     double startTime=CFAbsoluteTimeGetCurrent();
     double duration=0;
@@ -506,7 +506,6 @@
     [self removeAllAnimations];
 }
 #pragma mark - rotateDegree
-#pragma mark rotateDegree
 -(void)setRotateDegree:(CGFloat)rotateDegree{
     _rotateDegree=rotateDegree;
     self.transform=WKFlipCATransform3DPerspectSimpleWithRotate(rotateDegree);
