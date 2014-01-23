@@ -191,7 +191,7 @@
     }
     NSData* data=[string dataUsingEncoding:NSUTF8StringEncoding];
     [data writeToFile:filename atomically:YES];
-    NSLog(@"writeImages:%@",filename);
+    //NSLog(@"writeImages:%@",filename);
 }
 -(void)testSortPages{
     NSMutableArray* pagesArray=[NSMutableArray array];

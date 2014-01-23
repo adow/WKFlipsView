@@ -99,6 +99,12 @@
     double startTime=CFAbsoluteTimeGetCurrent();
     double duration=0;
     int totalPages=[self.flipsView.dataSource numberOfPagesForFlipsView:self.flipsView];
+    ///检查缓存索引键是否完全
+    for (int a=0; a<totalPages; a++) {
+        if (![self.flipsView.cache pageCacheAtPageIndex:a]){
+            [self.flipsView.cache addPage];
+        }
+    }
     ///对贴图顺序进行排序
     NSArray* sortedPages=[self _sortedPagesForTargetPageIndex:targetPageIndex];
     ///统计贴图的页面数和跳过的页面数(WKFlipsLayer的正反面)
@@ -123,12 +129,12 @@
             continue;
         }
         WKFlipPageView* page=[self.flipsView.dataSource flipsView:self.flipsView pageAtPageIndex:pageIndex];
-        ///如果没有缓存键值就添加一个
+//        ///如果没有缓存键值就添加一个
         _WKFlipPageViewCache* pageCache=[self.flipsView.cache pageCacheAtPageIndex:pageIndex];
-        if (!pageCache){
-            NSLog(@"new pageCache:%d",pageIndex);
-            pageCache=[self.flipsView.cache addPage];
-        }
+//        if (!pageCache){
+//            NSLog(@"new pageCache:%d",pageIndex);
+//            pageCache=[self.flipsView.cache addPage];
+//        }
         NSArray* images=nil;
         if (!layerForTop.backLayer.contents){
             ///没有缓存
@@ -171,7 +177,7 @@
         [pagesArray addObject:[NSNumber numberWithInt:a]];
     }
     //NSLog(@"pagesArray:%@",pagesArray);
-    targetPageIndex=self.flipsView.pageIndex;
+    //targetPageIndex=self.flipsView.pageIndex;
     NSArray* sortedPagesArray=[pagesArray sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
         int page_1=[(NSNumber*)obj1 intValue];
         int distance_1=abs(page_1-targetPageIndex);
