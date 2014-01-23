@@ -25,7 +25,7 @@
 }
 #pragma mark - Properties
 -(int)pageIndex{
-    return [_flipsViewCache.pageIdentityArray indexOfObject:self.pageIdentity];
+    return (int)[_flipsViewCache.pageIdentityArray indexOfObject:self.pageIdentity];
 }
 -(NSString*)topImageFilename{
     return [NSString stringWithFormat:@"%@/top.png",self.folder];
