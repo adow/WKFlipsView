@@ -81,8 +81,10 @@
 //        [self.layer addSublayer:layer];
 //        layer.frontLayer.contents=(id)[UIImage imageNamed:@"weather-default-bg"].CGImage;
 //        layer.backLayer.contents=(id)[UIImage imageNamed:@"weather-default-bg"].CGImage;
-        [layer drawWords:[NSString stringWithFormat:@"layer %d front",(layersNumber-a-1)] onPosition:0];
-        [layer drawWords:[NSString stringWithFormat:@"layer %d back",(layersNumber-a-1)] onPosition:1];
+        #ifdef DEBUG
+        [layer drawWords:[NSString stringWithFormat:@"layer:%d-front,page:%d",(layersNumber-a-1),a-1] onPosition:0];
+        [layer drawWords:[NSString stringWithFormat:@"layer:%d-back,page:%d",(layersNumber-a-1),a] onPosition:1];
+        #endif
         layer.rotateDegree=0.0f;
     }
     [self _pasteImagesToLayersForTargetPageIndex:self.flipsView.pageIndex inSeconds:0.3f];///重建时可以使用更多的时间来贴图
@@ -90,7 +92,6 @@
 //    [self flipToPageIndex:1 completion:^(BOOL completed) {
 //    }];
     ///直接已经翻页到现在的页面
-    //[self flipToPageIndex:self.flipsView.pageIndex];
     [self flipToPageIndex:self.flipsView.pageIndex];
 }
 ///在允许的时间范围内为尽可能多的layer贴图,如果maxSeconds是0那就忽略时间
