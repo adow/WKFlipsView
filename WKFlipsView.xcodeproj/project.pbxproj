@@ -24,6 +24,7 @@
 		6808BEAF1855E2BC00A8E552 /* WKFlipPageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6808BEAE1855E2BC00A8E552 /* WKFlipPageView.m */; };
 		6808BEB31855E39000A8E552 /* WKFlipsView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6808BEB21855E39000A8E552 /* WKFlipsView.m */; };
 		6808BF28185768EC00A8E552 /* TestFlipPageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6808BF27185768EC00A8E552 /* TestFlipPageView.m */; };
+		68164B7C189170B400F28D09 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 68164B7B189170B400F28D09 /* README.md */; };
 		68435029188A27C100A159D4 /* _WKFlipsViewCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 68435028188A27C100A159D4 /* _WKFlipsViewCache.m */; };
 		6869ED22185B2903008613FE /* WKFlipsLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 6869ED21185B2903008613FE /* WKFlipsLayer.m */; };
 		68FF4B91187C5499009301E2 /* TestImagePageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 68FF4B90187C5499009301E2 /* TestImagePageView.m */; };
@@ -66,6 +67,7 @@
 		6808BEB21855E39000A8E552 /* WKFlipsView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WKFlipsView.m; path = WKFlipPageView/WKFlipsView.m; sourceTree = "<group>"; };
 		6808BF26185768EC00A8E552 /* TestFlipPageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestFlipPageView.h; sourceTree = "<group>"; };
 		6808BF27185768EC00A8E552 /* TestFlipPageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestFlipPageView.m; sourceTree = "<group>"; };
+		68164B7B189170B400F28D09 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
 		68435027188A27C100A159D4 /* _WKFlipsViewCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = _WKFlipsViewCache.h; path = WKFlipPageView/_WKFlipsViewCache.h; sourceTree = "<group>"; };
 		68435028188A27C100A159D4 /* _WKFlipsViewCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = _WKFlipsViewCache.m; path = WKFlipPageView/_WKFlipsViewCache.m; sourceTree = "<group>"; };
 		6869ED20185B2903008613FE /* WKFlipsLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKFlipsLayer.h; path = WKFlipPageView/WKFlipsLayer.h; sourceTree = "<group>"; };
@@ -101,6 +103,7 @@
 		6808BE6B1855E24900A8E552 = {
 			isa = PBXGroup;
 			children = (
+				68164B7B189170B400F28D09 /* README.md */,
 				6808BE7D1855E24900A8E552 /* WKFlipsView */,
 				6808BE9C1855E24900A8E552 /* WKFlipsViewTests */,
 				6808BE761855E24900A8E552 /* Frameworks */,
@@ -270,6 +273,7 @@
 			files = (
 				6808BE901855E24900A8E552 /* Images.xcassets in Resources */,
 				6808BE821855E24900A8E552 /* InfoPlist.strings in Resources */,
+				68164B7C189170B400F28D09 /* README.md in Resources */,
 				6808BE8B1855E24900A8E552 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

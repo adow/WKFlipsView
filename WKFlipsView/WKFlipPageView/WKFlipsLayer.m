@@ -82,6 +82,7 @@
 //        layer.frontLayer.contents=(id)[UIImage imageNamed:@"weather-default-bg"].CGImage;
 //        layer.backLayer.contents=(id)[UIImage imageNamed:@"weather-default-bg"].CGImage;
         #ifdef DEBUG
+        ///在页面上输出图层编号和页面编号
         [layer drawWords:[NSString stringWithFormat:@"layer:%d-front,page:%d",(layersNumber-a-1),a-1] onPosition:0];
         [layer drawWords:[NSString stringWithFormat:@"layer:%d-back,page:%d",(layersNumber-a-1),a] onPosition:1];
         #endif
@@ -130,12 +131,7 @@
             continue;
         }
         WKFlipPageView* page=[self.flipsView.dataSource flipsView:self.flipsView pageAtPageIndex:pageIndex];
-//        ///如果没有缓存键值就添加一个
         _WKFlipPageViewCache* pageCache=[self.flipsView.cache pageCacheAtPageIndex:pageIndex];
-//        if (!pageCache){
-//            NSLog(@"new pageCache:%d",pageIndex);
-//            pageCache=[self.flipsView.cache addPage];
-//        }
         NSArray* images=nil;
         if (!layerForTop.backLayer.contents){
             ///没有缓存
