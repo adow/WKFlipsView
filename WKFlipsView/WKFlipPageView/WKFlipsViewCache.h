@@ -7,8 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
-@class  _WKFlipsViewCache;
-@interface _WKFlipPageViewCache:NSObject{
+@class  WKFlipsViewCache;
+@interface WKFlipPageViewCache:NSObject{
     UIImage* _topImage;
     UIImage* _bottomImage;
 }
@@ -26,12 +26,12 @@
 @property (nonatomic,readonly) NSString* folder;
 ///页面顺序
 @property (nonatomic,readonly) int pageIndex;
-@property (nonatomic,assign) _WKFlipsViewCache* flipsViewCache;
-+(id)flipPageCacheWithIdentity:(NSString*)pageIdentity inFlipsViewCache:(_WKFlipsViewCache*)flipsViewCache;
+@property (nonatomic,assign) WKFlipsViewCache* flipsViewCache;
++(id)flipPageCacheWithIdentity:(NSString*)pageIdentity inFlipsViewCache:(WKFlipsViewCache*)flipsViewCache;
 ///删除缓存图片
 -(void)removeCacheImage;
 @end
-@interface _WKFlipsViewCache : NSObject{
+@interface WKFlipsViewCache : NSObject{
     
 }
 @property (nonatomic,retain) NSMutableArray* pageIdentityArray;
@@ -42,10 +42,10 @@
 ///索引文件名
 @property (nonatomic,readonly) NSString* indexFilename;
 -(id)initWithIdentity:(NSString*)identity;
--(_WKFlipPageViewCache*)pageCacheAtPageIndex:(int)pageIndex;
--(_WKFlipPageViewCache*)pageCacheForPageIdentity:(NSString*)pageIdentity;
+-(WKFlipPageViewCache*)pageCacheAtPageIndex:(int)pageIndex;
+-(WKFlipPageViewCache*)pageCacheForPageIdentity:(NSString*)pageIdentity;
 -(void)removeAtPageIndex:(int)pageIndex;
 -(void)removeCacheImageAtPageIndex:(int)pageIndex;
--(_WKFlipPageViewCache*)insertAtPageIndex:(int)pageIndex;
--(_WKFlipPageViewCache*)addPage;
+-(WKFlipPageViewCache*)insertAtPageIndex:(int)pageIndex;
+-(WKFlipPageViewCache*)addPage;
 @end

@@ -131,7 +131,7 @@
             continue;
         }
         WKFlipPageView* page=[self.flipsView.dataSource flipsView:self.flipsView pageAtPageIndex:pageIndex];
-        _WKFlipPageViewCache* pageCache=[self.flipsView.cache pageCacheAtPageIndex:pageIndex];
+        WKFlipPageViewCache* pageCache=[self.flipsView.cache pageCacheAtPageIndex:pageIndex];
         NSArray* images=nil;
         if (!layerForTop.backLayer.contents){
             ///没有缓存
@@ -203,7 +203,7 @@
     ///往前翻页，也就是把上半部分的页面往下面翻
     if (pageIndex<self.flipsView.pageIndex){
         for (int layerIndex=0; layerIndex<layersNumber; layerIndex++) {
-            CGFloat rotateDegree=[self calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:pageIndex];
+            CGFloat rotateDegree=[self _calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:pageIndex];
             WKFlipsLayer *flipLayer=self.layer.sublayers[layerIndex];
             flipLayer.rotateDegree=rotateDegree;
         }
@@ -211,7 +211,7 @@
     ///往后面翻页,也就是把下半部分的往上面翻
     else{
         for (int layerIndex=layersNumber-1; layerIndex>=0; layerIndex--) {
-            CGFloat rotateDegree=[self calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:pageIndex];
+            CGFloat rotateDegree=[self _calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:pageIndex];
             WKFlipsLayer* flipLayer=self.layer.sublayers[layerIndex];
             flipLayer.rotateDegree=rotateDegree;
         }
@@ -234,7 +234,7 @@
     __block int complete_hits=0;
     if (pageIndex<self.flipsView.pageIndex){
         for (int layerIndex=0; layerIndex<layersNumber; layerIndex++) {
-            CGFloat rotateDegree=[self calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:pageIndex];
+            CGFloat rotateDegree=[self _calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:pageIndex];
             //NSLog(@"layerIndex:%d,%f",layerIndex,rotateDegree);
             WKFlipsLayer *flipLayer=self.layer.sublayers[layerIndex];
             CGFloat rotateDistance=fabsf(rotateDegree-flipLayer.rotateDegree);
@@ -255,7 +255,7 @@
     }
     else{
         for (int layerIndex=layersNumber-1; layerIndex>=0; layerIndex--) {
-            CGFloat rotateDegree=[self calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:pageIndex];
+            CGFloat rotateDegree=[self _calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:pageIndex];
             //NSLog(@"layerIndex:%d,%f",layerIndex,rotateDegree);
             WKFlipsLayer* flipLayer=self.layer.sublayers[layerIndex];
             CGFloat rotateDistance=fabsf(rotateDegree-flipLayer.rotateDegree);
@@ -276,7 +276,7 @@
     }
 }
 ///当翻页到一个pageIndex,为每个layer计算角度
--(CGFloat)calculateRotateDegreeForLayerIndex:(int)layerIndex toTargetPageIndex:(int)pageIndex{
+-(CGFloat)_calculateRotateDegreeForLayerIndex:(int)layerIndex toTargetPageIndex:(int)pageIndex{
     int layersNumber=[self numbersOfLayers];
     int stopLayerIndexAtTop=layersNumber-1-pageIndex;
     int stopLayerIndexAtBottom=stopLayerIndexAtTop-1;
@@ -312,7 +312,7 @@
         ///返回现在的页面
         if (_dragging_layer.rotateDegree>=90.0f){
             int layerIndex=(int)[self.layer.sublayers indexOfObject:_dragging_layer];
-            CGFloat oldRotateDegree=[self calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:self.flipsView.pageIndex];
+            CGFloat oldRotateDegree=[self _calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:self.flipsView.pageIndex];
             CGFloat duration=fabsf(oldRotateDegree-_dragging_layer.rotateDegree)/180.0f*durationFull;
             [_dragging_layer setRotateDegree:oldRotateDegree duration:duration afterDelay:0.0f completion:^{
                 _dragging_layer=nil;
@@ -323,7 +323,7 @@
             int previousPageIndex=self.flipsView.pageIndex-1;
             int layersNumber=[self numbersOfLayers];
             for (int layerIndex=0; layerIndex<layersNumber; layerIndex++) {
-                CGFloat rotateDegree=[self calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:previousPageIndex];
+                CGFloat rotateDegree=[self _calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:previousPageIndex];
                 //NSLog(@"layerIndex:%d,rotateDegree:%f",layerIndex,rotateDegree);
                 WKFlipsLayer* flipLayer=self.layer.sublayers[layerIndex];
                 if (flipLayer!=_dragging_layer){
@@ -331,7 +331,7 @@
                 }
             }
             int layerIndex=(int)[self.layer.sublayers indexOfObject:_dragging_layer];
-            CGFloat newRotateDegree=[self calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:previousPageIndex];
+            CGFloat newRotateDegree=[self _calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:previousPageIndex];
             CGFloat duration=fabsf(newRotateDegree-_dragging_layer.rotateDegree)/180.0f*durationFull;
             [_dragging_layer setRotateDegree:newRotateDegree duration:duration afterDelay:0.0f completion:^{
                 _dragging_layer=nil;
@@ -348,13 +348,13 @@
             int nextPageIndex=self.flipsView.pageIndex+1;
             int layersNUmber=[self numbersOfLayers];
             for (int layerIndex=layersNUmber-1; layerIndex>=0; layerIndex--) {
-                CGFloat rotateDegree=[self calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:nextPageIndex];
+                CGFloat rotateDegree=[self _calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:nextPageIndex];
                 WKFlipsLayer* flipLayer=self.layer.sublayers[layerIndex];
                 if (flipLayer!=_dragging_layer)
                     [flipLayer setRotateDegree:rotateDegree];
             }
             int layerIndex=(int)[self.layer.sublayers indexOfObject:_dragging_layer];
-            CGFloat newRotateDegree=[self calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:nextPageIndex];
+            CGFloat newRotateDegree=[self _calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:nextPageIndex];
             CGFloat duration=fabsf(newRotateDegree-_dragging_layer.rotateDegree)/180.0f*durationFull;
             [_dragging_layer setRotateDegree:newRotateDegree duration:duration afterDelay:0.0f completion:^{
                 _dragging_layer=nil;
@@ -367,7 +367,7 @@
         }
         else{///返回到现在的页面
             int layerIndex=(int)[self.layer.sublayers indexOfObject:_dragging_layer];
-            CGFloat oldRotateDegree=[self calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:self.flipsView.pageIndex];
+            CGFloat oldRotateDegree=[self _calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:self.flipsView.pageIndex];
             CGFloat duration=fabsf(oldRotateDegree-_dragging_layer.rotateDegree)/180.0f*durationFull;
             [_dragging_layer setRotateDegree:oldRotateDegree duration:duration afterDelay:0.0f completion:^{
                 _dragging_layer=nil;
@@ -427,6 +427,10 @@
 @interface WKFlipsLayer(){
     
 }
+///动画是否被取消
+@property (nonatomic,assign) BOOL isAnimationCancelled;
+///正在取消拖动时，记录当前的位置
+@property (nonatomic,assign) CATransform3D cancelledTransform;
 @end
 @implementation WKFlipsLayer
 -(id)initWithFrame:(CGRect)frame{

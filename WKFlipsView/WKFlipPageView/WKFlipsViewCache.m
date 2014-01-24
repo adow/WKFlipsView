@@ -6,13 +6,13 @@
 //  Copyright (c) 2014年 秦 道平. All rights reserved.
 //
 
-#import "_WKFlipsViewCache.h"
+#import "WKFlipsViewCache.h"
 #import "WKFlip.h"
-@implementation _WKFlipPageViewCache
+@implementation WKFlipPageViewCache
 @dynamic topImage;
 @dynamic bottomImage;
-+(id)flipPageCacheWithIdentity:(NSString *)pageIdentity inFlipsViewCache:(_WKFlipsViewCache *)flipsViewCache{
-    _WKFlipPageViewCache* pageCache=[[_WKFlipPageViewCache alloc]init];
++(id)flipPageCacheWithIdentity:(NSString *)pageIdentity inFlipsViewCache:(WKFlipsViewCache *)flipsViewCache{
+    WKFlipPageViewCache* pageCache=[[WKFlipPageViewCache alloc]init];
     pageCache.pageIdentity=pageIdentity;
     pageCache.flipsViewCache=flipsViewCache;
     return [pageCache autorelease];
@@ -86,7 +86,7 @@
     _bottomImage=nil;
 }
 @end
-@implementation _WKFlipsViewCache
+@implementation WKFlipsViewCache
 -(id)initWithIdentity:(NSString *)identity{
     self=[super init];
     if (self){
@@ -138,19 +138,19 @@
     }
 }
 #pragma mark - pageCache
--(_WKFlipPageViewCache*)pageCacheAtPageIndex:(int)pageIndex{
+-(WKFlipPageViewCache*)pageCacheAtPageIndex:(int)pageIndex{
     if (pageIndex<0 || pageIndex>=self.pageIdentityArray.count)
         return nil;
     NSString* pageIdentity=self.pageIdentityArray[pageIndex];
-    _WKFlipPageViewCache* pageCache=[_WKFlipPageViewCache flipPageCacheWithIdentity:pageIdentity inFlipsViewCache:self];
+    WKFlipPageViewCache* pageCache=[WKFlipPageViewCache flipPageCacheWithIdentity:pageIdentity inFlipsViewCache:self];
     return pageCache;
 }
--(_WKFlipPageViewCache*)pageCacheForPageIdentity:(NSString *)pageIdentity{
-    _WKFlipPageViewCache* pageCache=[_WKFlipPageViewCache flipPageCacheWithIdentity:pageIdentity inFlipsViewCache:self];
+-(WKFlipPageViewCache*)pageCacheForPageIdentity:(NSString *)pageIdentity{
+    WKFlipPageViewCache* pageCache=[WKFlipPageViewCache flipPageCacheWithIdentity:pageIdentity inFlipsViewCache:self];
     return pageCache;
 }
 -(void)removeAtPageIndex:(int)pageIndex{
-    _WKFlipPageViewCache* pageCache=[self pageCacheAtPageIndex:pageIndex];
+    WKFlipPageViewCache* pageCache=[self pageCacheAtPageIndex:pageIndex];
     ///delete uuid
     [self.pageIdentityArray removeObjectAtIndex:pageIndex];
     [self write];
@@ -158,16 +158,16 @@
     [pageCache removeCacheImage];
 }
 -(void)removeCacheImageAtPageIndex:(int)pageIndex{
-    _WKFlipPageViewCache* pageCache=[self pageCacheAtPageIndex:pageIndex];
+    WKFlipPageViewCache* pageCache=[self pageCacheAtPageIndex:pageIndex];
     [pageCache removeCacheImage];
 }
--(_WKFlipPageViewCache*)insertAtPageIndex:(int)pageIndex{
+-(WKFlipPageViewCache*)insertAtPageIndex:(int)pageIndex{
     NSString* uuid=[[NSUUID UUID] UUIDString];
     [self.pageIdentityArray insertObject:uuid atIndex:pageIndex];
     [self write];
     return [self pageCacheAtPageIndex:pageIndex];
 }
--(_WKFlipPageViewCache*)addPage{
+-(WKFlipPageViewCache*)addPage{
     NSString* uuid=[[NSUUID UUID] UUIDString];
     [self.pageIdentityArray addObject:uuid];
     [self write];

@@ -25,7 +25,7 @@
 		6808BEB31855E39000A8E552 /* WKFlipsView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6808BEB21855E39000A8E552 /* WKFlipsView.m */; };
 		6808BF28185768EC00A8E552 /* TestFlipPageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6808BF27185768EC00A8E552 /* TestFlipPageView.m */; };
 		68164B7C189170B400F28D09 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 68164B7B189170B400F28D09 /* README.md */; };
-		68435029188A27C100A159D4 /* _WKFlipsViewCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 68435028188A27C100A159D4 /* _WKFlipsViewCache.m */; };
+		68435029188A27C100A159D4 /* WKFlipsViewCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 68435028188A27C100A159D4 /* WKFlipsViewCache.m */; };
 		6869ED22185B2903008613FE /* WKFlipsLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 6869ED21185B2903008613FE /* WKFlipsLayer.m */; };
 		68FF4B91187C5499009301E2 /* TestImagePageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 68FF4B90187C5499009301E2 /* TestImagePageView.m */; };
 /* End PBXBuildFile section */
@@ -68,8 +68,8 @@
 		6808BF26185768EC00A8E552 /* TestFlipPageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestFlipPageView.h; sourceTree = "<group>"; };
 		6808BF27185768EC00A8E552 /* TestFlipPageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestFlipPageView.m; sourceTree = "<group>"; };
 		68164B7B189170B400F28D09 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
-		68435027188A27C100A159D4 /* _WKFlipsViewCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = _WKFlipsViewCache.h; path = WKFlipPageView/_WKFlipsViewCache.h; sourceTree = "<group>"; };
-		68435028188A27C100A159D4 /* _WKFlipsViewCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = _WKFlipsViewCache.m; path = WKFlipPageView/_WKFlipsViewCache.m; sourceTree = "<group>"; };
+		68435027188A27C100A159D4 /* WKFlipsViewCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKFlipsViewCache.h; path = WKFlipPageView/WKFlipsViewCache.h; sourceTree = "<group>"; };
+		68435028188A27C100A159D4 /* WKFlipsViewCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WKFlipsViewCache.m; path = WKFlipPageView/WKFlipsViewCache.m; sourceTree = "<group>"; };
 		6869ED20185B2903008613FE /* WKFlipsLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKFlipsLayer.h; path = WKFlipPageView/WKFlipsLayer.h; sourceTree = "<group>"; };
 		6869ED21185B2903008613FE /* WKFlipsLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WKFlipsLayer.m; path = WKFlipPageView/WKFlipsLayer.m; sourceTree = "<group>"; };
 		68FF4B8F187C5499009301E2 /* TestImagePageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestImagePageView.h; sourceTree = "<group>"; };
@@ -189,8 +189,8 @@
 				6808BEB21855E39000A8E552 /* WKFlipsView.m */,
 				6869ED20185B2903008613FE /* WKFlipsLayer.h */,
 				6869ED21185B2903008613FE /* WKFlipsLayer.m */,
-				68435027188A27C100A159D4 /* _WKFlipsViewCache.h */,
-				68435028188A27C100A159D4 /* _WKFlipsViewCache.m */,
+				68435027188A27C100A159D4 /* WKFlipsViewCache.h */,
+				68435028188A27C100A159D4 /* WKFlipsViewCache.m */,
 			);
 			name = WKFlipsView;
 			sourceTree = "<group>";
@@ -299,7 +299,7 @@
 				6808BEB31855E39000A8E552 /* WKFlipsView.m in Sources */,
 				6808BE8E1855E24900A8E552 /* ViewController.m in Sources */,
 				6808BE881855E24900A8E552 /* AppDelegate.m in Sources */,
-				68435029188A27C100A159D4 /* _WKFlipsViewCache.m in Sources */,
+				68435029188A27C100A159D4 /* WKFlipsViewCache.m in Sources */,
 				6808BF28185768EC00A8E552 /* TestFlipPageView.m in Sources */,
 				6808BE841855E24900A8E552 /* main.m in Sources */,
 			);

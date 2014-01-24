@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "WKFlipPageView.h"
 #import "WKFlipsLayer.h"
-#import "_WKFlipsViewCache.h"
+#import "WKFlipsViewCache.h"
 @class WKFlipsView;
 @protocol WKFlipsViewDataSource <NSObject>
 ///每一页内容
@@ -36,7 +36,7 @@
 ///翻页集
 @property (nonatomic,retain) WKFlipsLayerView* flippingLayersView;
 ///缓存管理
-@property (nonatomic,retain) _WKFlipsViewCache* cache;
+@property (nonatomic,retain) WKFlipsViewCache* cache;
 #pragma mark - page
 ///用来显示页面
 @property (nonatomic,retain) UIView* currentPageView;

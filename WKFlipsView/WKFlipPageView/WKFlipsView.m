@@ -15,7 +15,7 @@
     self = [super initWithFrame:frame];
     if (self) {
         // Initialization code
-        _cache=[[_WKFlipsViewCache alloc]initWithIdentity:cacheIdentity];
+        _cache=[[WKFlipsViewCache alloc]initWithIdentity:cacheIdentity];
         _reusedPageViewDictionary=[[NSMutableDictionary alloc]init];
         _currentPageView=[[UIView alloc]initWithFrame:self.bounds];
         [self addSubview:_currentPageView];
@@ -23,7 +23,7 @@
         _flippingLayersView=[[WKFlipsLayerView alloc] initWithFlipsView:self];
         [self addSubview:_flippingLayersView];
         _flippingLayersView.hidden=YES;
-        UIPanGestureRecognizer* panGeture=[[[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(flippingPanGesture:)] autorelease];
+        UIPanGestureRecognizer* panGeture=[[[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(_flippingPanGesture:)] autorelease];
         [self addGestureRecognizer:panGeture];
     }
     return self;
@@ -132,7 +132,7 @@
 }
 #pragma mark - cache
 #pragma mark - touches
--(void)flippingPanGesture:(UIPanGestureRecognizer*)recognizer{
+-(void)_flippingPanGesture:(UIPanGestureRecognizer*)recognizer{
     if (recognizer.state==UIGestureRecognizerStateBegan){
         [self.flippingLayersView dragBegan];
     }
@@ -144,23 +144,4 @@
         [self.flippingLayersView draggingWithTranslation:translation];
     }
 }
-#pragma mark - Test
-///更新换乘图片显示
-//-(void)_test_update_cache_for_page:(WKFlipPageView*)pageView{
-//    for (UIView* view in _testCacheView.subviews) {
-//        [view removeFromSuperview];
-//    }
-//    UIImageView* imageViewTop=[[[UIImageView alloc]initWithImage:pageView.cacheImageHTop] autorelease];
-//    CGRect imageViewTopFrame=imageViewTop.frame;
-//    imageViewTopFrame.origin.x=100.0f;
-//    imageViewTopFrame.origin.y=200.0f;
-//    imageViewTop.frame=imageViewTopFrame;
-//    [_testCacheView addSubview:imageViewTop];
-//    UIImageView* imageViewBottom=[[[UIImageView alloc]initWithImage:pageView.cacheImageHBottom] autorelease];
-//    CGRect imageViewBottomFrame=imageViewBottom.frame;
-//    imageViewBottomFrame.origin.x=100.0f;
-//    imageViewBottomFrame.origin.y=CGRectGetMaxY(imageViewTopFrame);
-//    imageViewBottom.frame=imageViewBottomFrame;
-//    [_testCacheView addSubview:imageViewBottom];
-//}
 @end

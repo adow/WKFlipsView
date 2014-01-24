@@ -12,7 +12,7 @@
 #pragma makr - WKFlipsLayerView
 ///翻页的状态
 typedef enum WKFlipsLayerViewRunState:NSUInteger{
-   ///禁止
+   ///停止
     WKFlipsLayerViewRunStateStop=0,
     ///拖动翻页中
     WKFlipsLayerViewRunStateDragging=1,
@@ -72,10 +72,6 @@ typedef enum WKFlipsLayerDragAtPosition:NSUInteger{
 @property (nonatomic,assign) CGFloat rotateDegree;
 ///动画设置翻转角度
 -(void)setRotateDegree:(CGFloat)rotateDegree duration:(CGFloat)duration afterDelay:(NSTimeInterval)delay completion:(void(^)())completion;
-///动画是否被取消
-@property (nonatomic,assign) BOOL isAnimationCancelled;
-///正在取消拖动时，记录当前的位置
-@property (nonatomic,assign) CATransform3D cancelledTransform;
 ///取消拖动后的动画
 -(void)cancelDragAnimation;
 ///画出来测试用的文字

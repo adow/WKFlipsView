@@ -9,7 +9,7 @@
 
 #import "ViewController.h"
 #import "WKFlipsView.h"
-#import "_WKFlipsViewCache.h"
+#import "WKFlipsViewCache.h"
 #import "TestFlipPageView.h"
 #import "TestImagePageView.h"
 @interface ViewController ()<WKFlipsViewDataSource,WKFlipsViewDelegate>{
