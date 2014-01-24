@@ -65,6 +65,7 @@
     return (int)[self.flipsView.dataSource numberOfPagesForFlipsView:self.flipsView]+1;
 }
 -(void)buildLayers{
+//    double startTime=CFAbsoluteTimeGetCurrent();
     ///先删除现有的layer
     NSMutableArray* layerArray=[[self.layer.sublayers mutableCopy] autorelease];
     for (CALayer *layer in layerArray) {
@@ -83,12 +84,13 @@
 //        layer.frontLayer.contents=(id)[UIImage imageNamed:@"weather-default-bg"].CGImage;
 //        layer.backLayer.contents=(id)[UIImage imageNamed:@"weather-default-bg"].CGImage;
         #ifdef DEBUG
-        ///在页面上输出图层编号和页面编号
+        ///在页面上输出图层编号和页面编号,绘制文字会消耗不少时间
         [layer drawWords:[NSString stringWithFormat:@"layer:%d-front,page:%d",(layersNumber-a-1),a-1] onPosition:0];
         [layer drawWords:[NSString stringWithFormat:@"layer:%d-back,page:%d",(layersNumber-a-1),a] onPosition:1];
         #endif
         layer.rotateDegree=0.0f;
     }
+//    NSLog(@"buildLayers duration:%f",CFAbsoluteTimeGetCurrent()-startTime);
     [self _pasteImagesToLayersForTargetPageIndex:self.flipsView.pageIndex inSeconds:0.3f];///重建时可以使用更多的时间来贴图
     ///TEST
 //    [self flipToPageIndex:1 completion:^(BOOL completed) {
