@@ -95,6 +95,10 @@
 }
 #pragma mark create update and detele
 -(void)deleteCurrentPage{
+    ///在动画或者拖动时不可以编辑
+    if (self.flippingLayersView.runState!=WKFlipsLayerViewRunStateStop){
+        return;
+    }
     ///删除数据
     [self.delegate flipwView:self willDeletePageAtPageIndex:self.pageIndex];
     ///删除缓存
@@ -103,6 +107,10 @@
     [self reloadPages];
 }
 -(void)insertPage{
+    ///在动画或者拖动时不可以编辑
+    if (self.flippingLayersView.runState!=WKFlipsLayerViewRunStateStop){
+        return;
+    }
     ///更新数据
     [self.delegate flipsView:self willInsertPageAtPageIndex:self.pageIndex];
     ///添加缓存索引
@@ -111,6 +119,10 @@
     [self reloadPages];
 }
 -(void)updateCurrentPage{
+    ///在动画或者拖动时不可以编辑
+    if (self.flippingLayersView.runState!=WKFlipsLayerViewRunStateStop){
+        return;
+    }
     ///更新数据
     [self.delegate flipsView:self willUpdatePageAtPageIndex:self.pageIndex];
     ////删除已有的缓存图片,索引还是原来的
