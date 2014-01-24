@@ -7,7 +7,7 @@
 //
 
 #import "WKFlipPageView.h"
-
+#import "WKFlip.h"
 @interface WKFlipPageView(){
     
 }

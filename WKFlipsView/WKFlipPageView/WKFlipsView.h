@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "WKFlip.h"
 #import "WKFlipPageView.h"
 #import "WKFlipsLayer.h"
 #import "WKFlipsViewCache.h"

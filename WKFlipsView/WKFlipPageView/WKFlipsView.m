@@ -7,8 +7,6 @@
 //
 
 #import "WKFlipsView.h"
-
-
 @implementation WKFlipsView
 @dynamic pageIndex;
 - (id)initWithFrame:(CGRect)frame atPageIndex:(int)pageIndex withCacheIdentity:(NSString *)cacheIdentity{

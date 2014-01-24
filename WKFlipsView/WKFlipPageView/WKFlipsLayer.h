@@ -8,7 +8,6 @@
 
 #import <QuartzCore/QuartzCore.h>
 #import <CoreText/CoreText.h>
-#import "WKFlip.h"
 #pragma makr - WKFlipsLayerView
 ///翻页的状态
 typedef enum WKFlipsLayerViewRunState:NSUInteger{

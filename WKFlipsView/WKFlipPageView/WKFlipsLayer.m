@@ -8,6 +8,7 @@
 
 #import "WKFlipsLayer.h"
 #import "WKFlipsView.h"
+#import "WKFlip.h"
 #pragma makr - WKFlipsLayerView
 @interface WKFlipsLayerView(){
     
