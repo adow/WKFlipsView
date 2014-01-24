@@ -147,7 +147,7 @@
         _images=[[NSMutableArray alloc]init];
     }
     [_images removeAllObjects];
-    NSString* filename=[NSString stringWithFormat:@"%@/test.images",WK_PATH_DOCUMENT];
+    NSString* filename=[NSString stringWithFormat:@"%@/test.images",WKFLIPS_PATH_DOCUMENT];
     if ([[NSFileManager defaultManager] fileExistsAtPath:filename]){
         NSLog(@"load test images");
         NSString* string=[NSString stringWithContentsOfFile:filename encoding:NSUTF8StringEncoding error:NULL];
@@ -170,7 +170,7 @@
     }
 }
 -(void)testWriteImages{
-    NSString* filename=[NSString stringWithFormat:@"%@/test.images",WK_PATH_DOCUMENT];
+    NSString* filename=[NSString stringWithFormat:@"%@/test.images",WKFLIPS_PATH_DOCUMENT];
     NSMutableString* string=[NSMutableString string];
     for (NSString* one_image in _images) {
         if ([one_image isEqualToString:@""]){

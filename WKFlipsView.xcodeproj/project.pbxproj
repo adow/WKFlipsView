@@ -62,7 +62,7 @@
 		6808BEA21855E24900A8E552 /* WKFlipsViewTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WKFlipsViewTests.m; sourceTree = "<group>"; };
 		6808BEAD1855E2BC00A8E552 /* WKFlipPageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKFlipPageView.h; path = WKFlipPageView/WKFlipPageView.h; sourceTree = "<group>"; };
 		6808BEAE1855E2BC00A8E552 /* WKFlipPageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WKFlipPageView.m; path = WKFlipPageView/WKFlipPageView.m; sourceTree = "<group>"; };
-		6808BEB01855E2E200A8E552 /* WK.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WK.h; path = WKFlipPageView/WK.h; sourceTree = "<group>"; };
+		6808BEB01855E2E200A8E552 /* WKFlip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKFlip.h; path = WKFlipPageView/WKFlip.h; sourceTree = "<group>"; };
 		6808BEB11855E39000A8E552 /* WKFlipsView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKFlipsView.h; path = WKFlipPageView/WKFlipsView.h; sourceTree = "<group>"; };
 		6808BEB21855E39000A8E552 /* WKFlipsView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WKFlipsView.m; path = WKFlipPageView/WKFlipsView.m; sourceTree = "<group>"; };
 		6808BF26185768EC00A8E552 /* TestFlipPageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestFlipPageView.h; sourceTree = "<group>"; };
@@ -182,7 +182,7 @@
 		6808BEAC1855E25800A8E552 /* WKFlipsView */ = {
 			isa = PBXGroup;
 			children = (
-				6808BEB01855E2E200A8E552 /* WK.h */,
+				6808BEB01855E2E200A8E552 /* WKFlip.h */,
 				6808BEAD1855E2BC00A8E552 /* WKFlipPageView.h */,
 				6808BEAE1855E2BC00A8E552 /* WKFlipPageView.m */,
 				6808BEB11855E39000A8E552 /* WKFlipsView.h */,

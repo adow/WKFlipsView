@@ -7,7 +7,7 @@
 //
 
 #import "_WKFlipsViewCache.h"
-#import "WK.h"
+#import "WKFlip.h"
 @implementation _WKFlipPageViewCache
 @dynamic topImage;
 @dynamic bottomImage;
@@ -103,7 +103,7 @@
 }
 #pragma mark - file
 -(NSString*)folder{
-    return [NSString stringWithFormat:@"%@/%@.cache",WK_PATH_DOCUMENT,self.identity];
+    return [NSString stringWithFormat:@"%@/%@.cache",WKFLIPS_PATH_DOCUMENT,self.identity];
 }
 -(NSString*)indexFilename{
     return [NSString stringWithFormat:@"%@/index",self.folder];

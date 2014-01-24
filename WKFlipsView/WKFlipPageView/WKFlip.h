@@ -9,11 +9,11 @@
 #ifndef WKPagesScrollView_WK_h
 #define WKPagesScrollView_WK_h
 ///获取主目录
-#define WK_PATH_HOME NSHomeDirectory()
+#define WKFLIPS_PATH_HOME NSHomeDirectory()
 ///获取临时目录
-#define WK_PATH_TEMP NSTemporaryDirectory()
+#define WKFLIPS_PATH_TEMP NSTemporaryDirectory()
 ///获取文档目录
-#define WK_PATH_DOCUMENT NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDirectory, YES)[0]
+#define WKFLIPS_PATH_DOCUMENT NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDirectory, YES)[0]
 
 static inline CATransform3D WKFlipCATransform3DMakePerspective(CGPoint center, float disZ)
 {
