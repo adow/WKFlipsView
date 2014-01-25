@@ -59,9 +59,19 @@ typedef enum WKFlipsLayerDragAtPosition:NSUInteger{
 -(void)draggingWithTranslation:(CGPoint)translation;
 @end
 #pragma mark - WKFlipsLayer
+///图层阴影样式
+typedef enum WKFlipsLayerShadowStyle:NSUInteger{
+    WKFlipsLayerShadowStyle1=0,
+    WKFlipsLayerShadowStyle2=1,
+    WKFlipsLayerShadowStyle3=2,
+}WKFlipsLayerShadowStyle;
 ///单个页面，layer,每个页面有两面，翻页是已经被翻转过的
 @interface WKFlipsLayer : CATransformLayer{
     CGFloat _rotateDegree;
+    ///图层的阴影
+    CALayer* _shadowOnFronLayer;
+    ///图层的阴影
+    CALayer* _shadowOnBackLayer;
 }
 
 @property (nonatomic,retain) CALayer* frontLayer;
@@ -75,4 +85,9 @@ typedef enum WKFlipsLayerDragAtPosition:NSUInteger{
 -(void)cancelDragAnimation;
 ///画出来测试用的文字
 -(void)drawWords:(NSString*)words onPosition:(int)position;
+#pragma mark shadow
+///显示图层阴影
+-(void)showShadowStyle:(WKFlipsLayerShadowStyle)style;
+///去掉图层阴影
+-(void)removeShadow;
 @end
