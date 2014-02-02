@@ -10,6 +10,8 @@
 #import "WKFlipsView.h"
 #import "WKFlip.h"
 #pragma makr - WKFlipsLayerView
+#define WKFlipsLayerView_PasteImageDuration_When_Rebuild 1.0f
+#define WKFlipsLayerView_PasteImageDuration_After_Flipped 0.5f
 @interface WKFlipsLayerView(){
     
 }
@@ -45,12 +47,12 @@
             self.flipsView.currentPageView.hidden=YES;
             break;
         case WKFlipsLayerViewRunStateDragging:
-            [self _showShadowOnDraggingLayer];
+            //[self _showShadowOnDraggingLayer];
             self.hidden=NO;
             self.flipsView.currentPageView.hidden=YES;
             break;
         case WKFlipsLayerViewRunStateStop:
-            [self _removeShadowOnDraggngLayer];
+            //[self _removeShadowOnDraggngLayer];
             self.hidden=YES;
             self.flipsView.currentPageView.hidden=NO;
             
@@ -94,7 +96,7 @@
         layer.rotateDegree=0.0f;
     }
 //    NSLog(@"buildLayers duration:%f",CFAbsoluteTimeGetCurrent()-startTime);
-    [self _pasteImagesToLayersForTargetPageIndex:self.flipsView.pageIndex inSeconds:0.3f];///重建时可以使用更多的时间来贴图
+    [self _pasteImagesToLayersForTargetPageIndex:self.flipsView.pageIndex inSeconds:WKFlipsLayerView_PasteImageDuration_When_Rebuild];///重建时可以使用更多的时间来贴图
     ///TEST
 //    [self flipToPageIndex:1 completion:^(BOOL completed) {
 //    }];
@@ -250,7 +252,7 @@
                 if (++complete_hits>=layersNumber){
                         //NSLog(@"flip completed");
                         ///先创建贴图在设置pageIndex
-                        [self _pasteImagesToLayersForTargetPageIndex:pageIndex inSeconds:1.0f];
+                        [self _pasteImagesToLayersForTargetPageIndex:pageIndex inSeconds:WKFlipsLayerView_PasteImageDuration_After_Flipped];
                         self.flipsView.pageIndex=pageIndex;
                         completionBlock(YES);
                         self.runState=WKFlipsLayerViewRunStateStop;
@@ -271,7 +273,7 @@
                 if (++complete_hits>=layersNumber){
                         //NSLog(@"flip completed");
                         ///先创建贴图在设置pageIndex
-                    [self _pasteImagesToLayersForTargetPageIndex:pageIndex inSeconds:1.0f];
+                    [self _pasteImagesToLayersForTargetPageIndex:pageIndex inSeconds:WKFlipsLayerView_PasteImageDuration_After_Flipped];
                         self.flipsView.pageIndex=pageIndex;
                         completionBlock(YES);
                         self.runState=WKFlipsLayerViewRunStateStop;
@@ -342,7 +344,7 @@
             [_dragging_layer setRotateDegree:newRotateDegree duration:duration afterDelay:0.0f completion:^{
                 _dragging_layer=nil;
                 ///先创建贴图在设置pageIndex
-                [self _pasteImagesToLayersForTargetPageIndex:previousPageIndex inSeconds:1.0f];
+                [self _pasteImagesToLayersForTargetPageIndex:previousPageIndex inSeconds:WKFlipsLayerView_PasteImageDuration_After_Flipped];
                 self.flipsView.pageIndex=previousPageIndex;
                 self.runState=WKFlipsLayerViewRunStateStop;
             }];
@@ -365,7 +367,7 @@
             [_dragging_layer setRotateDegree:newRotateDegree duration:duration afterDelay:0.0f completion:^{
                 _dragging_layer=nil;
                 ///先创建贴图在设置pageIndex
-                [self _pasteImagesToLayersForTargetPageIndex:nextPageIndex inSeconds:1.0f];
+                [self _pasteImagesToLayersForTargetPageIndex:nextPageIndex inSeconds:WKFlipsLayerView_PasteImageDuration_After_Flipped];
                 self.flipsView.pageIndex=nextPageIndex;
                 self.runState=WKFlipsLayerViewRunStateStop;
                 
