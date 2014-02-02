@@ -103,7 +103,7 @@
 }
 #pragma mark - file
 -(NSString*)folder{
-    return [NSString stringWithFormat:@"%@/%@.cache",WKFLIPS_PATH_DOCUMENT,self.identity];
+    return [NSString stringWithFormat:@"%@/%@.cache",WKFLIPS_PATH_TEMP,self.identity];
 }
 -(NSString*)indexFilename{
     return [NSString stringWithFormat:@"%@/index",self.folder];
