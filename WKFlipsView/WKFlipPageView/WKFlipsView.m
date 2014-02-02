@@ -15,6 +15,7 @@
         // Initialization code
         _cache=[[WKFlipsViewCache alloc]initWithIdentity:cacheIdentity];
         _reusedPageViewDictionary=[[NSMutableDictionary alloc]init];
+        _reusedPageViewDictionaryCopy=[[NSMutableDictionary alloc]init];
         _currentPageView=[[UIView alloc]initWithFrame:self.bounds];
         [self addSubview:_currentPageView];
         self.pageIndex=pageIndex;
@@ -28,6 +29,7 @@
 }
 -(void)dealloc{
     [_reusedPageViewDictionary release];
+    [_reusedPageViewDictionaryCopy release];
     [_currentPageView release];
     [_cache release];
     //[_testCacheView release];
@@ -43,9 +45,21 @@
     pageView.frame=self.bounds;
     _reusedPageViewDictionary[reuseIdentifier]=pageView;
     [pageView release];
+    ///要保存两份
+    WKFlipPageView* pageViewCopy=[[class alloc]init];
+    pageViewCopy.frame=self.bounds;
+    _reusedPageViewDictionaryCopy[reuseIdentifier]=pageViewCopy;
+    [pageViewCopy release];
 }
--(WKFlipPageView*)dequeueReusablePageWithReuseIdentifier:(NSString *)reuseIdentifier{
-    WKFlipPageView* pageView= _reusedPageViewDictionary[reuseIdentifier];
+-(WKFlipPageView*)dequeueReusablePageWithReuseIdentifier:(NSString *)reuseIdentifier isThumbCopy:(bool)isThumbCopy{
+    WKFlipPageView* pageView= nil;
+    ///用来创建缩略图
+    if (isThumbCopy){
+        pageView=_reusedPageViewDictionaryCopy[reuseIdentifier];
+    }
+    else{
+        pageView=_reusedPageViewDictionary[reuseIdentifier];
+    }
     [pageView prepareForReuse];
     return pageView;
 }
@@ -67,7 +81,7 @@
     _pageIndex=pageIndex;
     ///这里的pageView也从deque中获取，所以是一个实例，如果其他地方在创建贴图时也调用了下面这个方法，会导致实例进行更新，所以正在实际显示的页面会被修改.这就要求，在设置pageIndex的前面就应该调用完成创建贴图的过程
     if (pageIndex>=0 && pageIndex<[self.dataSource numberOfPagesForFlipsView:self]){
-        WKFlipPageView* pageView=[self.dataSource flipsView:self pageAtPageIndex:pageIndex];
+        WKFlipPageView* pageView=[self.dataSource flipsView:self pageAtPageIndex:pageIndex isThumbCopy:NO];
         ///TODO:这里可能需要禁止动画
         [self.currentPageView addSubview:pageView];
     }

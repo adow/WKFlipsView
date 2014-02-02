@@ -14,7 +14,7 @@
 @class WKFlipsView;
 @protocol WKFlipsViewDataSource <NSObject>
 ///每一页内容
--(WKFlipPageView*)flipsView:(WKFlipsView*)flipsView pageAtPageIndex:(int)pageIndex;
+-(WKFlipPageView*)flipsView:(WKFlipsView*)flipsView pageAtPageIndex:(int)pageIndex isThumbCopy:(bool)isThumbCopy;
 ///总页数
 -(NSInteger)numberOfPagesForFlipsView:(WKFlipsView*)flipsView;
 
@@ -25,7 +25,10 @@
 -(void)flipsView:(WKFlipsView*)flipsView willUpdatePageAtPageIndex:(int)pageIndex;
 @end
 @interface WKFlipsView : UIView{
+    ///用于存储页面类型
     NSMutableDictionary* _reusedPageViewDictionary;
+    ///用于存储页面类型，用作缓存用
+    NSMutableDictionary* _reusedPageViewDictionaryCopy;
     UIView* _testCacheView;
     int _pageIndex;
 }
@@ -47,8 +50,8 @@
 @property (nonatomic,assign) int pageIndex;
 ///注册页面class
 -(void)registerClass:(Class)class forPageWithReuseIdentifier:(NSString*)reuseIdentifier;
-///获取一个已经使用的page，这个需要收工添加cacheName，可以使用带pageIndex的代替
--(WKFlipPageView*)dequeueReusablePageWithReuseIdentifier:(NSString*)reuseIdentifier;
+///获取一个已经使用的page，这个需要收工添加cacheName，可以使用带pageIndex的代替,isThumbCopy表明是否用作缩略图缓存
+-(WKFlipPageView*)dequeueReusablePageWithReuseIdentifier:(NSString*)reuseIdentifier isThumbCopy:(bool)isThumbCopy;
 #pragma mark - action
 ///载入页面
 -(void)reloadPages;
