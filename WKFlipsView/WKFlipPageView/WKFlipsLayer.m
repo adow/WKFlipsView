@@ -484,12 +484,14 @@
 -(void)_showShadowOnDraggingLayer2{
     NSUInteger layerIndex=[self.layer.sublayers indexOfObject:_dragging_layer];
     NSUInteger shadowLayerIndex_bottom=layerIndex-1;
-    NSUInteger shadowLayerIndex_top=layerIndex+1;
     WKFlipsLayer* shadowLayer_bottom=self.layer.sublayers[shadowLayerIndex_bottom];
-    WKFlipsLayer* shadowLayer_top=self.layer.sublayers[shadowLayerIndex_top];
+    WKFlipsLayer* shadowLayer_top=nil;
+    if (layerIndex<self.layer.sublayers.count-1){
+        NSUInteger shadowLayerIndex_top=layerIndex+1;
+        shadowLayer_top=self.layer.sublayers[shadowLayerIndex_top];
+    }
     if (_dragging_layer.rotateDegree<90.0f){
         [shadowLayer_bottom showShadowOpacity:(1.0f-_dragging_layer.rotateDegree/90.0f)];
-        //[shadowLayer_bottom showShadowStyle:WKFlipsLayerShadowStyle1];
         [shadowLayer_top removeShadow];
     }
     else{
