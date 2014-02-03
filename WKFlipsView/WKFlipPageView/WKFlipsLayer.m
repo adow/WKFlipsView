@@ -453,8 +453,11 @@
         _dragging_layer.rotateDegree=rotateDegree;
     }
     _dragging_last_translation_y=translation.y;
+    ///shadow
+    [self _showShadowOnDraggingLayer2];
     
 }
+#pragma mark Shadow
 ///显示拖动时的图层阴影
 -(void)_showShadowOnDraggingLayer{
     ///找到需要设置阴影的图层
@@ -476,6 +479,24 @@
         [flipLayer removeShadow];
     }
     NSLog(@"removeShaodw duration:%f",CFAbsoluteTimeGetCurrent()-startTime);
+}
+///根据现在的页面拖动的角度计算另外两层页面的阴影
+-(void)_showShadowOnDraggingLayer2{
+    NSUInteger layerIndex=[self.layer.sublayers indexOfObject:_dragging_layer];
+    NSUInteger shadowLayerIndex_bottom=layerIndex-1;
+    NSUInteger shadowLayerIndex_top=layerIndex+1;
+    WKFlipsLayer* shadowLayer_bottom=self.layer.sublayers[shadowLayerIndex_bottom];
+    WKFlipsLayer* shadowLayer_top=self.layer.sublayers[shadowLayerIndex_top];
+    if (_dragging_layer.rotateDegree<90.0f){
+        [shadowLayer_bottom showShadowOpacity:(1.0f-_dragging_layer.rotateDegree/90.0f)];
+        //[shadowLayer_bottom showShadowStyle:WKFlipsLayerShadowStyle1];
+        [shadowLayer_top removeShadow];
+    }
+    else{
+        [shadowLayer_top showShadowOpacity:(1.0f-(180.0f-_dragging_layer.rotateDegree)/90.0f)];
+        [shadowLayer_bottom removeShadow];
+    }
+
 }
 @end
 
@@ -641,5 +662,20 @@
         [_shadowOnBackLayer removeFromSuperlayer];
         _shadowOnBackLayer=nil;
     }
+}
+-(void)showShadowOpacity:(CGFloat)opacity{
+    if (!_shadowOnFronLayer && !_shadowOnBackLayer){
+        _shadowOnFronLayer=[[CALayer alloc]init];
+        _shadowOnFronLayer.frame=self.bounds;
+        _shadowOnBackLayer=[[CALayer alloc]init];
+        _shadowOnBackLayer.frame=self.bounds;
+        [self.frontLayer addSublayer:_shadowOnFronLayer];
+        [self.backLayer addSublayer:_shadowOnBackLayer];
+        _shadowOnBackLayer.backgroundColor=[UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:0.9f].CGColor;
+        _shadowOnFronLayer.backgroundColor=[UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:0.9f].CGColor;
+    }
+    _shadowOnBackLayer.opacity=opacity;
+    _shadowOnFronLayer.opacity=opacity;
+    
 }
 @end

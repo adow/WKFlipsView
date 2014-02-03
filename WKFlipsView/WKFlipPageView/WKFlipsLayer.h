@@ -90,4 +90,6 @@ typedef enum WKFlipsLayerShadowStyle:NSUInteger{
 -(void)showShadowStyle:(WKFlipsLayerShadowStyle)style;
 ///去掉图层阴影
 -(void)removeShadow;
+///显示阴影的透明度
+-(void)showShadowOpacity:(CGFloat)opacity;
 @end

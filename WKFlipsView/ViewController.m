@@ -43,7 +43,7 @@
     [buttonNext setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     buttonNext.backgroundColor=[UIColor lightGrayColor];
     [buttonNext addTarget:self action:@selector(onButtonNext:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:buttonNext];
+    //[self.view addSubview:buttonNext];
     
     UIButton* buttonInsert=[UIButton buttonWithType:UIButtonTypeCustom];
     buttonInsert.frame=CGRectMake(10.0f, 360.0f, 300.0f, 50.0f);
@@ -51,7 +51,7 @@
     [buttonInsert setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     buttonInsert.backgroundColor=[UIColor lightGrayColor];
     [buttonInsert addTarget:self action:@selector(onButtonInsert:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:buttonInsert];
+    //[self.view addSubview:buttonInsert];
     
     UIButton* buttonUpdate=[UIButton buttonWithType:UIButtonTypeCustom];
     buttonUpdate.frame=CGRectMake(10.0f, 420.0f, 300.0f, 50.0f);
@@ -59,12 +59,8 @@
     [buttonUpdate setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     buttonUpdate.backgroundColor=[UIColor lightGrayColor];
     [buttonUpdate addTarget:self action:@selector(onButtonUpdate:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:buttonUpdate];
+    //[self.view addSubview:buttonUpdate];
 
-    ///test prepare cache
-    //[_flipsView preparePageCachesFromPageIndex:0 toPageIndex:3];
-    
-    ///test remove cache
     double delayInSeconds = 2.0;
     dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
     dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
