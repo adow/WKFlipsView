@@ -51,12 +51,11 @@
             self.flipsView.currentPageView.hidden=YES;
             break;
         case WKFlipsLayerViewRunStateDragging:
-            //[self _showShadowOnDraggingLayer];
             self.hidden=NO;
             self.flipsView.currentPageView.hidden=YES;
             break;
         case WKFlipsLayerViewRunStateStop:
-            //[self _removeShadowOnDraggngLayer];
+            [self _removeShadowOnDraggngLayer];
             self.hidden=YES;
             self.flipsView.currentPageView.hidden=NO;
             
@@ -454,34 +453,12 @@
     }
     _dragging_last_translation_y=translation.y;
     ///shadow
-    [self _showShadowOnDraggingLayer2];
+    [self _showShadowOnDraggingLayer];
     
 }
 #pragma mark Shadow
-///显示拖动时的图层阴影
--(void)_showShadowOnDraggingLayer{
-    ///找到需要设置阴影的图层
-    int layersNumber=[self numbersOfLayers];
-    int stopLayerIndexAtTop=layersNumber-1-self.flipsView.pageIndex;
-    int stopLayerIndexAtBottom=stopLayerIndexAtTop-1;
-    ///设置阴影
-    WKFlipsLayer* topLayer=self.layer.sublayers[stopLayerIndexAtTop];
-    [topLayer showShadowStyle:WKFlipsLayerShadowStyle1];
-    WKFlipsLayer* bottomLayer=self.layer.sublayers[stopLayerIndexAtBottom];
-    [bottomLayer showShadowStyle:WKFlipsLayerShadowStyle2];
-}
-///去掉图层阴影，从所有图层上处理
--(void)_removeShadowOnDraggngLayer{
-    double startTime=CFAbsoluteTimeGetCurrent();
-    int layersNUmber=[self numbersOfLayers];
-    for (int layerIndex=layersNUmber-1; layerIndex>=0; layerIndex--){
-        WKFlipsLayer* flipLayer=self.layer.sublayers[layerIndex];
-        [flipLayer removeShadow];
-    }
-    NSLog(@"removeShaodw duration:%f",CFAbsoluteTimeGetCurrent()-startTime);
-}
 ///根据现在的页面拖动的角度计算另外两层页面的阴影
--(void)_showShadowOnDraggingLayer2{
+-(void)_showShadowOnDraggingLayer{
     NSUInteger layerIndex=[self.layer.sublayers indexOfObject:_dragging_layer];
     NSUInteger shadowLayerIndex_bottom=layerIndex-1;
     WKFlipsLayer* shadowLayer_bottom=self.layer.sublayers[shadowLayerIndex_bottom];
@@ -498,7 +475,17 @@
         [shadowLayer_top showShadowOpacity:(1.0f-(180.0f-_dragging_layer.rotateDegree)/90.0f)];
         [shadowLayer_bottom removeShadow];
     }
-
+    
+}
+///去掉图层阴影，从所有图层上处理
+-(void)_removeShadowOnDraggngLayer{
+    double startTime=CFAbsoluteTimeGetCurrent();
+    int layersNUmber=[self numbersOfLayers];
+    for (int layerIndex=layersNUmber-1; layerIndex>=0; layerIndex--){
+        WKFlipsLayer* flipLayer=self.layer.sublayers[layerIndex];
+        [flipLayer removeShadow];
+    }
+    NSLog(@"removeShaodw duration:%f",CFAbsoluteTimeGetCurrent()-startTime);
 }
 @end
 
@@ -629,42 +616,6 @@
     [CATransaction commit];
 }
 #pragma mark shadow
--(void)showShadowStyle:(WKFlipsLayerShadowStyle)style{
-    if (_shadowOnBackLayer || _shadowOnFronLayer)
-        return;
-    //NSLog(@"showShadowStyle:%d",style);
-    _shadowOnFronLayer=[[CALayer alloc]init];
-    _shadowOnFronLayer.frame=self.bounds;
-    _shadowOnBackLayer=[[CALayer alloc]init];
-    _shadowOnBackLayer.frame=self.bounds;
-    [self.frontLayer addSublayer:_shadowOnFronLayer];
-    [self.backLayer addSublayer:_shadowOnBackLayer];
-    switch (style) {
-        case WKFlipsLayerShadowStyle1:
-            _shadowOnBackLayer.backgroundColor=[UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:0.2f].CGColor;
-            _shadowOnFronLayer.backgroundColor=[UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:0.2f].CGColor;
-            break;
-        case WKFlipsLayerShadowStyle2:
-            _shadowOnBackLayer.backgroundColor=[UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:0.15f].CGColor;
-            _shadowOnFronLayer.backgroundColor=[UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:0.15f].CGColor;
-            break;
-        default:
-            break;
-    }
-    
-    
-}
--(void)removeShadow{
-    //NSLog(@"removeShadow");
-    if (_shadowOnFronLayer){
-        [_shadowOnFronLayer removeFromSuperlayer];
-        _shadowOnFronLayer=nil;
-    }
-    if (_shadowOnBackLayer){
-        [_shadowOnBackLayer removeFromSuperlayer];
-        _shadowOnBackLayer=nil;
-    }
-}
 -(void)showShadowOpacity:(CGFloat)opacity{
     if (!_shadowOnFronLayer && !_shadowOnBackLayer){
         _shadowOnFronLayer=[[CALayer alloc]init];
@@ -679,5 +630,16 @@
     _shadowOnBackLayer.opacity=opacity;
     _shadowOnFronLayer.opacity=opacity;
     
+}
+-(void)removeShadow{
+    //NSLog(@"removeShadow");
+    if (_shadowOnFronLayer){
+        [_shadowOnFronLayer removeFromSuperlayer];
+        _shadowOnFronLayer=nil;
+    }
+    if (_shadowOnBackLayer){
+        [_shadowOnBackLayer removeFromSuperlayer];
+        _shadowOnBackLayer=nil;
+    }
 }
 @end
