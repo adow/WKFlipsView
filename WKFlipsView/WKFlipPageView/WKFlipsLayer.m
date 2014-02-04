@@ -106,6 +106,7 @@
     ///直接已经翻页到现在的页面
     [self flipToPageIndex:self.flipsView.pageIndex];
 }
+#pragma mark paste images
 ///在允许的时间范围内为尽可能多的layer贴图,如果maxSeconds是0那就忽略时间
 ///应该从当前页面两边优先贴图
 -(void)_pasteImagesToLayersForTargetPageIndex:(int)targetPageIndex inSeconds:(double)maxSeconds{
@@ -177,6 +178,19 @@
     }
     duration=CFAbsoluteTimeGetCurrent()-startTime;
     NSLog(@"pastes:%d,skips:%d,duration:%f",numbersPastes,numbersSkips,duration);
+}
+///这个会在主线程中延时一点贴图
+-(void)_pasteImagesToLayersForTargetPageIndex:(int)targetPageIndex inSeconds:(double)maxSeconds delay:(CGFloat)delay{
+    if (!delay){
+        [self _pasteImagesToLayersForTargetPageIndex:targetPageIndex inSeconds:maxSeconds];
+    }
+    else{
+        double delayInSeconds = delay;
+        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+        dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+            [self _pasteImagesToLayersForTargetPageIndex:targetPageIndex inSeconds:maxSeconds];
+        });
+    }
 }
 ///对页面的贴图顺序进行排序，当前页面周边的优先贴图
 -(NSArray*)_sortedPagesForTargetPageIndex:(int)targetPageIndex{
@@ -257,12 +271,7 @@
                         //NSLog(@"flip completed");
                         self.flipsView.pageIndex=pageIndex;
                         ///延时一点进行贴图
-                        double delayInSeconds = WKFlipsLayerView_PasteImage_Delay;
-                        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
-                        dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-                            ///先创建贴图在设置pageIndex
-                            [self _pasteImagesToLayersForTargetPageIndex:pageIndex inSeconds:WKFlipsLayerView_PasteImageDuration_After_Flipped];
-                        });
+                        [self _pasteImagesToLayersForTargetPageIndex:pageIndex inSeconds:WKFlipsLayerView_PasteImageDuration_After_Flipped delay:WKFlipsLayerView_PasteImage_Delay];
                         completionBlock(YES);
                         self.runState=WKFlipsLayerViewRunStateStop;
                     }
@@ -283,12 +292,7 @@
                         //NSLog(@"flip completed");
                         self.flipsView.pageIndex=pageIndex;
                         ///延时一点进行贴图
-                        double delayInSeconds = WKFlipsLayerView_PasteImage_Delay;
-                        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
-                        dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-                            ///先创建贴图在设置pageIndex
-                            [self _pasteImagesToLayersForTargetPageIndex:pageIndex inSeconds:WKFlipsLayerView_PasteImageDuration_After_Flipped];
-                        });
+                        [self _pasteImagesToLayersForTargetPageIndex:pageIndex inSeconds:WKFlipsLayerView_PasteImageDuration_After_Flipped delay:WKFlipsLayerView_PasteImage_Delay];
                         completionBlock(YES);
                         self.runState=WKFlipsLayerViewRunStateStop;
                     
@@ -359,12 +363,7 @@
                 _dragging_layer=nil;
                 self.flipsView.pageIndex=previousPageIndex;
                 ///延时一点进行贴图
-                double delayInSeconds = WKFlipsLayerView_PasteImage_Delay;
-                dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
-                dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-                    ///先创建贴图在设置pageIndex
-                    [self _pasteImagesToLayersForTargetPageIndex:previousPageIndex inSeconds:WKFlipsLayerView_PasteImageDuration_After_Flipped];
-                });
+                [self _pasteImagesToLayersForTargetPageIndex:previousPageIndex inSeconds:WKFlipsLayerView_PasteImageDuration_After_Flipped delay:WKFlipsLayerView_PasteImage_Delay];
                 self.runState=WKFlipsLayerViewRunStateStop;
             }];
         }
@@ -387,13 +386,7 @@
                 _dragging_layer=nil;
                 self.flipsView.pageIndex=nextPageIndex;
                 ///延时一点进行贴图
-                double delayInSeconds = WKFlipsLayerView_PasteImage_Delay;
-                dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
-                dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-                    ///先创建贴图在设置pageIndex
-                    [self _pasteImagesToLayersForTargetPageIndex:nextPageIndex inSeconds:WKFlipsLayerView_PasteImageDuration_After_Flipped];
-                });
-                
+                [self _pasteImagesToLayersForTargetPageIndex:nextPageIndex inSeconds:WKFlipsLayerView_PasteImageDuration_After_Flipped delay:WKFlipsLayerView_PasteImage_Delay];
                 self.runState=WKFlipsLayerViewRunStateStop;
                 
             }];
@@ -481,13 +474,13 @@
 }
 ///去掉图层阴影，从所有图层上处理
 -(void)_removeShadowOnDraggngLayer{
-    double startTime=CFAbsoluteTimeGetCurrent();
+    //double startTime=CFAbsoluteTimeGetCurrent();
     int layersNUmber=[self numbersOfLayers];
     for (int layerIndex=layersNUmber-1; layerIndex>=0; layerIndex--){
         WKFlipsLayer* flipLayer=self.layer.sublayers[layerIndex];
         [flipLayer removeShadow];
     }
-    NSLog(@"removeShaodw duration:%f",CFAbsoluteTimeGetCurrent()-startTime);
+    //NSLog(@"removeShaodw duration:%f",CFAbsoluteTimeGetCurrent()-startTime);
 }
 @end
 
