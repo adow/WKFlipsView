@@ -238,7 +238,7 @@
     if (pageIndex==self.flipsView.pageIndex)
         return;
     self.runState=WKFlipsLayerViewRunStateAnimation;
-    CGFloat durationFull=3.0f;
+    CGFloat durationFull=1.3f;
     CGFloat delayFromDuration=0.05f;
     ///往前翻页，也就是把上半部分往下面翻页
     CGFloat delay=0.0f;
