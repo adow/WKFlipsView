@@ -459,6 +459,8 @@
 #pragma mark Shadow
 ///根据现在的页面拖动的角度计算另外两层页面的阴影
 -(void)_showShadowOnDraggingLayer{
+    ///当前正在拖动的这层有一个固定明度的阴影
+    [_dragging_layer showShadowOpacity:0.03];
     NSUInteger layerIndex=[self.layer.sublayers indexOfObject:_dragging_layer];
     NSUInteger shadowLayerIndex_bottom=layerIndex-1;
     WKFlipsLayer* shadowLayer_bottom=self.layer.sublayers[shadowLayerIndex_bottom];
