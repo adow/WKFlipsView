@@ -7,6 +7,17 @@ A Flipboard-like paging view.
 * 动画连续翻页到第几页;
 * 手动拖动翻页;
 
+
+
+[实现效果的视频链接](http://v.youku.com/v_show/id_XNjY5NTQ3OTU2.html)
+
+
+![image](http://farm6.staticflickr.com/5536/12322833674_14c5a1cb08_c.jpg)
+
+
+![image](http://farm4.staticflickr.com/3748/12322833224_c89ce973f9_c.jpg)
+
+
 ## 使用
 
 * 包含 
