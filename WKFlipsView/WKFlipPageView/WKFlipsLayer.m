@@ -572,10 +572,8 @@
 #pragma mark - rotateDegree
 -(void)setRotateDegree:(CGFloat)rotateDegree{
     _rotateDegree=rotateDegree;
-    [CATransaction begin];
-    [CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];
+    [CATransaction setDisableActions:YES];
     self.transform=WKFlipCATransform3DPerspectSimpleWithRotate(rotateDegree);
-    [CATransaction commit];
 }
 -(CGFloat)rotateDegree{
     return _rotateDegree;
@@ -614,6 +612,7 @@
     [CATransaction commit];
 }
 #pragma mark shadow
+///显示图层阴影，设置opacity是比较费时的操作
 -(void)showShadowOpacity:(CGFloat)opacity{
     if (!_shadowOnFronLayer && !_shadowOnBackLayer){
         _shadowOnFronLayer=[[CALayer alloc]init];
