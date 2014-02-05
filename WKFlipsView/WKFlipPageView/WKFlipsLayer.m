@@ -406,6 +406,7 @@
     //NSLog(@"dragging:%f",translation.y);
     if (self.runState!=WKFlipsLayerViewRunStateDragging)
         return;
+    ///一开始的时候要知道是在拖动那一页
     if (!_dragging_layer){
         int layersNumber=[self numbersOfLayers];
         int stopLayerIndexAtTop=layersNumber-1-self.flipsView.pageIndex;
@@ -418,6 +419,8 @@
             _dragging_layer=self.layer.sublayers[stopLayerIndexAtBottom];
             _dragging_position=WKFlipsLayerDragAtPositionBottom;
         }
+        ///恢复开是时候的位置
+        _dragging_last_translation_y=translation.y;
     }
     ///往下面翻
     if (_dragging_position==WKFlipsLayerDragAtPositionTop){
