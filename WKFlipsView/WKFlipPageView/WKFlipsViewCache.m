@@ -38,9 +38,7 @@
 }
 -(UIImage*)topImage{
     if (!_topImage){
-        if ([[NSFileManager defaultManager] fileExistsAtPath:self.topImageFilename]){
-            _topImage=[[UIImage alloc] initWithContentsOfFile:self.topImageFilename];
-        }
+        _topImage=[[UIImage alloc] initWithContentsOfFile:self.topImageFilename];
     }
     return _topImage;
 }
@@ -58,9 +56,7 @@
 }
 -(UIImage*)bottomImage{
     if (!_bottomImage){
-        if ([[NSFileManager defaultManager] fileExistsAtPath:self.bottomImageFilename]){
-            _bottomImage=[[UIImage alloc]initWithContentsOfFile:self.bottomImageFilename];
-        }
+        _bottomImage=[[UIImage alloc]initWithContentsOfFile:self.bottomImageFilename];
     }
     return _bottomImage;
 }
@@ -99,11 +95,16 @@
 -(void)dealloc{
     [_pageIdentityArray release];
     [_identity release];
+    [_folder release];
     [super dealloc];
 }
 #pragma mark - file
 -(NSString*)folder{
-    return [NSString stringWithFormat:@"%@/%@.cache",WKFLIPS_PATH_TEMP,self.identity];
+    if (!_folder){
+        _folder=[[NSString alloc]initWithFormat:@"%@/%@.cache",WKFLIPS_PATH_TEMP,self.identity];
+    }
+    return _folder;
+    
 }
 -(NSString*)indexFilename{
     return [NSString stringWithFormat:@"%@/index",self.folder];

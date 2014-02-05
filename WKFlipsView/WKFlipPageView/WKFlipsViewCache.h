@@ -32,7 +32,7 @@
 -(void)removeCacheImage;
 @end
 @interface WKFlipsViewCache : NSObject{
-    
+    NSString* _folder;
 }
 @property (nonatomic,retain) NSMutableArray* pageIdentityArray;
 ///文件夹标识

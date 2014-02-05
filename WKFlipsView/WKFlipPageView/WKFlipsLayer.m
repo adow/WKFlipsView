@@ -572,7 +572,10 @@
 #pragma mark - rotateDegree
 -(void)setRotateDegree:(CGFloat)rotateDegree{
     _rotateDegree=rotateDegree;
+    [CATransaction begin];
+    [CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];
     self.transform=WKFlipCATransform3DPerspectSimpleWithRotate(rotateDegree);
+    [CATransaction commit];
 }
 -(CGFloat)rotateDegree{
     return _rotateDegree;
