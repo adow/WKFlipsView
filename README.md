@@ -20,7 +20,7 @@ A Flipboard-like paging view.
 
 
 每一个具体的页面在dataSource所对应的接口中实现，需要指定具体实现的页面定义。
-registClass用来保存页面的类型，页面应该是WKFlipPageView的子类。所以首先定义页面实现类。由于每个页面是重用的，所以应该实现 `-(void)prepareForReuse` 方法，用来处理在重用前一些UI的清理。
+registClass用来保存页面的类型，页面应该是WKFlipPageView的子类。所以首先定义页面实现类。由于每个页面是重用的，所以应该实现 `-(void)prepareForReuse` 方法，用来处理在重用前一些UI的清理。重复使用WKFlipPageView的好处在于可以减少创建UIView所花的时间，在页面很多的时候，这个尤为明显。
 
 TestImagePageView.h， 实现WKFlipPageView 的子类
 
@@ -97,7 +97,7 @@ TestImagePageView.m
     [_flipsView reloadPages];
 	    
 
-* 实现WKFlipsViewDataSource的方法,提供数据准备
+* 实现WKFlipsViewDataSource的方法,提供数据准备。
 
 
 		///获取页面数量
@@ -105,10 +105,12 @@ TestImagePageView.m
 		    return _images.count;
 		}
 		
-		///实现每一页的具体内容
-		-(WKFlipPageView*)flipsView:(WKFlipsView *)flipsView pageAtPageIndex:(int)pageIndex{
+		///实现每一页的具体内容，参数isThumbCopy指定了这个方法是否使用来创建缓存贴图时使用的
+		-(WKFlipPageView*)flipsView:(WKFlipsView *)flipsView pageAtPageIndex:(int)pageIndex isThumbCopy:(bool)isThumbCopy{
 		    static NSString* identity=@"page";
-		    TestImagePageView* pageView=(TestImagePageView*)[flipsView dequeueReusablePageWithReuseIdentifier:identity];
+		    ///获取重用的WKFlipPageView
+		    TestImagePageView* pageView=(TestImagePageView*)[flipsView dequeueReusablePageWithReuseIdentifier:identity isThumbCopy:isThumbCopy];
+		    ///为这个page设置对应页面的内容
 		    UIImage* image=[UIImage imageNamed:_images[pageIndex]];
 		    pageView.testImageView.image=image;
 		    UIButton* button=[UIButton buttonWithType:UIButtonTypeCustom];
@@ -123,7 +125,7 @@ TestImagePageView.m
 		}
 
 
-其中的的_images就是要使用的数据, 应该在之前就完成数据准备了
+其中的的_images就是要使用的数据, 应该在之前就完成数据准备了。（测试中是载入一些和屏幕一样大小的图片）
 
 
 		///从一个文件中载入一堆图片
@@ -218,9 +220,9 @@ TestImagePageView.m
 ```
 - UIView 
 	- WKFlipsView
-		- UIView (currentPageView)
+		- UIView (currentPageView) #下层是真正显示的内容
 			- WKFlipPageView (currentFlipPageView)
-		- WKFlipsLayerView (flippingLayersView)
+		- WKFlipsLayerView (flippingLayersView) #上层是用来实现翻页的效果，翻页结束后隐藏
 			- CALayer (layer)
 				- WKFlipsLayer 
 					- frontLayer
@@ -245,7 +247,7 @@ TestImagePageView.m
 
 ### 关于翻转角度
 
-每个WKFlipsLayer包含了两面的贴图，而背面的贴图是一开始就翻转过了的。当图层翻转完后，背面的贴图就显示出来了。
+每个WKFlipsLayer包含了**两面的贴图**，而背面的贴图是一开始就翻转过了的。当图层翻转完后，背面的贴图就显示出来了。
 
 翻转的效果只需要通过修改CALayer的transform属性就可以实现了。我们已经为每个页面创建了上下两部分的截图，并放在两个CALayer中，然后对图层进行翻转设置。在开始的时候（也就是图层全部创建的时候），所有的图层都在屏幕的下半部分。这时他们的角度都是0°，当进行翻转的时候，角度逐渐增大，到180°的时候，就是完成这个图层从下翻转到上的过程了。由于我们的图层是双面的，翻转到上面的时候，我们就能看到背面的内容了。
 
@@ -275,7 +277,7 @@ TestImagePageView.m
 
 我的优化方法是将这些UIView的截图都保存下来，这样避免反复创建截图。当需要更新的时候，对应的图片文件会被删除。所以在WKFlipsView创建的时候，是需要一个标识缓存的参数的`withCacheIdentity`用来标识这一组页面的缓存位置。
 
-当WKFlipsView创建的时候，或者有页面进行插入/修改/删除的时候，现有的翻页图层会被全部重建(WKFlipsLayerView下面的WKFlipsLayer会被重建)，建立图层的同时，会为他们进行贴图，如果对应页面的贴图已经有缓存文件的话，他会直接从文件中载入的，如果没有的话，会为这个页面来创建截图并缓存。所以，我们能看出来，重建图层的时候可能会消耗大量时间，主要是由于贴图的时间，如果一开始没有如何截图缓存的时候，这个过程的时间是更长的。我能想到的办法就是在贴图过程中设置一个时间阀值，超过这个时间就会停止贴图了，这时你就会看到一些空白的图层页面在翻页。
+当WKFlipsView创建的时候，或者有页面进行插入/修改/删除的时候，现有的翻页图层会被全部重建(WKFlipsLayerView下面的WKFlipsLayer会被重建)，建立图层的同时，会为他们进行贴图，如果对应页面的贴图已经有缓存文件的话，他会直接从文件中载入的，如果没有的话，会为这个页面来创建截图并缓存。所以，我们能看出来，重建图层的时候可能会消耗大量时间，主要是由于贴图的时间，如果一开始没有任何截图缓存的时候，这个过程的时间是更长的。我能想到的办法就是在贴图过程中设置一个时间阀值，超过这个时间就会停止贴图了，这时你就会看到一些空白的图层页面在翻页。
 
 		///在允许的时间范围内为尽可能多的layer贴图,如果maxSeconds是0那就忽略时间
 		///应该从当前页面两边优先贴图
