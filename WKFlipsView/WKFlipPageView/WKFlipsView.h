@@ -59,6 +59,8 @@
 -(void)flipToPageIndex:(int)pageIndex;
 ///动画翻页到一个指定的页面
 -(void)flipToPageIndex:(int)pageIndex completion:(void(^)())completion;
+///在主线程中延时翻页,如果delay=0就立刻执行
+-(void)flipToPageIndex:(int)pageIndex delay:(CGFloat)delay completion:(void (^)())completion;
 #pragma mark create update and delete
 ///删除当前这个位置的页面
 -(void)deleteCurrentPage;

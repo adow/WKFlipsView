@@ -105,6 +105,18 @@
     [_flippingLayersView flipToPageIndex:pageIndex completion:^(BOOL completed) {
     }];
 }
+-(void)flipToPageIndex:(int)pageIndex delay:(CGFloat)delay completion:(void (^)())completion{
+    if (!delay){
+        [self flipToPageIndex:pageIndex completion:completion];
+    }
+    else{
+        double delayInSeconds = delay;
+        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+        dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+            [self flipToPageIndex:pageIndex completion:completion];
+        });
+    }
+}
 #pragma mark create update and detele
 -(void)deleteCurrentPage{
     ///在动画或者拖动时不可以编辑

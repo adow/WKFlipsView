@@ -61,13 +61,9 @@
     [buttonUpdate addTarget:self action:@selector(onButtonUpdate:) forControlEvents:UIControlEventTouchUpInside];
     //[self.view addSubview:buttonUpdate];
 
-    double delayInSeconds = 2.0;
-    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
-    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-        [_flipsView flipToPageIndex:9 completion:^{
-            
-        }];
-    });
+    [_flipsView flipToPageIndex:9 delay:1.0f completion:^{
+        
+    }];
 }
 
 - (void)didReceiveMemoryWarning
