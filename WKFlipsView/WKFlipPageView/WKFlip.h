@@ -16,6 +16,16 @@
 ///获取文档目录
 #define WKFLIPS_PATH_DOCUMENT NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDirectory, YES)[0]
 
+///系统版本号
+#define WKFLIPS_CURRENTSYSTEMVERSIONFLOAT [[[UIDevice currentDevice] systemVersion] floatValue]
+///当前系统是否是ios7
+#define WKFLIPS_IOS7 BUS_CURRENTSYSTEMVERSIONFLOAT==7.0f
+
+///状态条的高度
+#define WKFLIPS_STATUSBAR_HEIGHT 20.0f
+
+#define WKFLIPS_IPOD [[UIDevice currentDevice].model rangeOfString:@"iPod"].location!=NSNotFound
+
 static inline CATransform3D WKFlipCATransform3DMakePerspective(CGPoint center, float disZ)
 {
 //    CATransform3D transToCenter = CATransform3DMakeTranslation(-center.x, -center.y,0.0f);
@@ -45,8 +55,13 @@ static inline UIImage* WKFlip_make_image_for_view(UIView* view){
     } else {
         UIGraphicsBeginImageContext(view.frame.size);
     }
-    [view.layer renderInContext:UIGraphicsGetCurrentContext()];
-    //[view drawViewHierarchyInRect:view.bounds afterScreenUpdates:YES];
+    if (WKFLIPS_CURRENTSYSTEMVERSIONFLOAT>=7.0f){
+        [view drawViewHierarchyInRect:view.bounds afterScreenUpdates:YES];
+    }
+    else{
+        [view.layer renderInContext:UIGraphicsGetCurrentContext()];///在iOS7.0下使用这个会使得UITextView在editable=NO时只绘制部分内容
+    }
+    //
     UIImage* image=UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     NSLog(@"makeImage duration:%f", CFAbsoluteTimeGetCurrent()-startTime);
