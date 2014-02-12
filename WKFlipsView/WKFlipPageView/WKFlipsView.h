@@ -23,6 +23,7 @@
 -(void)flipwView:(WKFlipsView*)flipsView willDeletePageAtPageIndex:(int)pageIndex;
 -(void)flipsView:(WKFlipsView*)flipsView willInsertPageAtPageIndex:(int)pageIndex;
 -(void)flipsView:(WKFlipsView*)flipsView willUpdatePageAtPageIndex:(int)pageIndex;
+-(void)willAppendPageIntoFlipsView:(WKFlipsView*)flipsView;
 @end
 @interface WKFlipsView : UIView{
     ///用于存储页面类型
@@ -66,6 +67,8 @@
 -(void)deleteCurrentPage;
 ///在当前的位置添加一个页面
 -(void)insertPage;
+///在最后面添加一个页面
+-(void)appendPage;
 ///更新当前页面的内容
 -(void)updateCurrentPage;
 @end

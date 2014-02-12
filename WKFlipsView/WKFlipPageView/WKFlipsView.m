@@ -142,6 +142,19 @@
     ///重建页面
     [self reloadPages];
 }
+-(void)appendPage{
+    ///在动画或者拖动时不可以编辑
+    if (self.flippingLayersView.runState!=WKFlipsLayerViewRunStateStop){
+        return;
+    }
+    [self.delegate willAppendPageIntoFlipsView:self];
+    ///添加索引
+    [self.cache addPage];
+    ///把页面编号设置为最新的页面(最后一页)
+    _pageIndex=[self.dataSource numberOfPagesForFlipsView:self]-1;
+    ///重建页面
+    [self reloadPages];
+}
 -(void)updateCurrentPage{
     ///在动画或者拖动时不可以编辑
     if (self.flippingLayersView.runState!=WKFlipsLayerViewRunStateStop){

@@ -51,7 +51,7 @@
     [buttonInsert setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     buttonInsert.backgroundColor=[UIColor lightGrayColor];
     [buttonInsert addTarget:self action:@selector(onButtonInsert:) forControlEvents:UIControlEventTouchUpInside];
-    //[self.view addSubview:buttonInsert];
+    [self.view addSubview:buttonInsert];
     
     UIButton* buttonUpdate=[UIButton buttonWithType:UIButtonTypeCustom];
     buttonUpdate.frame=CGRectMake(10.0f, 420.0f, 300.0f, 50.0f);
@@ -82,7 +82,8 @@
     [_flipsView deleteCurrentPage];
 }
 -(IBAction)onButtonInsert:(id)sender{
-    [_flipsView insertPage];
+    //[_flipsView insertPage];
+    [_flipsView appendPage];
 }
 -(IBAction)onButtonUpdate:(id)sender{
     [_flipsView updateCurrentPage];
@@ -112,6 +113,10 @@
 }
 -(void)flipsView:(WKFlipsView *)flipsView willInsertPageAtPageIndex:(int)pageIndex{
     [_images insertObject:@"a.png" atIndex:pageIndex];
+    [self testWriteImages];
+}
+-(void)willAppendPageIntoFlipsView:(WKFlipsView *)flipsView{
+    [_images addObject:@"c.png"];
     [self testWriteImages];
 }
 -(void)flipsView:(WKFlipsView *)flipsView willUpdatePageAtPageIndex:(int)pageIndex{
