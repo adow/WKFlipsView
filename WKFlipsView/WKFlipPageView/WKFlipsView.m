@@ -123,12 +123,29 @@
     if (self.flippingLayersView.runState!=WKFlipsLayerViewRunStateStop){
         return;
     }
+    ///为当前页面创建一个截图，用来演示删除时的效果
+    UIImage* deleteImageForCurrentPageView=WKFlip_make_image_for_view(self.currentFlipPageView);
+    UIImageView* deleteImageView=[[[UIImageView alloc]initWithImage:deleteImageForCurrentPageView] autorelease];
+//    deleteImageView.frame=CGRectMake(0.0f, 0.0f, self.frame.size.width, self.frame.size.height);
+    [self.window addSubview:deleteImageView];
     ///删除数据
     [self.delegate flipwView:self willDeletePageAtPageIndex:self.pageIndex];
     ///删除缓存
     [self.cache removeAtPageIndex:self.pageIndex];
     ///重建页面
     [self reloadPages];
+    ///重建页面完成后，显示页面删除的动画
+    double delayInSeconds = 0.01f;
+    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+        [UIView animateWithDuration:0.5f delay:0.0f options:UIViewAnimationOptionCurveEaseOut animations:^{
+            deleteImageView.transform=CGAffineTransformMakeTranslation(0.0f, self.frame.size.height);
+            deleteImageView.alpha=0.0f;
+        } completion:^(BOOL finished) {
+            [deleteImageView removeFromSuperview];
+        }];
+
+    });
 }
 -(void)insertPage{
     ///在动画或者拖动时不可以编辑
