@@ -139,8 +139,15 @@
     [self.delegate flipsView:self willInsertPageAtPageIndex:self.pageIndex];
     ///添加缓存索引
     [self.cache insertAtPageIndex:self.pageIndex];
+    ///在重建页面时，现在的页面已经到后面一页了
+    int to_pageIndex=self.pageIndex;
+    _pageIndex+=1;
     ///重建页面
     [self reloadPages];
+    ///翻页到插入的这个页面
+    [self flipToPageIndex:to_pageIndex delay:0.01f completion:^{
+        
+    }];
 }
 -(void)appendPage{
     ///在动画或者拖动时不可以编辑
@@ -150,10 +157,14 @@
     [self.delegate willAppendPageIntoFlipsView:self];
     ///添加索引
     [self.cache addPage];
-    ///把页面编号设置为最新的页面(最后一页)
-    _pageIndex=[self.dataSource numberOfPagesForFlipsView:self]-1;
+//    ///把页面编号设置为最新的页面(最后一页)
+//    _pageIndex=[self.dataSource numberOfPagesForFlipsView:self]-1;
     ///重建页面
     [self reloadPages];
+    ///重建完后自动翻页到最后一页
+    [self flipToPageIndex:[self.dataSource numberOfPagesForFlipsView:self]-1 delay:0.01f completion:^{
+        
+    }];
 }
 -(void)updateCurrentPage{
     ///在动画或者拖动时不可以编辑

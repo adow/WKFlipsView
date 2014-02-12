@@ -82,8 +82,8 @@
     [_flipsView deleteCurrentPage];
 }
 -(IBAction)onButtonInsert:(id)sender{
-    //[_flipsView insertPage];
-    [_flipsView appendPage];
+    [_flipsView insertPage];
+    //[_flipsView appendPage];
 }
 -(IBAction)onButtonUpdate:(id)sender{
     [_flipsView updateCurrentPage];
