@@ -123,13 +123,17 @@
     if (self.flippingLayersView.runState!=WKFlipsLayerViewRunStateStop){
         return;
     }
+    if (![self.delegate respondsToSelector:@selector(flipsView:willDeletePageAtPageIndex:)]){
+        NSLog(@"no willDeletePageAtPageIndex");
+        return;
+    }
     ///为当前页面创建一个截图，用来演示删除时的效果
     UIImage* deleteImageForCurrentPageView=WKFlip_make_image_for_view(self.currentFlipPageView);
     UIImageView* deleteImageView=[[[UIImageView alloc]initWithImage:deleteImageForCurrentPageView] autorelease];
 //    deleteImageView.frame=CGRectMake(0.0f, 0.0f, self.frame.size.width, self.frame.size.height);
     [self.window addSubview:deleteImageView];
     ///删除数据
-    [self.delegate flipwView:self willDeletePageAtPageIndex:self.pageIndex];
+    [self.delegate flipsView:self willDeletePageAtPageIndex:self.pageIndex];
     ///删除缓存
     [self.cache removeAtPageIndex:self.pageIndex];
     ///重建页面
@@ -152,6 +156,10 @@
     if (self.flippingLayersView.runState!=WKFlipsLayerViewRunStateStop){
         return;
     }
+    if (![self.delegate respondsToSelector:@selector(flipsView:willInsertPageAtPageIndex:)]){
+        NSLog(@"no willInsertPageAtPageIndex");
+        return;
+    }
     ///更新数据
     [self.delegate flipsView:self willInsertPageAtPageIndex:self.pageIndex];
     ///添加缓存索引
@@ -171,6 +179,10 @@
     if (self.flippingLayersView.runState!=WKFlipsLayerViewRunStateStop){
         return;
     }
+    if (![self.delegate respondsToSelector:@selector(willAppendPageIntoFlipsView:)]){
+        NSLog(@"no willAppendPageIntoFlipsView");
+        return ;
+    }
     [self.delegate willAppendPageIntoFlipsView:self];
     ///添加索引
     [self.cache addPage];
@@ -186,6 +198,10 @@
 -(void)updateCurrentPage{
     ///在动画或者拖动时不可以编辑
     if (self.flippingLayersView.runState!=WKFlipsLayerViewRunStateStop){
+        return;
+    }
+    if (![self.delegate respondsToSelector:@selector(flipsView:willUpdatePageAtPageIndex:)]){
+        NSLog(@"no willUpdatePageAtPageIndex");
         return;
     }
     ///更新数据

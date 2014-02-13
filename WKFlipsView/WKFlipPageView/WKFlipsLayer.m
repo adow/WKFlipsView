@@ -458,8 +458,11 @@
     ///当前正在拖动的这层有一个固定明度的阴影
     [_dragging_layer showShadowOpacity:0.03];
     NSUInteger layerIndex=[self.layer.sublayers indexOfObject:_dragging_layer];
-    NSUInteger shadowLayerIndex_bottom=layerIndex-1;
-    WKFlipsLayer* shadowLayer_bottom=self.layer.sublayers[shadowLayerIndex_bottom];
+    WKFlipsLayer* shadowLayer_bottom=nil;
+    if (layerIndex>0){
+        NSUInteger shadowLayerIndex_bottom=layerIndex-1;
+        shadowLayer_bottom=self.layer.sublayers[shadowLayerIndex_bottom];
+    }
     WKFlipsLayer* shadowLayer_top=nil;
     if (layerIndex<self.layer.sublayers.count-1){
         NSUInteger shadowLayerIndex_top=layerIndex+1;

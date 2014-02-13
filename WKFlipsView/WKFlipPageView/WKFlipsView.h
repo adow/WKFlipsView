@@ -20,7 +20,8 @@
 
 @end
 @protocol WKFlipsViewDelegate <NSObject>
--(void)flipwView:(WKFlipsView*)flipsView willDeletePageAtPageIndex:(int)pageIndex;
+@optional
+-(void)flipsView:(WKFlipsView*)flipsView willDeletePageAtPageIndex:(int)pageIndex;
 -(void)flipsView:(WKFlipsView*)flipsView willInsertPageAtPageIndex:(int)pageIndex;
 -(void)flipsView:(WKFlipsView*)flipsView willUpdatePageAtPageIndex:(int)pageIndex;
 -(void)willAppendPageIntoFlipsView:(WKFlipsView*)flipsView;

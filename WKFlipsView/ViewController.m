@@ -107,7 +107,7 @@
     return pageView;
 
 }
--(void)flipwView:(WKFlipsView *)flipsView willDeletePageAtPageIndex:(int)pageIndex{
+-(void)flipsView:(WKFlipsView *)flipsView willDeletePageAtPageIndex:(int)pageIndex{
     [_images removeObjectAtIndex:pageIndex];
     [self testWriteImages];
 }
