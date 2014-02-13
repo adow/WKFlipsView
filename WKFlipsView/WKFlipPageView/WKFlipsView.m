@@ -103,6 +103,7 @@
         return;
     }
     [_flippingLayersView flipToPageIndex:pageIndex completion:^(BOOL completed) {
+        completion();
     }];
 }
 -(void)flipToPageIndex:(int)pageIndex delay:(CGFloat)delay completion:(void (^)())completion{
@@ -147,6 +148,9 @@
             deleteImageView.alpha=0.0f;
         } completion:^(BOOL finished) {
             [deleteImageView removeFromSuperview];
+            if ([self.delegate respondsToSelector:@selector(flipsView:didDeletePageAtPageIndex:)]){
+                [self.delegate flipsView:self didDeletePageAtPageIndex:self.pageIndex];
+            }
         }];
 
     });
@@ -171,7 +175,9 @@
     [self reloadPages];
     ///翻页到插入的这个页面
     [self flipToPageIndex:to_pageIndex delay:0.01f completion:^{
-        
+        if ([self.delegate respondsToSelector:@selector(flipsView:didInsertPageAtPageIndex:)]){
+            [self.delegate flipsView:self didInsertPageAtPageIndex:to_pageIndex];
+        }
     }];
 }
 -(void)appendPage{
@@ -192,7 +198,9 @@
     [self reloadPages];
     ///重建完后自动翻页到最后一页
     [self flipToPageIndex:[self.dataSource numberOfPagesForFlipsView:self]-1 delay:0.01f completion:^{
-        
+        if ([self.delegate respondsToSelector:@selector(didAppendPageIntoFlipsView:)]){
+            [self.delegate didAppendPageIntoFlipsView:self];
+        }
     }];
 }
 -(void)updateCurrentPage{
@@ -210,6 +218,9 @@
     [self.cache removeCacheImageAtPageIndex:self.pageIndex];
     ///重建页面
     [self reloadPages];
+    if ([self.delegate respondsToSelector:@selector(flipsView:didUpdatePageAtPageIndex:)]){
+        [self.delegate flipsView:self didUpdatePageAtPageIndex:self.pageIndex];
+    }
 }
 #pragma mark - cache
 #pragma mark - touches

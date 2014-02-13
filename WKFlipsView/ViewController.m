@@ -89,6 +89,7 @@
     [_flipsView updateCurrentPage];
 }
 #pragma mark - WKFlipsViewDataSource & WKFlipsViewDelegate
+#pragma mark WKFlipsViewDataSource
 -(NSInteger)numberOfPagesForFlipsView:(WKFlipsView *)flipsView{
     return _images.count;
 }
@@ -107,6 +108,7 @@
     return pageView;
 
 }
+#pragma mark WKFlipsViewDelegate
 -(void)flipsView:(WKFlipsView *)flipsView willDeletePageAtPageIndex:(int)pageIndex{
     [_images removeObjectAtIndex:pageIndex];
     [self testWriteImages];
@@ -122,6 +124,18 @@
 -(void)flipsView:(WKFlipsView *)flipsView willUpdatePageAtPageIndex:(int)pageIndex{
     _images[pageIndex]=@"b.png";
     [self testWriteImages];
+}
+-(void)flipsView:(WKFlipsView *)flipsView didDeletePageAtPageIndex:(int)pageIndex{
+    NSLog(@"didDeletePageAtPageIndex:%d",pageIndex);
+}
+-(void)flipsView:(WKFlipsView *)flipsView didInsertPageAtPageIndex:(int)pageIndex{
+    NSLog(@"didInsertPageAtPageIndex:%d",pageIndex);
+}
+-(void)didAppendPageIntoFlipsView:(WKFlipsView *)flipsView{
+    NSLog(@"didAppendPageIntoFlipsView");
+}
+-(void)flipsView:(WKFlipsView *)flipsView didUpdatePageAtPageIndex:(int)pageIndex{
+    NSLog(@"didUpdatePageAtPageIndex:%d",pageIndex);
 }
 #pragma mark - Test
 -(void)testPrepareImages{
