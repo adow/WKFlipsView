@@ -48,4 +48,6 @@
 -(void)removeCacheImageAtPageIndex:(int)pageIndex;
 -(WKFlipPageViewCache*)insertAtPageIndex:(int)pageIndex;
 -(WKFlipPageViewCache*)addPage;
+///清除所有的缓存目录
++(void)clearAllCaches;
 @end

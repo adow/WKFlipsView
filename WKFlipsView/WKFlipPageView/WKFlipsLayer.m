@@ -243,6 +243,9 @@
         }
     }
     self.flipsView.pageIndex=pageIndex;
+    if ([self.flipsView.delegate respondsToSelector:@selector(flipsView:didFlippedToPageIndex:)]){
+        [self.flipsView.delegate flipsView:self.flipsView didFlippedToPageIndex:self.flipsView.pageIndex];
+    }
 }
 -(void)flipToPageIndex:(int)pageIndex completion:(void (^)(BOOL completed))completionBlock{
     if(self.runState!=WKFlipsLayerViewRunStateStop)
@@ -270,6 +273,9 @@
                 if (++complete_hits>=layersNumber){
                         //NSLog(@"flip completed");
                         self.flipsView.pageIndex=pageIndex;
+                        if ([self.flipsView.delegate respondsToSelector:@selector(flipsView:didFlippedToPageIndex:)]){
+                            [self.flipsView.delegate flipsView:self.flipsView didFlippedToPageIndex:self.flipsView.pageIndex];
+                        }
                         ///延时一点进行贴图
                         [self _pasteImagesToLayersForTargetPageIndex:pageIndex inSeconds:WKFlipsLayerView_PasteImageDuration_After_Flipped delay:WKFlipsLayerView_PasteImage_Delay];
                         completionBlock(YES);
@@ -291,6 +297,9 @@
                 if (++complete_hits>=layersNumber){
                         //NSLog(@"flip completed");
                         self.flipsView.pageIndex=pageIndex;
+                        if ([self.flipsView.delegate respondsToSelector:@selector(flipsView:didFlippedToPageIndex:)]){
+                            [self.flipsView.delegate flipsView:self.flipsView didFlippedToPageIndex:self.flipsView.pageIndex];
+                        }
                         ///延时一点进行贴图
                         [self _pasteImagesToLayersForTargetPageIndex:pageIndex inSeconds:WKFlipsLayerView_PasteImageDuration_After_Flipped delay:WKFlipsLayerView_PasteImage_Delay];
                         completionBlock(YES);
@@ -362,6 +371,9 @@
             [_dragging_layer setRotateDegree:newRotateDegree duration:duration afterDelay:0.0f completion:^{
                 _dragging_layer=nil;
                 self.flipsView.pageIndex=previousPageIndex;
+                if ([self.flipsView.delegate respondsToSelector:@selector(flipsView:didFlippedToPageIndex:)]){
+                    [self.flipsView.delegate flipsView:self.flipsView didFlippedToPageIndex:self.flipsView.pageIndex];
+                }
                 ///延时一点进行贴图
                 [self _pasteImagesToLayersForTargetPageIndex:previousPageIndex inSeconds:WKFlipsLayerView_PasteImageDuration_After_Flipped delay:WKFlipsLayerView_PasteImage_Delay];
                 self.runState=WKFlipsLayerViewRunStateStop;
@@ -385,6 +397,9 @@
             [_dragging_layer setRotateDegree:newRotateDegree duration:duration afterDelay:0.0f completion:^{
                 _dragging_layer=nil;
                 self.flipsView.pageIndex=nextPageIndex;
+                if ([self.flipsView.delegate respondsToSelector:@selector(flipsView:didFlippedToPageIndex:)]){
+                    [self.flipsView.delegate flipsView:self.flipsView didFlippedToPageIndex:self.flipsView.pageIndex];
+                }
                 ///延时一点进行贴图
                 [self _pasteImagesToLayersForTargetPageIndex:nextPageIndex inSeconds:WKFlipsLayerView_PasteImageDuration_After_Flipped delay:WKFlipsLayerView_PasteImage_Delay];
                 self.runState=WKFlipsLayerViewRunStateStop;

@@ -29,6 +29,8 @@
 -(void)flipsView:(WKFlipsView*)flipsView didInsertPageAtPageIndex:(int)pageIndex;
 -(void)flipsView:(WKFlipsView*)flipsView didUpdatePageAtPageIndex:(int)pageIndex;
 -(void)didAppendPageIntoFlipsView:(WKFlipsView*)flipsView;
+///翻页到指定页面之后的通知
+-(void)flipsView:(WKFlipsView*)flipsView didFlippedToPageIndex:(int)pageIndex;
 @end
 @interface WKFlipsView : UIView{
     ///用于存储页面类型
@@ -70,6 +72,8 @@
 #pragma mark create update and delete
 ///删除当前这个位置的页面
 -(void)deleteCurrentPage;
+///删除指定的页面
+-(void)deletePage:(int)pageIndex;
 ///在当前的位置添加一个页面
 -(void)insertPage;
 ///在最后面添加一个页面

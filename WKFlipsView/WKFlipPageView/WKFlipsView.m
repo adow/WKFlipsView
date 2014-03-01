@@ -97,6 +97,9 @@
         return;
     }
     [_flippingLayersView flipToPageIndex:pageIndex];
+//    if ([self.delegate respondsToSelector:@selector(flipsView:didFlippedToPageIndex:)]){
+//        [self.delegate flipsView:self didFlippedToPageIndex:pageIndex];
+//    }
 }
 -(void)flipToPageIndex:(int)pageIndex completion:(void (^)())completion{
     if (pageIndex<0 || pageIndex>=[self.dataSource numberOfPagesForFlipsView:self]){
@@ -104,6 +107,9 @@
     }
     [_flippingLayersView flipToPageIndex:pageIndex completion:^(BOOL completed) {
         completion();
+//        if ([self.delegate respondsToSelector:@selector(flipsView:didFlippedToPageIndex:)]){
+//            [self.delegate flipsView:self didFlippedToPageIndex:pageIndex];
+//        }
     }];
 }
 -(void)flipToPageIndex:(int)pageIndex delay:(CGFloat)delay completion:(void (^)())completion{
@@ -120,6 +126,43 @@
 }
 #pragma mark create update and detele
 -(void)deleteCurrentPage{
+//    ///在动画或者拖动时不可以编辑
+//    if (self.flippingLayersView.runState!=WKFlipsLayerViewRunStateStop){
+//        return;
+//    }
+//    if (![self.delegate respondsToSelector:@selector(flipsView:willDeletePageAtPageIndex:)]){
+//        NSLog(@"no willDeletePageAtPageIndex");
+//        return;
+//    }
+//    ///为当前页面创建一个截图，用来演示删除时的效果
+//    UIImage* deleteImageForCurrentPageView=WKFlip_make_image_for_view(self.currentFlipPageView);
+//    UIImageView* deleteImageView=[[[UIImageView alloc]initWithImage:deleteImageForCurrentPageView] autorelease];
+////    deleteImageView.frame=CGRectMake(0.0f, 0.0f, self.frame.size.width, self.frame.size.height);
+//    [self.window addSubview:deleteImageView];
+//    ///删除数据
+//    [self.delegate flipsView:self willDeletePageAtPageIndex:self.pageIndex];
+//    ///删除缓存
+//    [self.cache removeAtPageIndex:self.pageIndex];
+//    ///重建页面
+//    [self reloadPages];
+//    ///重建页面完成后，显示页面删除的动画
+//    double delayInSeconds = 0.01f;
+//    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+//    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+//        [UIView animateWithDuration:0.5f delay:0.0f options:UIViewAnimationOptionCurveEaseOut animations:^{
+//            deleteImageView.transform=CGAffineTransformMakeTranslation(0.0f, self.frame.size.height);
+//            deleteImageView.alpha=0.0f;
+//        } completion:^(BOOL finished) {
+//            [deleteImageView removeFromSuperview];
+//            if ([self.delegate respondsToSelector:@selector(flipsView:didDeletePageAtPageIndex:)]){
+//                [self.delegate flipsView:self didDeletePageAtPageIndex:self.pageIndex];
+//            }
+//        }];
+//
+//    });
+    [self deletePage:self.pageIndex];
+}
+-(void)deletePage:(int)pageIndex{
     ///在动画或者拖动时不可以编辑
     if (self.flippingLayersView.runState!=WKFlipsLayerViewRunStateStop){
         return;
@@ -128,32 +171,44 @@
         NSLog(@"no willDeletePageAtPageIndex");
         return;
     }
-    ///为当前页面创建一个截图，用来演示删除时的效果
-    UIImage* deleteImageForCurrentPageView=WKFlip_make_image_for_view(self.currentFlipPageView);
-    UIImageView* deleteImageView=[[[UIImageView alloc]initWithImage:deleteImageForCurrentPageView] autorelease];
-//    deleteImageView.frame=CGRectMake(0.0f, 0.0f, self.frame.size.width, self.frame.size.height);
-    [self.window addSubview:deleteImageView];
+    ///如果在删除当前显示的页面，有一个动画
+    UIImageView* deleteImageView=nil;
+    if (pageIndex==self.pageIndex){
+        ///为当前页面创建一个截图，用来演示删除时的效果
+        UIImage* deleteImageForCurrentPageView=WKFlip_make_image_for_view(self.currentFlipPageView);
+        deleteImageView=[[[UIImageView alloc]initWithImage:deleteImageForCurrentPageView] autorelease];
+        [self addSubview:deleteImageView];
+    }
     ///删除数据
-    [self.delegate flipsView:self willDeletePageAtPageIndex:self.pageIndex];
+    [self.delegate flipsView:self willDeletePageAtPageIndex:pageIndex];
     ///删除缓存
-    [self.cache removeAtPageIndex:self.pageIndex];
+    [self.cache removeAtPageIndex:pageIndex];
     ///重建页面
     [self reloadPages];
-    ///重建页面完成后，显示页面删除的动画
-    double delayInSeconds = 0.01f;
-    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
-    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-        [UIView animateWithDuration:0.5f delay:0.0f options:UIViewAnimationOptionCurveEaseOut animations:^{
-            deleteImageView.transform=CGAffineTransformMakeTranslation(0.0f, self.frame.size.height);
-            deleteImageView.alpha=0.0f;
-        } completion:^(BOOL finished) {
-            [deleteImageView removeFromSuperview];
-            if ([self.delegate respondsToSelector:@selector(flipsView:didDeletePageAtPageIndex:)]){
-                [self.delegate flipsView:self didDeletePageAtPageIndex:self.pageIndex];
-            }
-        }];
-
-    });
+    ///需要删除的动画
+    if (deleteImageView){
+        ///重建页面完成后，显示页面删除的动画
+        double delayInSeconds = 0.01f;
+        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+        dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+            [UIView animateWithDuration:0.5f delay:0.0f options:UIViewAnimationOptionCurveEaseOut animations:^{
+                deleteImageView.transform=CGAffineTransformMakeTranslation(0.0f, self.frame.size.height);
+                deleteImageView.alpha=0.0f;
+            } completion:^(BOOL finished) {
+                [deleteImageView removeFromSuperview];
+                if ([self.delegate respondsToSelector:@selector(flipsView:didDeletePageAtPageIndex:)]){
+                    [self.delegate flipsView:self didDeletePageAtPageIndex:pageIndex];
+                }
+            }];
+            
+        });
+    }
+    ///不需要删除的过度动画
+    else{
+        if ([self.delegate respondsToSelector:@selector(flipsView:didDeletePageAtPageIndex:)]){
+            [self.delegate flipsView:self didDeletePageAtPageIndex:pageIndex];
+        }
+    }
 }
 -(void)insertPage{
     ///在动画或者拖动时不可以编辑
