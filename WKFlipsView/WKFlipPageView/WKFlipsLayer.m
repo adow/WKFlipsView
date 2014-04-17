@@ -49,16 +49,18 @@
         case WKFlipsLayerViewRunStateAnimation:
             self.hidden=NO;
             self.flipsView.currentPageView.hidden=YES;
+            self.flipsView._operateAvailable=NO;
             break;
         case WKFlipsLayerViewRunStateDragging:
             self.hidden=NO;
             self.flipsView.currentPageView.hidden=YES;
+            self.flipsView._operateAvailable=NO;
             break;
         case WKFlipsLayerViewRunStateStop:
             [self _removeShadowOnDraggngLayer];
             self.hidden=YES;
             self.flipsView.currentPageView.hidden=NO;
-            
+            self.flipsView._operateAvailable=YES;
             break;
         default:
             break;
@@ -93,8 +95,8 @@
 //        layer.backLayer.contents=(id)[UIImage imageNamed:@"weather-default-bg"].CGImage;
         #ifdef DEBUG
         ///在页面上输出图层编号和页面编号,绘制文字会消耗不少时间
-        [layer drawWords:[NSString stringWithFormat:@"layer:%d-front,page:%d",(layersNumber-a-1),a-1] onPosition:0];
-        [layer drawWords:[NSString stringWithFormat:@"layer:%d-back,page:%d",(layersNumber-a-1),a] onPosition:1];
+//        [layer drawWords:[NSString stringWithFormat:@"layer:%d-front,page:%d",(layersNumber-a-1),a-1] onPosition:0];
+//        [layer drawWords:[NSString stringWithFormat:@"layer:%d-back,page:%d",(layersNumber-a-1),a] onPosition:1];
         #endif
         layer.rotateDegree=0.0f;
     }
@@ -255,7 +257,7 @@
     if (pageIndex==self.flipsView.pageIndex)
         return;
     self.runState=WKFlipsLayerViewRunStateAnimation;
-    CGFloat durationFull=1.3f;
+    CGFloat durationFull=1.0f;
     CGFloat delayFromDuration=0.05f;
     ///往前翻页，也就是把上半部分往下面翻页
     CGFloat delay=0.0f;
@@ -329,23 +331,63 @@
 
 }
 #pragma mark - Drag
--(void)dragBegan{
+-(void)dragBeganWithTranslation:(CGPoint)translation{
 //    NSLog(@"dragBegan");
 //    if (self.runState!=WKFlipsLayerViewRunStateStop)
 //        return;
     if (self.runState==WKFlipsLayerViewRunStateAnimation) ///如果正在连续动画就不拖动
         return;
+    _drag_start_time=[[NSDate date] timeIntervalSince1970];
+    _dragging_last_translation_y=translation.y;
     [_dragging_layer cancelDragAnimation];///如果有_dragging_layer的话，取消拖动的动画
     self.runState=WKFlipsLayerViewRunStateDragging;
 }
--(void)dragEnded{
+-(void)dragEndedWithTranslation:(CGPoint)translation{
 //    NSLog(@"dragEnded");
     if (self.runState!=WKFlipsLayerViewRunStateDragging)
         return;
     CGFloat durationFull=1.0f;
+    double drag_duration=fabsl([[NSDate date] timeIntervalSince1970]-_drag_start_time);
+    //NSLog(@"drag_duration:%f,rotate:%f",drag_duration,_dragging_layer.rotateDegree);
+    BOOL quick_drag_flip=(drag_duration<0.15f); ///是否翻页足够快
+//    NSLog(@"drag_duration:%f,quick_drag_flip:%d,rotate:%f",drag_duration,quick_drag_flip,_dragging_layer.rotateDegree);
     if (_dragging_position==WKFlipsLayerDragAtPositionTop){
-        ///返回现在的页面
-        if (_dragging_layer.rotateDegree>=90.0f){
+        ///返回现在的页面,超过90度或者快速的操作30度
+        ///不是最后一页，要么翻页超过90度，要么快速翻页超过20度
+        if (_dragging_layer!=self.layer.sublayers.lastObject &&
+            (_dragging_layer.rotateDegree<=90.0f ||(_dragging_layer.rotateDegree<=(180-30.0f) && quick_drag_flip))){
+//                [_dragging_layer removeShadow];
+                [self _removeShadowOnDraggngLayer];
+                int previousPageIndex=self.flipsView.pageIndex-1;
+                int layersNumber=[self numbersOfLayers];
+                for (int layerIndex=0; layerIndex<layersNumber; layerIndex++) {
+                    CGFloat rotateDegree=[self _calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:previousPageIndex];
+                    //NSLog(@"layerIndex:%d,rotateDegree:%f",layerIndex,rotateDegree);
+                    WKFlipsLayer* flipLayer=self.layer.sublayers[layerIndex];
+                    if (flipLayer!=_dragging_layer){
+                        [flipLayer setRotateDegree:rotateDegree];
+                    }
+                }
+                int layerIndex=(int)[self.layer.sublayers indexOfObject:_dragging_layer];
+                CGFloat newRotateDegree=[self _calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:previousPageIndex];
+                CGFloat duration=fabsf(newRotateDegree-_dragging_layer.rotateDegree)/180.0f*durationFull;
+                ///快速时因为角度很小，所以要缩短时间
+                if (quick_drag_flip){
+                    duration=0.3f;
+                }
+                [_dragging_layer setRotateDegree:newRotateDegree duration:duration afterDelay:0.0f completion:^{
+                    _dragging_layer=nil;
+                    self.flipsView.pageIndex=previousPageIndex;
+                    if ([self.flipsView.delegate respondsToSelector:@selector(flipsView:didFlippedToPageIndex:)]){
+                        [self.flipsView.delegate flipsView:self.flipsView didFlippedToPageIndex:self.flipsView.pageIndex];
+                    }
+                    ///延时一点进行贴图
+                    [self _pasteImagesToLayersForTargetPageIndex:previousPageIndex inSeconds:WKFlipsLayerView_PasteImageDuration_After_Flipped delay:WKFlipsLayerView_PasteImage_Delay];
+                    self.runState=WKFlipsLayerViewRunStateStop;
+                }];
+        }
+        ///否则返回到前面的页面
+        else{
             int layerIndex=(int)[self.layer.sublayers indexOfObject:_dragging_layer];
             CGFloat oldRotateDegree=[self _calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:self.flipsView.pageIndex];
             CGFloat duration=fabsf(oldRotateDegree-_dragging_layer.rotateDegree)/180.0f*durationFull;
@@ -354,35 +396,14 @@
                 self.runState=WKFlipsLayerViewRunStateStop;
             }];
         }
-        else{///到前一页
-            int previousPageIndex=self.flipsView.pageIndex-1;
-            int layersNumber=[self numbersOfLayers];
-            for (int layerIndex=0; layerIndex<layersNumber; layerIndex++) {
-                CGFloat rotateDegree=[self _calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:previousPageIndex];
-                //NSLog(@"layerIndex:%d,rotateDegree:%f",layerIndex,rotateDegree);
-                WKFlipsLayer* flipLayer=self.layer.sublayers[layerIndex];
-                if (flipLayer!=_dragging_layer){
-                    [flipLayer setRotateDegree:rotateDegree];
-                }
-            }
-            int layerIndex=(int)[self.layer.sublayers indexOfObject:_dragging_layer];
-            CGFloat newRotateDegree=[self _calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:previousPageIndex];
-            CGFloat duration=fabsf(newRotateDegree-_dragging_layer.rotateDegree)/180.0f*durationFull;
-            [_dragging_layer setRotateDegree:newRotateDegree duration:duration afterDelay:0.0f completion:^{
-                _dragging_layer=nil;
-                self.flipsView.pageIndex=previousPageIndex;
-                if ([self.flipsView.delegate respondsToSelector:@selector(flipsView:didFlippedToPageIndex:)]){
-                    [self.flipsView.delegate flipsView:self.flipsView didFlippedToPageIndex:self.flipsView.pageIndex];
-                }
-                ///延时一点进行贴图
-                [self _pasteImagesToLayersForTargetPageIndex:previousPageIndex inSeconds:WKFlipsLayerView_PasteImageDuration_After_Flipped delay:WKFlipsLayerView_PasteImage_Delay];
-                self.runState=WKFlipsLayerViewRunStateStop;
-            }];
-        }
     }
     else{
         ///到后一页
-        if (_dragging_layer.rotateDegree>=90.0f){
+        ///不是第一页，翻页超过90度，或者快速翻页超过30页
+        if (_dragging_layer!=self.layer.sublayers.firstObject &&
+                (_dragging_layer.rotateDegree>=90.0f || (_dragging_layer.rotateDegree>=30.0f && quick_drag_flip))){
+//            [_dragging_layer removeShadow];
+            [self _removeShadowOnDraggngLayer];
             int nextPageIndex=self.flipsView.pageIndex+1;
             int layersNUmber=[self numbersOfLayers];
             for (int layerIndex=layersNUmber-1; layerIndex>=0; layerIndex--) {
@@ -394,6 +415,10 @@
             int layerIndex=(int)[self.layer.sublayers indexOfObject:_dragging_layer];
             CGFloat newRotateDegree=[self _calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:nextPageIndex];
             CGFloat duration=fabsf(newRotateDegree-_dragging_layer.rotateDegree)/180.0f*durationFull;
+            ///快速翻页时因为角度很小，要缩小时间
+            if (quick_drag_flip){
+                duration=0.3f;
+            }
             [_dragging_layer setRotateDegree:newRotateDegree duration:duration afterDelay:0.0f completion:^{
                 _dragging_layer=nil;
                 self.flipsView.pageIndex=nextPageIndex;
@@ -423,6 +448,7 @@
         return;
     ///一开始的时候要知道是在拖动那一页
     if (!_dragging_layer){
+//        NSLog(@"get dragging layer");
         int layersNumber=[self numbersOfLayers];
         int stopLayerIndexAtTop=layersNumber-1-self.flipsView.pageIndex;
         int stopLayerIndexAtBottom=stopLayerIndexAtTop-1;
@@ -434,8 +460,11 @@
             _dragging_layer=self.layer.sublayers[stopLayerIndexAtBottom];
             _dragging_position=WKFlipsLayerDragAtPositionBottom;
         }
-        ///恢复开是时候的位置
-        _dragging_last_translation_y=translation.y;
+//        ///恢复开是时候的位置
+//        _dragging_last_translation_y=translation.y;
+    }
+    else{
+//        NSLog(@"existed dragging layer");
     }
     ///往下面翻
     if (_dragging_position==WKFlipsLayerDragAtPositionTop){
@@ -496,11 +525,26 @@
 ///去掉图层阴影，从所有图层上处理
 -(void)_removeShadowOnDraggngLayer{
     //double startTime=CFAbsoluteTimeGetCurrent();
-    int layersNUmber=[self numbersOfLayers];
-    for (int layerIndex=layersNUmber-1; layerIndex>=0; layerIndex--){
-        WKFlipsLayer* flipLayer=self.layer.sublayers[layerIndex];
-        [flipLayer removeShadow];
+//    int layersNUmber=[self numbersOfLayers];
+//    for (int layerIndex=layersNUmber-1; layerIndex>=0; layerIndex--){
+//        WKFlipsLayer* flipLayer=self.layer.sublayers[layerIndex];
+//        [flipLayer removeShadow];
+//    }
+    ///不循环所有层，只处理当前的几层
+    [_dragging_layer removeShadow];
+    NSUInteger layerIndex=[self.layer.sublayers indexOfObject:_dragging_layer];
+    WKFlipsLayer* shadowLayer_bottom=nil;
+    if (layerIndex>0 && layerIndex<self.layer.sublayers.count-1){
+        NSUInteger shadowLayerIndex_bottom=layerIndex-1;
+        shadowLayer_bottom=self.layer.sublayers[shadowLayerIndex_bottom];
     }
+    WKFlipsLayer* shadowLayer_top=nil;
+    if (layerIndex<self.layer.sublayers.count-1){
+        NSUInteger shadowLayerIndex_top=layerIndex+1;
+        shadowLayer_top=self.layer.sublayers[shadowLayerIndex_top];
+    }
+    [shadowLayer_bottom removeShadow];
+    [shadowLayer_top removeShadow];
     //NSLog(@"removeShaodw duration:%f",CFAbsoluteTimeGetCurrent()-startTime);
 }
 @end
@@ -525,7 +569,8 @@
                                   self.position.y-self.frame.size.height/2);
         _frontLayer=[[CALayer alloc]init];
         _frontLayer.frame=self.bounds;
-        _frontLayer.backgroundColor=[UIColor grayColor].CGColor;
+//        _frontLayer.backgroundColor=[UIColor grayColor].CGColor;
+        _frontLayer.backgroundColor=[UIColor whiteColor].CGColor;
         _frontLayer.doubleSided=NO;
         _frontLayer.name=@"frontLayer";
         

@@ -9,10 +9,12 @@
 #import "WKFlipsView.h"
 @implementation WKFlipsView
 @dynamic pageIndex;
+@dynamic _operateAvailable;
 - (id)initWithFrame:(CGRect)frame atPageIndex:(int)pageIndex withCacheIdentity:(NSString *)cacheIdentity{
     self = [super initWithFrame:frame];
     if (self) {
         // Initialization code
+        self.flipable=YES;
         _cache=[[WKFlipsViewCache alloc]initWithIdentity:cacheIdentity];
         _reusedPageViewDictionary=[[NSMutableDictionary alloc]init];
         _reusedPageViewDictionaryCopy=[[NSMutableDictionary alloc]init];
@@ -34,6 +36,19 @@
     [_cache release];
     //[_testCacheView release];
     [super dealloc];
+}
+#pragma mark - state
+-(void)set_operateAvailable:(BOOL)_operateAvailable{
+    if (_operateAvailable==__operateAvailable){
+        return;
+    }
+    __operateAvailable=_operateAvailable;
+    if ([self.delegate respondsToSelector:@selector(flipsView:operateAvailableChangedTo:)]){
+        [self.delegate flipsView:self operateAvailableChangedTo:_operateAvailable];
+    }
+}
+-(BOOL)_operateAvailable{
+    return __operateAvailable;
 }
 #pragma mark - page
 -(void)registerClass:(Class)class forPageWithReuseIdentifier:(NSString *)reuseIdentifier{
@@ -93,6 +108,10 @@
     return nil;
 }
 -(void)flipToPageIndex:(int)pageIndex{
+    if (!self.flipable){
+        NSLog(@"not flipable");
+        return;
+    }
     if (pageIndex<0 || pageIndex>=[self.dataSource numberOfPagesForFlipsView:self]){
         return;
     }
@@ -102,6 +121,10 @@
 //    }
 }
 -(void)flipToPageIndex:(int)pageIndex completion:(void (^)())completion{
+    if (!self.flipable){
+        NSLog(@"not flipable");
+        return;
+    }
     if (pageIndex<0 || pageIndex>=[self.dataSource numberOfPagesForFlipsView:self]){
         return;
     }
@@ -280,14 +303,18 @@
 #pragma mark - cache
 #pragma mark - touches
 -(void)_flippingPanGesture:(UIPanGestureRecognizer*)recognizer{
+    if (!self.flipable){
+        NSLog(@"not flipable");
+        return;
+    }
+    CGPoint translation=[recognizer translationInView:self];
     if (recognizer.state==UIGestureRecognizerStateBegan){
-        [self.flippingLayersView dragBegan];
+        [self.flippingLayersView dragBeganWithTranslation:translation];
     }
     else if (recognizer.state==UIGestureRecognizerStateCancelled|| recognizer.state==UIGestureRecognizerStateEnded){
-        [self.flippingLayersView dragEnded];
+        [self.flippingLayersView dragEndedWithTranslation:translation];
     }
-    else if (recognizer.state==UIGestureRecognizerStateChanged){
-        CGPoint translation=[recognizer translationInView:self];
+    else if (recognizer.state==UIGestureRecognizerStateChanged){        
         [self.flippingLayersView draggingWithTranslation:translation];
     }
 }

@@ -50,4 +50,8 @@
 -(WKFlipPageViewCache*)addPage;
 ///清除所有的缓存目录
 +(void)clearAllCaches;
+///删除页面缓存
+-(void)remove;
+///删除页面缓存
++(void)removeIdentity:(NSString*)identity;
 @end

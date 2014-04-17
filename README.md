@@ -217,6 +217,9 @@ TestImagePageView.m
 
 * 插入，更新页面时，dataSource中的 `-(NSInteger)numberOfPagesForFlipsView:(WKFlipsView *)flipsView` 和 `-(WKFlipPageView*)flipsView:(WKFlipsView *)flipsView pageAtPageIndex:(int)pageIndex` 会被调用来创建对应的页面，其他相关的贴图也会更新。
 
+### 现有的问题
+* 如果我们在拖动一个页面进行翻页的时候，拖动到一半释放掉，这时页面会翻到下一页或者回到上一页（这取决于当前翻页的角度和速度），如果这个过程还没完成的瞬间，又去拖动这个页面，他应该是从当前这个位置来进行拖动的，这需要在那一时间获得动画当前时间中页面的角度,现在没有做到这么精确，所以在手势脱离然后又翻动的过程中不是很自然;
+
 
 ## 实现原理
 

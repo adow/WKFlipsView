@@ -21,16 +21,26 @@
 @end
 @protocol WKFlipsViewDelegate <NSObject>
 @optional
+///删除前用来删除数据
 -(void)flipsView:(WKFlipsView*)flipsView willDeletePageAtPageIndex:(int)pageIndex;
+///插入前用来插入数据
 -(void)flipsView:(WKFlipsView*)flipsView willInsertPageAtPageIndex:(int)pageIndex;
+///更新前用来更新数据
 -(void)flipsView:(WKFlipsView*)flipsView willUpdatePageAtPageIndex:(int)pageIndex;
+///追加前用来追加数据
 -(void)willAppendPageIntoFlipsView:(WKFlipsView*)flipsView;
+///删除页面后通知
 -(void)flipsView:(WKFlipsView*)flipsView didDeletePageAtPageIndex:(int)pageIndex;
+///插入页面后通知
 -(void)flipsView:(WKFlipsView*)flipsView didInsertPageAtPageIndex:(int)pageIndex;
+///更新页面后通知
 -(void)flipsView:(WKFlipsView*)flipsView didUpdatePageAtPageIndex:(int)pageIndex;
+///追加页面后通知
 -(void)didAppendPageIntoFlipsView:(WKFlipsView*)flipsView;
 ///翻页到指定页面之后的通知
 -(void)flipsView:(WKFlipsView*)flipsView didFlippedToPageIndex:(int)pageIndex;
+///当WKFlipsViewLayer的动作状态改变时，会修改_operateAvailable，并发出回调,在动画，拖放过程中是不可以操作的
+-(void)flipsView:(WKFlipsView*)flipsView operateAvailableChangedTo:(BOOL)operateAvailable;
 @end
 @interface WKFlipsView : UIView{
     ///用于存储页面类型
@@ -39,6 +49,8 @@
     NSMutableDictionary* _reusedPageViewDictionaryCopy;
     UIView* _testCacheView;
     int _pageIndex;
+    ///_operateAvailable
+    BOOL __operateAvailable;
 }
 -(id)initWithFrame:(CGRect)frame atPageIndex:(int)pageIndex withCacheIdentity:(NSString*)cacheIdentity;
 ///数据源
@@ -49,6 +61,8 @@
 @property (nonatomic,retain) WKFlipsLayerView* flippingLayersView;
 ///缓存管理
 @property (nonatomic,retain) WKFlipsViewCache* cache;
+///是否可以进行操作,这个值只有WLFlipsLayerView里的状态改变时可以修改,并在修改时发出回调
+@property (nonatomic,assign) BOOL _operateAvailable;
 #pragma mark - page
 ///用来显示页面
 @property (nonatomic,retain) UIView* currentPageView;
@@ -69,6 +83,8 @@
 -(void)flipToPageIndex:(int)pageIndex completion:(void(^)())completion;
 ///在主线程中延时翻页,如果delay=0就立刻执行
 -(void)flipToPageIndex:(int)pageIndex delay:(CGFloat)delay completion:(void (^)())completion;
+///是否可以进行翻页操作，包括拖动和动画翻页,一般由外部控制这里是否可以翻页
+@property (nonatomic,assign) BOOL flipable;
 #pragma mark create update and delete
 ///删除当前这个位置的页面
 -(void)deleteCurrentPage;

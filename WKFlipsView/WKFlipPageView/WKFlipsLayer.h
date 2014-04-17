@@ -35,7 +35,8 @@ typedef enum WKFlipsLayerDragAtPosition:NSUInteger{
     WKFlipsLayerDragAtPosition _dragging_position;
     ///上一次的位置
     CGFloat _dragging_last_translation_y;
-    
+    ///开始拖动翻页的时间
+    double _drag_start_time;
 }
 ///使用flipsView
 -(id)initWithFlipsView:(WKFlipsView*)flipsView;
@@ -52,9 +53,9 @@ typedef enum WKFlipsLayerDragAtPosition:NSUInteger{
 -(void)flipToPageIndex:(int)pageIndex completion:(void(^)(BOOL completed))completionBlock;
 #pragma mark - Drag
 ///开始拖动
--(void)dragBegan;
+-(void)dragBeganWithTranslation:(CGPoint)translation;
 ///拖动结束
--(void)dragEnded;
+-(void)dragEndedWithTranslation:(CGPoint)translation;
 ///正在拖动
 -(void)draggingWithTranslation:(CGPoint)translation;
 @end

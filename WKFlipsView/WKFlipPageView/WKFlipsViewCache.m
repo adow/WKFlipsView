@@ -98,14 +98,6 @@
     [_folder release];
     [super dealloc];
 }
-+(void)clearAllCaches{
-    NSArray* folder_list=[[[NSFileManager defaultManager] contentsOfDirectoryAtPath:WKFLIPS_PATH_TEMP error:nil] pathsMatchingExtensions:@[@"cache"]];
-    for (NSString* folder in folder_list) {
-        NSString* filename=[WKFLIPS_PATH_TEMP stringByAppendingPathComponent:folder];
-        NSLog(@"remove caches:%@",filename);
-        [[NSFileManager defaultManager] removeItemAtPath:filename error:nil];
-    }
-}
 #pragma mark - file
 -(NSString*)folder{
     if (!_folder){
@@ -145,6 +137,22 @@
             [self.pageIdentityArray removeObject:identity];
         }
     }
+}
++(void)clearAllCaches{
+    NSArray* folder_list=[[[NSFileManager defaultManager] contentsOfDirectoryAtPath:WKFLIPS_PATH_TEMP error:nil] pathsMatchingExtensions:@[@"cache"]];
+    for (NSString* folder in folder_list) {
+        NSString* filename=[WKFLIPS_PATH_TEMP stringByAppendingPathComponent:folder];
+        NSLog(@"remove caches:%@",filename);
+        [[NSFileManager defaultManager] removeItemAtPath:filename error:nil];
+    }
+}
+-(void)remove{
+    NSLog(@"remvoe caches:%@",self.folder);
+    [[NSFileManager defaultManager] removeItemAtPath:self.folder error:nil];
+}
++(void)removeIdentity:(NSString *)identity{
+    WKFlipsViewCache* cache=[[[WKFlipsViewCache alloc]initWithIdentity:identity] autorelease];
+    [cache remove];
 }
 #pragma mark - pageCache
 -(WKFlipPageViewCache*)pageCacheAtPageIndex:(int)pageIndex{
