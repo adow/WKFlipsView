@@ -27,6 +27,7 @@
 		68164B7C189170B400F28D09 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 68164B7B189170B400F28D09 /* README.md */; };
 		68435029188A27C100A159D4 /* WKFlipsViewCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 68435028188A27C100A159D4 /* WKFlipsViewCache.m */; };
 		6869ED22185B2903008613FE /* WKFlipsLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 6869ED21185B2903008613FE /* WKFlipsLayer.m */; };
+		68C61AC11931D43F00DE8970 /* TestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 68C61AC01931D43F00DE8970 /* TestViewController.m */; };
 		68FF4B91187C5499009301E2 /* TestImagePageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 68FF4B90187C5499009301E2 /* TestImagePageView.m */; };
 /* End PBXBuildFile section */
 
@@ -72,6 +73,8 @@
 		68435028188A27C100A159D4 /* WKFlipsViewCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WKFlipsViewCache.m; path = WKFlipPageView/WKFlipsViewCache.m; sourceTree = "<group>"; };
 		6869ED20185B2903008613FE /* WKFlipsLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKFlipsLayer.h; path = WKFlipPageView/WKFlipsLayer.h; sourceTree = "<group>"; };
 		6869ED21185B2903008613FE /* WKFlipsLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WKFlipsLayer.m; path = WKFlipPageView/WKFlipsLayer.m; sourceTree = "<group>"; };
+		68C61ABF1931D43F00DE8970 /* TestViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestViewController.h; sourceTree = "<group>"; };
+		68C61AC01931D43F00DE8970 /* TestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestViewController.m; sourceTree = "<group>"; };
 		68FF4B8F187C5499009301E2 /* TestImagePageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestImagePageView.h; sourceTree = "<group>"; };
 		68FF4B90187C5499009301E2 /* TestImagePageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestImagePageView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -146,6 +149,8 @@
 				6808BF27185768EC00A8E552 /* TestFlipPageView.m */,
 				68FF4B8F187C5499009301E2 /* TestImagePageView.h */,
 				68FF4B90187C5499009301E2 /* TestImagePageView.m */,
+				68C61ABF1931D43F00DE8970 /* TestViewController.h */,
+				68C61AC01931D43F00DE8970 /* TestViewController.m */,
 			);
 			path = WKFlipsView;
 			sourceTree = "<group>";
@@ -297,6 +302,7 @@
 				68FF4B91187C5499009301E2 /* TestImagePageView.m in Sources */,
 				6869ED22185B2903008613FE /* WKFlipsLayer.m in Sources */,
 				6808BEB31855E39000A8E552 /* WKFlipsView.m in Sources */,
+				68C61AC11931D43F00DE8970 /* TestViewController.m in Sources */,
 				6808BE8E1855E24900A8E552 /* ViewController.m in Sources */,
 				6808BE881855E24900A8E552 /* AppDelegate.m in Sources */,
 				68435029188A27C100A159D4 /* WKFlipsViewCache.m in Sources */,

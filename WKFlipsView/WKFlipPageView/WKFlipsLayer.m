@@ -500,51 +500,46 @@
 ///根据现在的页面拖动的角度计算另外两层页面的阴影
 -(void)_showShadowOnDraggingLayer{
     ///当前正在拖动的这层有一个固定明度的阴影
-    [_dragging_layer showShadowOpacity:0.03];
-    NSUInteger layerIndex=[self.layer.sublayers indexOfObject:_dragging_layer];
-    WKFlipsLayer* shadowLayer_bottom=nil;
-    if (layerIndex>0){
-        NSUInteger shadowLayerIndex_bottom=layerIndex-1;
-        shadowLayer_bottom=self.layer.sublayers[shadowLayerIndex_bottom];
-    }
-    WKFlipsLayer* shadowLayer_top=nil;
-    if (layerIndex<self.layer.sublayers.count-1){
-        NSUInteger shadowLayerIndex_top=layerIndex+1;
-        shadowLayer_top=self.layer.sublayers[shadowLayerIndex_top];
-    }
-    if (_dragging_layer.rotateDegree<90.0f){
-        [shadowLayer_bottom showShadowOpacity:(1.0f-_dragging_layer.rotateDegree/90.0f)];
-        [shadowLayer_top removeShadow];
-    }
-    else{
-        [shadowLayer_top showShadowOpacity:(1.0f-(180.0f-_dragging_layer.rotateDegree)/90.0f)];
-        [shadowLayer_bottom removeShadow];
-    }
+//    [_dragging_layer showShadowOpacity:0.03];
+//    NSUInteger layerIndex=[self.layer.sublayers indexOfObject:_dragging_layer];
+//    WKFlipsLayer* shadowLayer_bottom=nil;
+//    if (layerIndex>0){
+//        NSUInteger shadowLayerIndex_bottom=layerIndex-1;
+//        shadowLayer_bottom=self.layer.sublayers[shadowLayerIndex_bottom];
+//    }
+//    WKFlipsLayer* shadowLayer_top=nil;
+//    if (layerIndex<self.layer.sublayers.count-1){
+//        NSUInteger shadowLayerIndex_top=layerIndex+1;
+//        shadowLayer_top=self.layer.sublayers[shadowLayerIndex_top];
+//    }
+//    if (_dragging_layer.rotateDegree<90.0f){
+//        [shadowLayer_bottom showShadowOpacity:(1.0f-_dragging_layer.rotateDegree/90.0f)];
+//        [shadowLayer_top removeShadow];
+//    }
+//    else{
+//        [shadowLayer_top showShadowOpacity:(1.0f-(180.0f-_dragging_layer.rotateDegree)/90.0f)];
+//        [shadowLayer_bottom removeShadow];
+//    }
     
 }
 ///去掉图层阴影，从所有图层上处理
 -(void)_removeShadowOnDraggngLayer{
     //double startTime=CFAbsoluteTimeGetCurrent();
-//    int layersNUmber=[self numbersOfLayers];
-//    for (int layerIndex=layersNUmber-1; layerIndex>=0; layerIndex--){
-//        WKFlipsLayer* flipLayer=self.layer.sublayers[layerIndex];
-//        [flipLayer removeShadow];
-//    }
     ///不循环所有层，只处理当前的几层
-    [_dragging_layer removeShadow];
-    NSUInteger layerIndex=[self.layer.sublayers indexOfObject:_dragging_layer];
-    WKFlipsLayer* shadowLayer_bottom=nil;
-    if (layerIndex>0 && layerIndex<self.layer.sublayers.count-1){
-        NSUInteger shadowLayerIndex_bottom=layerIndex-1;
-        shadowLayer_bottom=self.layer.sublayers[shadowLayerIndex_bottom];
-    }
-    WKFlipsLayer* shadowLayer_top=nil;
-    if (layerIndex<self.layer.sublayers.count-1){
-        NSUInteger shadowLayerIndex_top=layerIndex+1;
-        shadowLayer_top=self.layer.sublayers[shadowLayerIndex_top];
-    }
-    [shadowLayer_bottom removeShadow];
-    [shadowLayer_top removeShadow];
+//    [_dragging_layer removeShadow];
+//    NSUInteger layerIndex=[self.layer.sublayers indexOfObject:_dragging_layer];
+//    WKFlipsLayer* shadowLayer_bottom=nil;
+//    if (layerIndex>0 && layerIndex<self.layer.sublayers.count-1){
+//        NSUInteger shadowLayerIndex_bottom=layerIndex-1;
+//        shadowLayer_bottom=self.layer.sublayers[shadowLayerIndex_bottom];
+//    }
+//    WKFlipsLayer* shadowLayer_top=nil;
+//    if (layerIndex<self.layer.sublayers.count-1){
+//        NSUInteger shadowLayerIndex_top=layerIndex+1;
+//        shadowLayer_top=self.layer.sublayers[shadowLayerIndex_top];
+//    }
+//    [shadowLayer_bottom removeShadow];
+//    [shadowLayer_top removeShadow];
     //NSLog(@"removeShaodw duration:%f",CFAbsoluteTimeGetCurrent()-startTime);
 }
 @end
@@ -559,6 +554,7 @@
 @property (nonatomic,assign) CATransform3D cancelledTransform;
 @end
 @implementation WKFlipsLayer
+@dynamic rotateDegree;
 -(id)initWithFrame:(CGRect)frame{
     self=[super init];
     if (self){
@@ -629,6 +625,28 @@
         [self.backLayer addSublayer:wordsLayer];
     }
 }
+#pragma mark - Animation
+-(id<CAAction>)actionForKey:(NSString *)event{
+    return [super actionForKey:event];
+//    id<CAAction> animation=[super actionForKey:event];
+//    NSLog(@"%@:\n%@",event,animation);
+//    return animation;
+}
++(BOOL)needsDisplayForKey:(NSString *)key{
+//    NSLog(@"needsDisplayForKey:%@",key);
+    if ([key isEqualToString:@"rotateDegree"]){
+        return YES;
+    }
+    BOOL result=[super needsDisplayForKey:key];
+//    NSLog(@"needsDisplayForKey:%@,%d",key,result);
+    return result;
+}
+-(void)display{
+//    NSLog(@"display:%f",[self.presentationLayer rotateDegree]);
+    [CATransaction setValue:[NSNumber numberWithBool:YES] forKey:kCATransactionDisableActions];
+    self.transform=WKFlipCATransform3DPerspectSimpleWithRotate([self.presentationLayer rotateDegree]);
+//    [super display];
+}
 #pragma mark - Cancel Drag
 -(void)cancelDragAnimation{
     self.cancelledTransform=((CALayer*)self.presentationLayer).transform;
@@ -636,14 +654,14 @@
     [self removeAllAnimations];
 }
 #pragma mark - rotateDegree
--(void)setRotateDegree:(CGFloat)rotateDegree{
-    _rotateDegree=rotateDegree;
-    [CATransaction setDisableActions:YES];
-    self.transform=WKFlipCATransform3DPerspectSimpleWithRotate(rotateDegree);
-}
--(CGFloat)rotateDegree{
-    return _rotateDegree;
-}
+//-(void)setRotateDegree:(CGFloat)rotateDegree{
+//    _rotateDegree=rotateDegree;
+//    [CATransaction setDisableActions:YES];
+//    self.transform=WKFlipCATransform3DPerspectSimpleWithRotate(rotateDegree);
+//}
+//-(CGFloat)rotateDegree{
+//    return _rotateDegree;
+//}
 #pragma mark rotateDegree animation
 -(void)setRotateDegree:(CGFloat)rotateDegree duration:(CGFloat)duration afterDelay:(NSTimeInterval)delay completion:(void (^)())completion{
     CATransform3D fromTrnasform=self.transform;
@@ -651,31 +669,51 @@
     CATransform3D halfTransform=WKFlipCATransform3DPerspectSimpleWithRotate(halfRotateDegree);
     CATransform3D toTransform=WKFlipCATransform3DPerspectSimpleWithRotate(rotateDegree);
     //NSLog(@"%f,%f,%f",self.rotateDegree,halfRotateDegree,rotateDegree);
+    self.rotateDegree=rotateDegree;
     [CATransaction begin];
     [CATransaction setValue:[NSNumber numberWithBool:YES] forKey:kCATransactionDisableActions];
     CAKeyframeAnimation* flipAnimation=[CAKeyframeAnimation animationWithKeyPath:@"transform"];
     flipAnimation.delegate=self;
     flipAnimation.duration=duration;
     flipAnimation.beginTime=[self convertTime:CACurrentMediaTime() fromLayer:nil]+delay;
-    flipAnimation.removedOnCompletion=NO;
-    flipAnimation.fillMode=kCAFillModeForwards;
+//    flipAnimation.removedOnCompletion=NO;
+//    flipAnimation.fillMode=kCAFillModeForwards;
+    flipAnimation.fillMode=kCAFillModeBoth;
     flipAnimation.keyTimes=@[@0.0f,@0.5f,@1.0f];
     flipAnimation.values=@[[NSValue valueWithCATransform3D:fromTrnasform],[NSValue valueWithCATransform3D:halfTransform],
                            [NSValue valueWithCATransform3D:toTransform]];
     [CATransaction setCompletionBlock:^{
         if (!_isAnimationCancelled){
-            self.rotateDegree=rotateDegree;
+//            self.rotateDegree=rotateDegree;
             completion();
         }
         else{
             self.transform=self.cancelledTransform;///动画被取消，停在当前的位置,也不要回调
         }
-        [self removeAllAnimations];
+//        [self removeAllAnimations];
         
         _isAnimationCancelled=NO;
     }];
     [self addAnimation:flipAnimation forKey:@"animation-flip"];
     [CATransaction commit];
+}
+-(void)setRotateDegree2:(CGFloat)rotateDegree duration:(CGFloat)duration afterDelay:(NSTimeInterval)delay completion:(void (^)())completion{
+    [CATransaction begin];
+    CABasicAnimation* flipAnimation=[CABasicAnimation animationWithKeyPath:@"rotateDegree"];
+    [CATransaction setValue:[NSNumber numberWithBool:YES] forKey:kCATransactionDisableActions];
+    flipAnimation.delegate=self;
+    flipAnimation.duration=duration;
+    flipAnimation.fillMode=kCAFillModeBoth;
+    flipAnimation.toValue=[NSNumber numberWithFloat:rotateDegree];
+    flipAnimation.fromValue=@(self.rotateDegree);
+//    flipAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
+    [CATransaction setCompletionBlock:^{
+        
+    }];
+    [self addAnimation:flipAnimation forKey:@"flip-animation"];
+    [CATransaction commit];
+    self.rotateDegree=rotateDegree;
+    
 }
 #pragma mark shadow
 ///显示图层阴影，设置opacity是比较费时的操作

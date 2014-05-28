@@ -14,7 +14,7 @@
 ///获取临时目录
 #define WKFLIPS_PATH_TEMP NSTemporaryDirectory()
 ///获取文档目录
-#define WKFLIPS_PATH_DOCUMENT NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDirectory, YES)[0]
+#define WKFLIPS_PATH_DOCUMENT NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0]
 
 ///系统版本号
 #define WKFLIPS_CURRENTSYSTEMVERSIONFLOAT [[[UIDevice currentDevice] systemVersion] floatValue]

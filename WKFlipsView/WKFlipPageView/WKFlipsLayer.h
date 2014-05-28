@@ -6,6 +6,7 @@
 //  Copyright (c) 2013年 秦 道平. All rights reserved.
 //
 
+
 #import <QuartzCore/QuartzCore.h>
 #import <CoreText/CoreText.h>
 #pragma makr - WKFlipsLayerView
@@ -76,6 +77,7 @@ typedef enum WKFlipsLayerDragAtPosition:NSUInteger{
 @property (nonatomic,assign) CGFloat rotateDegree;
 ///动画设置翻转角度
 -(void)setRotateDegree:(CGFloat)rotateDegree duration:(CGFloat)duration afterDelay:(NSTimeInterval)delay completion:(void(^)())completion;
+-(void)setRotateDegree2:(CGFloat)rotateDegree duration:(CGFloat)duration afterDelay:(NSTimeInterval)delay completion:(void (^)())completion;
 ///取消拖动后的动画
 -(void)cancelDragAnimation;
 ///画出来测试用的文字

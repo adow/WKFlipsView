@@ -64,6 +64,7 @@
     [_flipsView flipToPageIndex:9 delay:1.0f completion:^{
         
     }];
+    
 }
 
 - (void)didReceiveMemoryWarning
