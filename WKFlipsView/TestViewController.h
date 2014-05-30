@@ -12,4 +12,5 @@
     
 }
 @property (nonatomic,retain) WKFlipsLayer* flipLayer;
+@property (nonatomic,retain) WKFlipsLayer* flipLayer2;
 @end

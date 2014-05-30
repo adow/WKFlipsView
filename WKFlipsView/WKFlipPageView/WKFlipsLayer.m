@@ -95,8 +95,8 @@
 //        layer.backLayer.contents=(id)[UIImage imageNamed:@"weather-default-bg"].CGImage;
         #ifdef DEBUG
         ///在页面上输出图层编号和页面编号,绘制文字会消耗不少时间
-//        [layer drawWords:[NSString stringWithFormat:@"layer:%d-front,page:%d",(layersNumber-a-1),a-1] onPosition:0];
-//        [layer drawWords:[NSString stringWithFormat:@"layer:%d-back,page:%d",(layersNumber-a-1),a] onPosition:1];
+        [layer drawWords:[NSString stringWithFormat:@"layer:%d-front,page:%d",(layersNumber-a-1),a-1] onPosition:0];
+        [layer drawWords:[NSString stringWithFormat:@"layer:%d-back,page:%d",(layersNumber-a-1),a] onPosition:1];
         #endif
         layer.rotateDegree=0.0f;
     }
@@ -317,8 +317,8 @@
     int layersNumber=[self numbersOfLayers];
     int stopLayerIndexAtTop=layersNumber-1-pageIndex;
     int stopLayerIndexAtBottom=stopLayerIndexAtTop-1;
-    //CGFloat spaceRotate=1.0f;
-    CGFloat spaceRotate=0.01f;
+//    CGFloat spaceRotate=1.0f;
+    CGFloat spaceRotate=0.1f;
     if (layerIndex>=stopLayerIndexAtTop){
         return 180.0f+(layerIndex-stopLayerIndexAtTop)*spaceRotate;
     }
@@ -361,7 +361,7 @@
                 int layersNumber=[self numbersOfLayers];
                 for (int layerIndex=0; layerIndex<layersNumber; layerIndex++) {
                     CGFloat rotateDegree=[self _calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:previousPageIndex];
-                    //NSLog(@"layerIndex:%d,rotateDegree:%f",layerIndex,rotateDegree);
+                    NSLog(@"layerIndex:%d,rotateDegree:%f",layerIndex,rotateDegree);
                     WKFlipsLayer* flipLayer=self.layer.sublayers[layerIndex];
                     if (flipLayer!=_dragging_layer){
                         [flipLayer setRotateDegree:rotateDegree];
@@ -408,6 +408,7 @@
             for (int layerIndex=layersNumber-1; layerIndex>=0; layerIndex--) {
                 CGFloat rotateDegree=[self _calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:nextPageIndex];
                 WKFlipsLayer* flipLayer=self.layer.sublayers[layerIndex];
+                NSLog(@"layerIndex:%d,rotateDegree:%f",layerIndex,rotateDegree);
                 if (flipLayer!=_dragging_layer)
                     [flipLayer setRotateDegree:rotateDegree];
             }
@@ -458,6 +459,10 @@
         else{
             _dragging_layer=self.layer.sublayers[stopLayerIndexAtBottom];
             _dragging_position=WKFlipsLayerDragAtPositionBottom;
+        }
+        for (long layerIndex=self.layer.sublayers.count-1; layerIndex>=0; layerIndex--) {
+            WKFlipsLayer* layer=self.layer.sublayers[layerIndex];
+            NSLog(@"%ld,%f",layerIndex,layer.rotateDegree);
         }
 //        ///恢复开是时候的位置
 //        _dragging_last_translation_y=translation.y;
@@ -628,10 +633,16 @@
 }
 #pragma mark - Animation
 -(id<CAAction>)actionForKey:(NSString *)event{
-    return [super actionForKey:event];
+//    return [super actionForKey:event];
 //    id<CAAction> animation=[super actionForKey:event];
 //    NSLog(@"%@:\n%@",event,animation);
 //    return animation;
+    if ([event isEqualToString:@"rotateDegree"]){
+        CABasicAnimation *animation=[CABasicAnimation animationWithKeyPath:event];
+        animation.fromValue=@([[self presentationLayer] rotateDegree]);
+        return animation;
+    }
+    return [super actionForKey:event];
 }
 +(BOOL)needsDisplayForKey:(NSString *)key{
 //    NSLog(@"needsDisplayForKey:%@",key);
@@ -669,6 +680,7 @@
     flipAnimation.delegate=self;
     flipAnimation.duration=duration;
     flipAnimation.fillMode=kCAFillModeBoth;
+    flipAnimation.beginTime=[self convertTime:CACurrentMediaTime() fromLayer:nil]+delay;
     flipAnimation.toValue=[NSNumber numberWithFloat:rotateDegree];
     flipAnimation.fromValue=@(self.rotateDegree);
     flipAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
@@ -676,9 +688,9 @@
         completion();
     }];
     [self addAnimation:flipAnimation forKey:WKFLIPSLAYER_FLIP_ANIMATION];
-    self.speed=2.0f;
-    [CATransaction commit];
     self.rotateDegree=rotateDegree;
+    [CATransaction commit];
+    
 
 }
 #pragma mark shadow

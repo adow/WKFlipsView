@@ -6,7 +6,6 @@
 //  Copyright (c) 2013年 秦 道平. All rights reserved.
 //
 
-
 #import <QuartzCore/QuartzCore.h>
 #import <CoreText/CoreText.h>
 #pragma makr - WKFlipsLayerView
