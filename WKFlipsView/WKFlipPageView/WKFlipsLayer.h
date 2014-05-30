@@ -76,8 +76,7 @@ typedef enum WKFlipsLayerDragAtPosition:NSUInteger{
 ///设置翻转角度，因为一开始的位置是在底部，所以在底部时0度，翻转到上面时变成180度
 @property (nonatomic,assign) CGFloat rotateDegree;
 ///动画设置翻转角度
--(void)setRotateDegree:(CGFloat)rotateDegree duration:(CGFloat)duration afterDelay:(NSTimeInterval)delay completion:(void(^)())completion;
--(void)setRotateDegree2:(CGFloat)rotateDegree duration:(CGFloat)duration afterDelay:(NSTimeInterval)delay completion:(void (^)())completion;
+-(void)setRotateDegree:(CGFloat)rotateDegree duration:(CGFloat)duration afterDelay:(NSTimeInterval)delay completion:(void (^)())completion;
 ///取消拖动后的动画
 -(void)cancelDragAnimation;
 ///画出来测试用的文字

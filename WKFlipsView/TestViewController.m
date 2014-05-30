@@ -66,34 +66,9 @@
 
 #pragma mark - Action
 -(IBAction)onAnimationButton:(id)sender{
-//    [_flipLayer setRotateDegree:180.0f duration:1.0f afterDelay:0.0f completion:^{
-//        [_flipLayer setRotateDegree:0.0f duration:1.0f afterDelay:1.0f completion:^{
-////            [_flipLayer setRotateDegree:180.0f duration:1.0f afterDelay:1.0f completion:^{
-////            
-////            }];
-//            
-//        }];
-//    }];
-    
-//    [CATransaction begin];
-//    CABasicAnimation* flipAnimation=[CABasicAnimation animationWithKeyPath:@"rotateDegree"];
-//    [CATransaction setValue:[NSNumber numberWithBool:YES] forKey:kCATransactionDisableActions];
-//    flipAnimation.delegate=self;
-//    flipAnimation.duration=3.0f;
-//    flipAnimation.fillMode=kCAFillModeBoth;
-//    flipAnimation.toValue=[NSNumber numberWithFloat:180.0f];
-//    flipAnimation.fromValue=@(_flipLayer.rotateDegree);
-//    flipAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
-//    [CATransaction setCompletionBlock:^{
-//        
-//    }];
-//    [_flipLayer addAnimation:flipAnimation forKey:@"flip-animation"];
-//    [CATransaction commit];
-//    _flipLayer.rotateDegree=180.0f;
-
-//    _flipLayer.rotateDegree=0.0f;
-    [_flipLayer setRotateDegree2:180.0f duration:3.0f afterDelay:3.0f completion:^{
-        
+    _flipLayer.rotateDegree=0.0f;
+    [_flipLayer setRotateDegree:180.0f duration:3.0f afterDelay:3.0f completion:^{
+        NSLog(@"completed");
     }];
 }
 #pragma mark - touches
@@ -112,12 +87,23 @@
 
 #pragma mark - Drag
 -(void)dragBeganWithTranslation:(CGPoint)translation{
+    [_flipLayer cancelDragAnimation];
     _dragging_last_translation_y=translation.y;
+    //[CATransaction setValue:[NSNumber numberWithBool:YES] forKey:kCATransactionDisableActions];
 }
 -(void)dragEndedWithTranslation:(CGPoint)translation{
-//    [_flipLayer setRotateDegree:0.0f duration:1.0f afterDelay:0.1f completion:^{
-//        
-//    }];
+    NSLog(@"%f",_flipLayer.rotateDegree);
+    [_flipLayer removeShadow];
+    if (_flipLayer.rotateDegree>=90.0f){
+        [_flipLayer setRotateDegree:180.0f duration:1.0f afterDelay:0.0f completion:^{
+            
+        }];
+    }
+    else{
+        [_flipLayer setRotateDegree:0.0f duration:1.0f afterDelay:0.0f completion:^{
+            
+        }];
+    }
 }
 -(void)draggingWithTranslation:(CGPoint)translation{
     CGFloat rotateDegree=_flipLayer.rotateDegree-(translation.y-_dragging_last_translation_y)*0.5f;
@@ -125,7 +111,7 @@
     rotateDegree=fminf(rotateDegree, 180.0f);
     _flipLayer.rotateDegree=rotateDegree;
     _dragging_last_translation_y=translation.y;
-    
+    [_flipLayer showShadowOpacity:rotateDegree/180.0f];
     //NSLog(@"dragging:%f",translation.y);
     
 }
