@@ -317,8 +317,8 @@
     int layersNumber=[self numbersOfLayers];
     int stopLayerIndexAtTop=layersNumber-1-pageIndex;
     int stopLayerIndexAtBottom=stopLayerIndexAtTop-1;
-//    CGFloat spaceRotate=1.0f;
     CGFloat spaceRotate=0.1f;
+//    CGFloat spaceRotate=0.01f;
     if (layerIndex>=stopLayerIndexAtTop){
         return 180.0f+(layerIndex-stopLayerIndexAtTop)*spaceRotate;
     }
@@ -359,13 +359,18 @@
                 [self _removeShadowOnDraggngLayer];
                 int previousPageIndex=self.flipsView.pageIndex-1;
                 int layersNumber=[self numbersOfLayers];
+//                [CATransaction setValue:[NSNumber numberWithBool:YES] forKey:kCATransactionDisableActions];
                 for (int layerIndex=0; layerIndex<layersNumber; layerIndex++) {
                     CGFloat rotateDegree=[self _calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:previousPageIndex];
-                    NSLog(@"layerIndex:%d,rotateDegree:%f",layerIndex,rotateDegree);
+                    //NSLog(@"layerIndex:%d,rotateDegree:%f",layerIndex,rotateDegree);
                     WKFlipsLayer* flipLayer=self.layer.sublayers[layerIndex];
                     if (flipLayer!=_dragging_layer){
                         [flipLayer setRotateDegree:rotateDegree];
                     }
+                    else{
+//                        NSLog(@"skip dragging layerIndex:%d",layerIndex);
+                    }
+//                    NSLog(@"layerIndex:%d,rotateDegree:%f/%f",layerIndex,flipLayer.rotateDegree,[[flipLayer presentationLayer] rotateDegree]);
                 }
                 int layerIndex=(int)[self.layer.sublayers indexOfObject:_dragging_layer];
                 CGFloat newRotateDegree=[self _calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:previousPageIndex];
@@ -405,12 +410,17 @@
             [self _removeShadowOnDraggngLayer];
             int nextPageIndex=self.flipsView.pageIndex+1;
             int layersNumber=[self numbersOfLayers];
+//            [CATransaction setValue:[NSNumber numberWithBool:YES] forKey:kCATransactionDisableActions];
             for (int layerIndex=layersNumber-1; layerIndex>=0; layerIndex--) {
                 CGFloat rotateDegree=[self _calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:nextPageIndex];
                 WKFlipsLayer* flipLayer=self.layer.sublayers[layerIndex];
-                NSLog(@"layerIndex:%d,rotateDegree:%f",layerIndex,rotateDegree);
+//                NSLog(@"layerIndex:%d,rotateDegree:%f",layerIndex,rotateDegree);
                 if (flipLayer!=_dragging_layer)
                     [flipLayer setRotateDegree:rotateDegree];
+                else{
+//                    NSLog(@"skip dragging layerIndex:%d",layerIndex);
+                }
+//                NSLog(@"layerIndex:%d,rotateDegree:%f/%f",layerIndex,flipLayer.rotateDegree,[[flipLayer presentationLayer] rotateDegree]);
             }
             int layerIndex=(int)[self.layer.sublayers indexOfObject:_dragging_layer];
             CGFloat newRotateDegree=[self _calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:nextPageIndex];
@@ -455,10 +465,12 @@
         if (translation.y>0){
             _dragging_layer=self.layer.sublayers[stopLayerIndexAtTop];
             _dragging_position=WKFlipsLayerDragAtPositionTop;
+            NSLog(@"dragging Top layerIndex:%d",stopLayerIndexAtTop);
         }
         else{
             _dragging_layer=self.layer.sublayers[stopLayerIndexAtBottom];
             _dragging_position=WKFlipsLayerDragAtPositionBottom;
+            NSLog(@"dragging Bottom layerIndex:%d",stopLayerIndexAtBottom);
         }
         for (long layerIndex=self.layer.sublayers.count-1; layerIndex>=0; layerIndex--) {
             WKFlipsLayer* layer=self.layer.sublayers[layerIndex];
@@ -640,6 +652,8 @@
     if ([event isEqualToString:@"rotateDegree"]){
         CABasicAnimation *animation=[CABasicAnimation animationWithKeyPath:event];
         animation.fromValue=@([[self presentationLayer] rotateDegree]);
+        animation.toValue=@(self.rotateDegree);
+//        NSLog(@"rotateDegree duration:%f",animation.duration);
         return animation;
     }
     return [super actionForKey:event];
@@ -683,7 +697,7 @@
     flipAnimation.beginTime=[self convertTime:CACurrentMediaTime() fromLayer:nil]+delay;
     flipAnimation.toValue=[NSNumber numberWithFloat:rotateDegree];
     flipAnimation.fromValue=@(self.rotateDegree);
-    flipAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
+//    flipAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
     [CATransaction setCompletionBlock:^{
         completion();
     }];
