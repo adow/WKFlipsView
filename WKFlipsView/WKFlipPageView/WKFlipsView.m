@@ -14,11 +14,13 @@
     self = [super initWithFrame:frame];
     if (self) {
         // Initialization code
+        self.opaque=YES;
         self.flipable=YES;
         _cache=[[WKFlipsViewCache alloc]initWithIdentity:cacheIdentity];
         _reusedPageViewDictionary=[[NSMutableDictionary alloc]init];
         _reusedPageViewDictionaryCopy=[[NSMutableDictionary alloc]init];
         _currentPageView=[[UIView alloc]initWithFrame:self.bounds];
+        _currentPageView.opaque=YES;
         [self addSubview:_currentPageView];
         self.pageIndex=pageIndex;
         _flippingLayersView=[[WKFlipsLayerView alloc] initWithFlipsView:self];
@@ -130,9 +132,9 @@
     }
     [_flippingLayersView flipToPageIndex:pageIndex completion:^(BOOL completed) {
         completion();
-//        if ([self.delegate respondsToSelector:@selector(flipsView:didFlippedToPageIndex:)]){
-//            [self.delegate flipsView:self didFlippedToPageIndex:pageIndex];
-//        }
+        if ([self.delegate respondsToSelector:@selector(flipsView:didFlippedToPageIndex:)]){
+            [self.delegate flipsView:self didFlippedToPageIndex:pageIndex];
+        }
     }];
 }
 -(void)flipToPageIndex:(int)pageIndex delay:(CGFloat)delay completion:(void (^)())completion{

@@ -85,4 +85,6 @@ typedef enum WKFlipsLayerDragAtPosition:NSUInteger{
 -(void)showShadowOpacity:(CGFloat)opacity;
 ///去掉图层阴影
 -(void)removeShadow;
+///在frontLayer(0)显示阴影还是在backLayer(1)显示阴影
+-(void)showShadowOpacity:(CGFloat)opacity onLayer:(int)layerPos;
 @end

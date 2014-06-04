@@ -28,6 +28,7 @@
     self=[super initWithFrame:frame];
     if (self){
         self.userInteractionEnabled=NO;
+        self.opaque=YES;
     }
     return self;
 }
@@ -36,6 +37,7 @@
     if (self){
         self.userInteractionEnabled=NO;
         self.flipsView=flipsView;
+        self.opaque=YES;
         //[self buildLayers];
     }
     return self;
@@ -233,6 +235,7 @@
         for (int layerIndex=0; layerIndex<layersNumber; layerIndex++) {
             CGFloat rotateDegree=[self _calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:pageIndex];
             WKFlipsLayer *flipLayer=self.layer.sublayers[layerIndex];
+            flipLayer.hidden=NO;
             flipLayer.rotateDegree=rotateDegree;
         }
     }
@@ -241,6 +244,7 @@
         for (int layerIndex=layersNumber-1; layerIndex>=0; layerIndex--) {
             CGFloat rotateDegree=[self _calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:pageIndex];
             WKFlipsLayer* flipLayer=self.layer.sublayers[layerIndex];
+            flipLayer.hidden=NO;
             flipLayer.rotateDegree=rotateDegree;
         }
     }
@@ -268,6 +272,7 @@
             CGFloat rotateDegree=[self _calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:pageIndex];
             //NSLog(@"layerIndex:%d,%f",layerIndex,rotateDegree);
             WKFlipsLayer *flipLayer=self.layer.sublayers[layerIndex];
+            flipLayer.hidden=NO;
             CGFloat rotateDistance=fabsf(rotateDegree-flipLayer.rotateDegree);
             CGFloat duration=rotateDistance/180.0f*durationFull;
             delay+=duration*delayFromDuration;
@@ -292,6 +297,7 @@
             CGFloat rotateDegree=[self _calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:pageIndex];
             //NSLog(@"layerIndex:%d,%f",layerIndex,rotateDegree);
             WKFlipsLayer* flipLayer=self.layer.sublayers[layerIndex];
+            flipLayer.hidden=NO;
             CGFloat rotateDistance=fabsf(rotateDegree-flipLayer.rotateDegree);
             CGFloat duration=rotateDistance/180.0f*durationFull;
             delay+=duration*delayFromDuration;
@@ -362,7 +368,6 @@
 //                [CATransaction setValue:[NSNumber numberWithBool:YES] forKey:kCATransactionDisableActions];
                 for (int layerIndex=0; layerIndex<layersNumber; layerIndex++) {
                     CGFloat rotateDegree=[self _calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:previousPageIndex];
-                    //NSLog(@"layerIndex:%d,rotateDegree:%f",layerIndex,rotateDegree);
                     WKFlipsLayer* flipLayer=self.layer.sublayers[layerIndex];
                     if (flipLayer!=_dragging_layer){
                         [flipLayer setRotateDegree:rotateDegree];
@@ -414,7 +419,6 @@
             for (int layerIndex=layersNumber-1; layerIndex>=0; layerIndex--) {
                 CGFloat rotateDegree=[self _calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:nextPageIndex];
                 WKFlipsLayer* flipLayer=self.layer.sublayers[layerIndex];
-//                NSLog(@"layerIndex:%d,rotateDegree:%f",layerIndex,rotateDegree);
                 if (flipLayer!=_dragging_layer)
                     [flipLayer setRotateDegree:rotateDegree];
                 else{
@@ -450,6 +454,7 @@
                 self.runState=WKFlipsLayerViewRunStateStop;
             }];
         }
+        
     }
 }
 -(void)draggingWithTranslation:(CGPoint)translation{
@@ -472,9 +477,17 @@
             _dragging_position=WKFlipsLayerDragAtPositionBottom;
             NSLog(@"dragging Bottom layerIndex:%d",stopLayerIndexAtBottom);
         }
+        ///为图层设置隐藏关系，多图层会引起动画很卡，只要当前翻页的几张能显示就可以了，其他图层隐藏
         for (long layerIndex=self.layer.sublayers.count-1; layerIndex>=0; layerIndex--) {
+//            WKFlipsLayer* layer=self.layer.sublayers[layerIndex];
+//            NSLog(@"%ld,%f",layerIndex,layer.rotateDegree);
             WKFlipsLayer* layer=self.layer.sublayers[layerIndex];
-            NSLog(@"%ld,%f",layerIndex,layer.rotateDegree);
+            if (abs(stopLayerIndexAtBottom-layerIndex)>2 || abs(stopLayerIndexAtTop-layerIndex)>2){
+                layer.hidden=YES;
+            }
+            else{
+                layer.hidden=NO;
+            }
         }
 //        ///恢复开是时候的位置
 //        _dragging_last_translation_y=translation.y;
@@ -516,46 +529,47 @@
 ///根据现在的页面拖动的角度计算另外两层页面的阴影
 -(void)_showShadowOnDraggingLayer{
     ///当前正在拖动的这层有一个固定明度的阴影
-//    [_dragging_layer showShadowOpacity:0.03];
-//    NSUInteger layerIndex=[self.layer.sublayers indexOfObject:_dragging_layer];
-//    WKFlipsLayer* shadowLayer_bottom=nil;
-//    if (layerIndex>0){
-//        NSUInteger shadowLayerIndex_bottom=layerIndex-1;
-//        shadowLayer_bottom=self.layer.sublayers[shadowLayerIndex_bottom];
-//    }
-//    WKFlipsLayer* shadowLayer_top=nil;
-//    if (layerIndex<self.layer.sublayers.count-1){
-//        NSUInteger shadowLayerIndex_top=layerIndex+1;
-//        shadowLayer_top=self.layer.sublayers[shadowLayerIndex_top];
-//    }
-//    if (_dragging_layer.rotateDegree<90.0f){
-//        [shadowLayer_bottom showShadowOpacity:(1.0f-_dragging_layer.rotateDegree/90.0f)];
-//        [shadowLayer_top removeShadow];
-//    }
-//    else{
-//        [shadowLayer_top showShadowOpacity:(1.0f-(180.0f-_dragging_layer.rotateDegree)/90.0f)];
-//        [shadowLayer_bottom removeShadow];
-//    }
+    //[_dragging_layer showShadowOpacity:_dragging_layer.rotateDegree/180.0f*0.3 onLayer:0];
+    [_dragging_layer showShadowOpacity:0.03];
+    NSUInteger layerIndex=[self.layer.sublayers indexOfObject:_dragging_layer];
+    WKFlipsLayer* shadowLayer_bottom=nil;
+    if (layerIndex>0){
+        NSUInteger shadowLayerIndex_bottom=layerIndex-1;
+        shadowLayer_bottom=self.layer.sublayers[shadowLayerIndex_bottom];
+    }
+    WKFlipsLayer* shadowLayer_top=nil;
+    if (layerIndex<self.layer.sublayers.count-1){
+        NSUInteger shadowLayerIndex_top=layerIndex+1;
+        shadowLayer_top=self.layer.sublayers[shadowLayerIndex_top];
+    }
+    if (_dragging_layer.rotateDegree<90.0f){
+        [shadowLayer_bottom showShadowOpacity:(1.0f-_dragging_layer.rotateDegree/90.0f) onLayer:0];
+        [shadowLayer_top removeShadow];
+    }
+    else{
+        [shadowLayer_top showShadowOpacity:(1.0f-(180.0f-_dragging_layer.rotateDegree)/90.0f) onLayer:1];
+        [shadowLayer_bottom removeShadow];
+    }
     
 }
 ///去掉图层阴影，从所有图层上处理
 -(void)_removeShadowOnDraggngLayer{
     //double startTime=CFAbsoluteTimeGetCurrent();
     ///不循环所有层，只处理当前的几层
-//    [_dragging_layer removeShadow];
-//    NSUInteger layerIndex=[self.layer.sublayers indexOfObject:_dragging_layer];
-//    WKFlipsLayer* shadowLayer_bottom=nil;
-//    if (layerIndex>0 && layerIndex<self.layer.sublayers.count-1){
-//        NSUInteger shadowLayerIndex_bottom=layerIndex-1;
-//        shadowLayer_bottom=self.layer.sublayers[shadowLayerIndex_bottom];
-//    }
-//    WKFlipsLayer* shadowLayer_top=nil;
-//    if (layerIndex<self.layer.sublayers.count-1){
-//        NSUInteger shadowLayerIndex_top=layerIndex+1;
-//        shadowLayer_top=self.layer.sublayers[shadowLayerIndex_top];
-//    }
-//    [shadowLayer_bottom removeShadow];
-//    [shadowLayer_top removeShadow];
+    [_dragging_layer removeShadow];
+    NSUInteger layerIndex=[self.layer.sublayers indexOfObject:_dragging_layer];
+    WKFlipsLayer* shadowLayer_bottom=nil;
+    if (layerIndex>0 && layerIndex<self.layer.sublayers.count-1){
+        NSUInteger shadowLayerIndex_bottom=layerIndex-1;
+        shadowLayer_bottom=self.layer.sublayers[shadowLayerIndex_bottom];
+    }
+    WKFlipsLayer* shadowLayer_top=nil;
+    if (layerIndex<self.layer.sublayers.count-1){
+        NSUInteger shadowLayerIndex_top=layerIndex+1;
+        shadowLayer_top=self.layer.sublayers[shadowLayerIndex_top];
+    }
+    [shadowLayer_bottom removeShadow];
+    [shadowLayer_top removeShadow];
     //NSLog(@"removeShaodw duration:%f",CFAbsoluteTimeGetCurrent()-startTime);
 }
 @end
@@ -586,6 +600,7 @@
         _frontLayer.backgroundColor=[UIColor whiteColor].CGColor;
         _frontLayer.doubleSided=NO;
         _frontLayer.name=@"frontLayer";
+        _frontLayer.opaque=YES;
         
         _backLayer=[[CALayer alloc]init];
         _backLayer.frame=self.bounds;
@@ -593,6 +608,7 @@
         _backLayer.doubleSided=YES;
         _backLayer.name=@"backLayer";
         _backLayer.transform=WKFlipCATransform3DPerspectSimpleWithRotate(180.0f);
+        _backLayer.opaque=YES;
         
         [self insertSublayer:_frontLayer atIndex:0];
         [self insertSublayer:_backLayer atIndex:0];
@@ -720,10 +736,26 @@
         _shadowOnBackLayer.backgroundColor=[UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:0.9f].CGColor;
         _shadowOnFronLayer.backgroundColor=[UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:0.9f].CGColor;
     }
-    
+    [CATransaction setDisableActions:YES];
     _shadowOnBackLayer.opacity=opacity;
     _shadowOnFronLayer.opacity=opacity;
+}
+///只显示一面的图层阴影
+-(void)showShadowOpacity:(CGFloat)opacity onLayer:(int)layerPos{
+    if (!_shadowOnFronLayer){
+        _shadowOnFronLayer=[[CALayer alloc]init];
+        _shadowOnFronLayer.frame=self.bounds;
+        _shadowOnFronLayer.backgroundColor=[UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:0.3f].CGColor;
+        if (layerPos==0){
+            [self.frontLayer addSublayer:_shadowOnFronLayer];
+        }
+        else{
+            [self.backLayer addSublayer:_shadowOnFronLayer];
+        }
+    }
     
+    [CATransaction setDisableActions:YES];
+    _shadowOnFronLayer.opacity=opacity;
 }
 -(void)removeShadow{
     //NSLog(@"removeShadow");

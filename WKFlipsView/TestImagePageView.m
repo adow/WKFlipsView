@@ -40,6 +40,7 @@
 -(void)prepareForReuse{
     if (!_testImageView){
         _testImageView=[[UIImageView alloc]initWithFrame:self.bounds];
+        _testImageView.opaque=YES;
         [self addSubview:_testImageView];
     }
     for (UIView* view in self.subviews) {
