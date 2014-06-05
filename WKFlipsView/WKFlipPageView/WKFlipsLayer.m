@@ -11,9 +11,9 @@
 #import "WKFlip.h"
 #pragma makr - WKFlipsLayerView
 ///重建页面时的贴图时间
-#define WKFlipsLayerView_PasteImageDuration_When_Rebuild 1.0f
+#define WKFlipsLayerView_PasteImageDuration_When_Rebuild 0.5f
 ///翻页结束时的贴图时间
-#define WKFlipsLayerView_PasteImageDuration_After_Flipped 0.5f
+#define WKFlipsLayerView_PasteImageDuration_After_Flipped 0.3f
 ///在主线程中延时贴图的时间
 #define WKFlipsLayerView_PasteImage_Delay 0.01f
 @interface WKFlipsLayerView(){
