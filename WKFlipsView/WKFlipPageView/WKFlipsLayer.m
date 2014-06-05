@@ -11,9 +11,9 @@
 #import "WKFlip.h"
 #pragma makr - WKFlipsLayerView
 ///重建页面时的贴图时间
-#define WKFlipsLayerView_PasteImageDuration_When_Rebuild 0.5f
+#define WKFlipsLayerView_PasteImageDuration_When_Rebuild 1.0f
 ///翻页结束时的贴图时间
-#define WKFlipsLayerView_PasteImageDuration_After_Flipped 0.3f
+#define WKFlipsLayerView_PasteImageDuration_After_Flipped 1.0f
 ///在主线程中延时贴图的时间
 #define WKFlipsLayerView_PasteImage_Delay 0.01f
 @interface WKFlipsLayerView(){
@@ -38,11 +38,13 @@
         self.userInteractionEnabled=NO;
         self.flipsView=flipsView;
         self.opaque=YES;
+        self.pasterService=[[_WKFlipsPasterService alloc]initWithFlipsLayerView:self];
         //[self buildLayers];
     }
     return self;
 }
 -(void)dealloc{
+    [_pasterService release];
     [super dealloc];
 }
 -(void)setRunState:(WKFlipsLayerViewRunState)runState{
@@ -76,6 +78,10 @@
     //return [self.flipsView.dataSource numberOfPagesForFlipsView:self.flipsView]*2;
     return (int)[self.flipsView.dataSource numberOfPagesForFlipsView:self.flipsView]+1;
 }
+-(int)totalPages{
+    int totalPages=(int)[self.flipsView.dataSource numberOfPagesForFlipsView:self.flipsView];
+    return totalPages;
+}
 -(void)buildLayers{
 //    double startTime=CFAbsoluteTimeGetCurrent();
     ///先删除现有的layer
@@ -103,124 +109,11 @@
         layer.rotateDegree=0.0f;
     }
 //    NSLog(@"buildLayers duration:%f",CFAbsoluteTimeGetCurrent()-startTime);
-    [self _pasteImagesToLayersForTargetPageIndex:self.flipsView.pageIndex inSeconds:WKFlipsLayerView_PasteImageDuration_When_Rebuild];///重建时可以使用更多的时间来贴图
-    ///TEST
-//    [self flipToPageIndex:1 completion:^(BOOL completed) {
-//    }];
+//    [self _pasteImagesToLayersForTargetPageIndex:self.flipsView.pageIndex inSeconds:WKFlipsLayerView_PasteImageDuration_When_Rebuild];///重建时可以使用更多的时间来贴图
+    [self.pasterService startWithPriorPageIndex:self.flipsView.pageIndex inSecnods:WKFlipsLayerView_PasteImageDuration_When_Rebuild];
+    
     ///直接已经翻页到现在的页面
     [self flipToPageIndex:self.flipsView.pageIndex];
-}
-#pragma mark paste images
-///在允许的时间范围内为尽可能多的layer贴图,如果maxSeconds是0那就忽略时间
-///应该从当前页面两边优先贴图
--(void)_pasteImagesToLayersForTargetPageIndex:(int)targetPageIndex inSeconds:(double)maxSeconds{
-    double startTime=CFAbsoluteTimeGetCurrent();
-    double duration=0;
-    int totalPages=(int)[self.flipsView.dataSource numberOfPagesForFlipsView:self.flipsView];
-    ///检查缓存索引键是否完全
-    for (int a=0; a<totalPages; a++) {
-        if (![self.flipsView.cache pageCacheAtPageIndex:a]){
-            [self.flipsView.cache addPage];
-        }
-    }
-    ///对贴图顺序进行排序
-    NSArray* sortedPages=[self _sortedPagesForTargetPageIndex:targetPageIndex];
-    ///统计贴图的页面数和跳过的页面数(WKFlipsLayer的正反面)
-    int numbersPastes=0,numbersSkips=0;
-    for(NSNumber* pageNumber in sortedPages) {
-        int pageIndex=[pageNumber intValue];
-        duration=CFAbsoluteTimeGetCurrent()-startTime;
-        ///超出设定时间了，跳过贴图
-        if (maxSeconds>0 && duration>=maxSeconds){
-            //NSLog(@"duration:%f",duration);
-            //break;
-            numbersSkips+=2;
-            continue;
-        }
-        int layerIndexForTop=totalPages-pageIndex;
-        int layerIndexForBottom=layerIndexForTop-1;
-        WKFlipsLayer* layerForTop=self.layer.sublayers[layerIndexForTop];
-        WKFlipsLayer* layerForBottom=self.layer.sublayers[layerIndexForBottom];
-        ///如果已经有贴图了就跳过
-        if (layerForTop.backLayer.contents && layerForBottom.frontLayer.contents){
-            numbersSkips+=2;
-            continue;
-        }
-        ///用作缩略图的页面内容
-        WKFlipPageView* page=[self.flipsView.dataSource flipsView:self.flipsView pageAtPageIndex:pageIndex isThumbCopy:YES];
-        WKFlipPageViewCache* pageCache=[self.flipsView.cache pageCacheAtPageIndex:pageIndex];
-        NSArray* images=nil;
-        if (!layerForTop.backLayer.contents){
-            ///没有缓存
-            if (!pageCache.topImage){
-                images=[page makeHSnapShotImages];
-                [pageCache setTopImage:images[0]];
-            }
-            layerForTop.backLayer.contents=(id)pageCache.topImage.CGImage;
-            numbersPastes+=1;
-            //NSLog(@"new image pasted");
-        }
-        else{
-            numbersSkips+=1;
-        }
-        if (!layerForBottom.frontLayer.contents){
-            if (!pageCache.bottomImage){
-                ///如果已经有截图了就不要重新创建了
-                if (!images){
-                    images=[page makeHSnapShotImages];
-                }
-                [pageCache setBottomImage:images[1]];
-            }
-            layerForBottom.frontLayer.contents=(id)pageCache.bottomImage.CGImage;
-            numbersPastes+=1;
-            //NSLog(@"new images pasted");
-        }
-        else{
-            numbersSkips+=1;
-        }
-        
-    }
-    duration=CFAbsoluteTimeGetCurrent()-startTime;
-    NSLog(@"pastes:%d,skips:%d,duration:%f",numbersPastes,numbersSkips,duration);
-}
-///这个会在主线程中延时一点贴图
--(void)_pasteImagesToLayersForTargetPageIndex:(int)targetPageIndex inSeconds:(double)maxSeconds delay:(CGFloat)delay{
-    if (!delay){
-        [self _pasteImagesToLayersForTargetPageIndex:targetPageIndex inSeconds:maxSeconds];
-    }
-    else{
-        double delayInSeconds = delay;
-        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
-        dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-            [self _pasteImagesToLayersForTargetPageIndex:targetPageIndex inSeconds:maxSeconds];
-        });
-    }
-}
-///对页面的贴图顺序进行排序，当前页面周边的优先贴图
--(NSArray*)_sortedPagesForTargetPageIndex:(int)targetPageIndex{
-    NSMutableArray* pagesArray=[NSMutableArray array];
-    int numbersOfPages=(int)[self.flipsView.dataSource numberOfPagesForFlipsView:self.flipsView];
-    for (int a=0; a<numbersOfPages; a++) {
-        [pagesArray addObject:[NSNumber numberWithInt:a]];
-    }
-    //NSLog(@"pagesArray:%@",pagesArray);
-    //targetPageIndex=self.flipsView.pageIndex;
-    NSArray* sortedPagesArray=[pagesArray sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
-        int page_1=[(NSNumber*)obj1 intValue];
-        int distance_1=abs(page_1-targetPageIndex);
-        int page_2=[(NSNumber*)obj2 intValue];
-        int distance_2=abs(page_2-targetPageIndex);
-        if (distance_1<distance_2){
-            return NSOrderedAscending;
-        }
-        else if (distance_1>distance_2){
-            return NSOrderedDescending;
-        }
-        else
-            return NSOrderedSame;
-    }];
-    //NSLog(@"sortedPagesArray:%@",sortedPagesArray);
-    return sortedPagesArray;
 }
 #pragma mark - flips
 ///无动画的翻页
@@ -260,6 +153,7 @@
     pageIndex=MAX(pageIndex, 0);
     if (pageIndex==self.flipsView.pageIndex)
         return;
+    [self.pasterService stop];///动画开始时结束贴图
     self.runState=WKFlipsLayerViewRunStateAnimation;
     CGFloat durationFull=1.0f;
     CGFloat delayFromDuration=0.05f;
@@ -283,8 +177,7 @@
                         if ([self.flipsView.delegate respondsToSelector:@selector(flipsView:didFlippedToPageIndex:)]){
                             [self.flipsView.delegate flipsView:self.flipsView didFlippedToPageIndex:self.flipsView.pageIndex];
                         }
-                        ///延时一点进行贴图
-                        [self _pasteImagesToLayersForTargetPageIndex:pageIndex inSeconds:WKFlipsLayerView_PasteImageDuration_After_Flipped delay:WKFlipsLayerView_PasteImage_Delay];
+                    [self.pasterService startWithPriorPageIndex:pageIndex inSecnods:WKFlipsLayerView_PasteImageDuration_After_Flipped];
                         completionBlock(YES);
                         self.runState=WKFlipsLayerViewRunStateStop;
                     }
@@ -308,8 +201,7 @@
                         if ([self.flipsView.delegate respondsToSelector:@selector(flipsView:didFlippedToPageIndex:)]){
                             [self.flipsView.delegate flipsView:self.flipsView didFlippedToPageIndex:self.flipsView.pageIndex];
                         }
-                        ///延时一点进行贴图
-                        [self _pasteImagesToLayersForTargetPageIndex:pageIndex inSeconds:WKFlipsLayerView_PasteImageDuration_After_Flipped delay:WKFlipsLayerView_PasteImage_Delay];
+                    [self.pasterService startWithPriorPageIndex:pageIndex inSecnods:WKFlipsLayerView_PasteImageDuration_After_Flipped];
                         completionBlock(YES);
                         self.runState=WKFlipsLayerViewRunStateStop;
                     
@@ -343,6 +235,7 @@
 //        return;
     if (self.runState==WKFlipsLayerViewRunStateAnimation) ///如果正在连续动画就不拖动
         return;
+    [self.pasterService stop];///拖动时停止贴图
     _drag_start_time=[[NSDate date] timeIntervalSince1970];
     _dragging_last_translation_y=translation.y;
     [_dragging_layer cancelDragAnimation];///如果有_dragging_layer的话，取消拖动的动画
@@ -390,8 +283,7 @@
                     if ([self.flipsView.delegate respondsToSelector:@selector(flipsView:didFlippedToPageIndex:)]){
                         [self.flipsView.delegate flipsView:self.flipsView didFlippedToPageIndex:self.flipsView.pageIndex];
                     }
-                    ///延时一点进行贴图
-                    [self _pasteImagesToLayersForTargetPageIndex:previousPageIndex inSeconds:WKFlipsLayerView_PasteImageDuration_After_Flipped delay:WKFlipsLayerView_PasteImage_Delay];
+                    [self.pasterService startWithPriorPageIndex:previousPageIndex inSecnods:WKFlipsLayerView_PasteImageDuration_After_Flipped];
                     self.runState=WKFlipsLayerViewRunStateStop;
                 }];
         }
@@ -439,8 +331,7 @@
                 if ([self.flipsView.delegate respondsToSelector:@selector(flipsView:didFlippedToPageIndex:)]){
                     [self.flipsView.delegate flipsView:self.flipsView didFlippedToPageIndex:self.flipsView.pageIndex];
                 }
-                ///延时一点进行贴图
-                [self _pasteImagesToLayersForTargetPageIndex:nextPageIndex inSeconds:WKFlipsLayerView_PasteImageDuration_After_Flipped delay:WKFlipsLayerView_PasteImage_Delay];
+                [self.pasterService startWithPriorPageIndex:nextPageIndex inSecnods:WKFlipsLayerView_PasteImageDuration_After_Flipped];
                 self.runState=WKFlipsLayerViewRunStateStop;
                 
             }];
@@ -571,6 +462,16 @@
     [shadowLayer_bottom removeShadow];
     [shadowLayer_top removeShadow];
     //NSLog(@"removeShaodw duration:%f",CFAbsoluteTimeGetCurrent()-startTime);
+}
+#pragma mark - Cache
+-(void)preparePageCache{
+    int totalPages=(int)[self.flipsView.dataSource numberOfPagesForFlipsView:self.flipsView];
+    ///检查缓存索引键是否完全
+    for (int a=0; a<totalPages; a++) {
+        if (![self.flipsView.cache pageCacheAtPageIndex:a]){
+            [self.flipsView.cache addPage];
+        }
+    }
 }
 @end
 

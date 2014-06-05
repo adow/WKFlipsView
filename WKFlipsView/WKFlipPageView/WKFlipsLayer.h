@@ -8,6 +8,7 @@
 
 #import <QuartzCore/QuartzCore.h>
 #import <CoreText/CoreText.h>
+#import "WKFlipsPasterService.h"
 #pragma makr - WKFlipsLayerView
 ///翻页的状态
 typedef enum WKFlipsLayerViewRunState:NSUInteger{
@@ -44,8 +45,12 @@ typedef enum WKFlipsLayerDragAtPosition:NSUInteger{
 @property (nonatomic,assign) WKFlipsLayerViewRunState runState;
 ///引用flipsView
 @property (nonatomic,assign) WKFlipsView* flipsView;
-///页面数
+///用来完成页面贴图
+@property (nonatomic,retain) _WKFlipsPasterService *pasterService;
+///贴图页面数
 @property (nonatomic,readonly) int numbersOfLayers;
+///页面数
+@property (nonatomic,readonly) int totalPages;
 ///重建所有页面
 -(void)buildLayers;
 #pragma mark - FlipAnimation
@@ -58,6 +63,9 @@ typedef enum WKFlipsLayerDragAtPosition:NSUInteger{
 -(void)dragEndedWithTranslation:(CGPoint)translation;
 ///正在拖动
 -(void)draggingWithTranslation:(CGPoint)translation;
+#pragma mark - Cache
+///准备页面缓存索引
+-(void)preparePageCache;
 @end
 #pragma mark - WKFlipsLayer
 ///单个页面，layer,每个页面有两面，翻页是已经被翻转过的
