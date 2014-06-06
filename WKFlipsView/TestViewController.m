@@ -31,47 +31,47 @@
     // Do any additional setup after loading the view.
 //    self.view.opaque=YES;
 //    self.view.backgroundColor=[UIColor darkGrayColor];
-//    if(!_flipLayer){
-//        _flipLayer=[[WKFlipsLayer alloc]initWithFrame:CGRectMake(0.0f, self.view.bounds.size.height/2,
-//                                                                 self.view.bounds.size.width,
-//                                                                 self.view.bounds.size.height/2)];
-//        [self.view.layer addSublayer:_flipLayer];
-//        [_flipLayer drawWords:@"1 front layer" onPosition:0];
-//        [_flipLayer drawWords:@"1 back layer" onPosition:1];
-//        _flipLayer.frontLayer.contents=(id)[UIImage imageNamed:@"1.png"].CGImage;
-//        _flipLayer.backLayer.contents=(id)[UIImage imageNamed:@"2.png"].CGImage;
-//        _flipLayer.rotateDegree=1.0f;
-//        
-//    }
-//    
-//    if (!_flipLayer2){
-//        _flipLayer2=[[WKFlipsLayer alloc]initWithFrame:CGRectMake(0.0f, self.view.bounds.size.height/2,
-//                                                                 self.view.bounds.size.width,
-//                                                                 self.view.bounds.size.height/2)];
-//        [self.view.layer addSublayer:_flipLayer2];
-//        [_flipLayer2 drawWords:@"2 front layer" onPosition:0];
-//        [_flipLayer2 drawWords:@"2 back layer" onPosition:1];
-//        _flipLayer2.frontLayer.contents=(id)[UIImage imageNamed:@"3.png"].CGImage;
-//        _flipLayer2.backLayer.contents=(id)[UIImage imageNamed:@"4.png"].CGImage;
-//        _flipLayer2.rotateDegree=0.0f;
-//    }
-//    
-//    UIButton* animationButton=[UIButton buttonWithType:UIButtonTypeCustom];
-//    animationButton.frame=CGRectMake(0.0, 60.0, 320.0f, 50.0f);
-//    animationButton.backgroundColor=[UIColor whiteColor];
-//    [animationButton setTitleColor:[UIColor darkTextColor] forState:UIControlStateNormal];
-//    [animationButton setTitle:@"animation" forState:UIControlStateNormal];
-//    [animationButton addTarget:self action:@selector(onAnimationButton:) forControlEvents:UIControlEventTouchUpInside];
-//    [self.view addSubview:animationButton];
-//
-//    UIPanGestureRecognizer* panGeture=[[[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(_flippingPanGesture:)] autorelease];
-//    [self.view addGestureRecognizer:panGeture];
+    if(!_flipLayer){
+        _flipLayer=[[WKFlipsLayer alloc]initWithFrame:CGRectMake(0.0f, self.view.bounds.size.height/2,
+                                                                 self.view.bounds.size.width,
+                                                                 self.view.bounds.size.height/2)];
+        [self.view.layer addSublayer:_flipLayer];
+        [_flipLayer drawWords:@"1 front layer" onPosition:0];
+        [_flipLayer drawWords:@"1 back layer" onPosition:1];
+        _flipLayer.frontLayer.contents=(id)[UIImage imageNamed:@"1.png"].CGImage;
+        _flipLayer.backLayer.contents=(id)[UIImage imageNamed:@"2.png"].CGImage;
+        _flipLayer.rotateDegree=0.0f;
+        
+    }
+    
+    if (!_flipLayer2){
+        _flipLayer2=[[WKFlipsLayer alloc]initWithFrame:CGRectMake(0.0f, self.view.bounds.size.height/2,
+                                                                 self.view.bounds.size.width,
+                                                                 self.view.bounds.size.height/2)];
+        [self.view.layer addSublayer:_flipLayer2];
+        [_flipLayer2 drawWords:@"2 front layer" onPosition:0];
+        [_flipLayer2 drawWords:@"2 back layer" onPosition:1];
+        _flipLayer2.frontLayer.contents=(id)[UIImage imageNamed:@"3.png"].CGImage;
+        _flipLayer2.backLayer.contents=(id)[UIImage imageNamed:@"4.png"].CGImage;
+        _flipLayer2.rotateDegree=-1.0f;
+    }
 
-    UIImageView *imageView=[[[UIImageView alloc]initWithImage:[UIImage imageNamed:@"Icon-1.png"]] autorelease];
-    imageView.frame=CGRectMake(100.0f, 300.0f, 57.0f, 57.0f);
-    imageView.opaque=YES;
-    imageView.layer.opaque=YES;
-    [self.view addSubview:imageView];
+    UIButton* animationButton=[UIButton buttonWithType:UIButtonTypeCustom];
+    animationButton.frame=CGRectMake(0.0, 60.0, 320.0f, 50.0f);
+    animationButton.backgroundColor=[UIColor whiteColor];
+    [animationButton setTitleColor:[UIColor darkTextColor] forState:UIControlStateNormal];
+    [animationButton setTitle:@"animation" forState:UIControlStateNormal];
+    [animationButton addTarget:self action:@selector(onAnimationButton:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:animationButton];
+
+    UIPanGestureRecognizer* panGeture=[[[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(_flippingPanGesture:)] autorelease];
+    [self.view addGestureRecognizer:panGeture];
+
+//    UIImageView *imageView=[[[UIImageView alloc]initWithImage:[UIImage imageNamed:@"Icon-1.png"]] autorelease];
+//    imageView.frame=CGRectMake(100.0f, 300.0f, 57.0f, 57.0f);
+//    imageView.opaque=YES;
+//    imageView.layer.opaque=YES;
+//    [self.view addSubview:imageView];
 }
 
 - (void)didReceiveMemoryWarning

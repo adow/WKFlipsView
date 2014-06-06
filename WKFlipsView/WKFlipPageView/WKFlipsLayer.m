@@ -246,6 +246,7 @@
     if (self.runState!=WKFlipsLayerViewRunStateDragging)
         return;
     CGFloat durationFull=1.0f;
+//    CGFloat durationFull=10.0f;
     double drag_duration=fabsl([[NSDate date] timeIntervalSince1970]-_drag_start_time);
     //NSLog(@"drag_duration:%f,rotate:%f",drag_duration,_dragging_layer.rotateDegree);
     BOOL quick_drag_flip=(drag_duration<0.15f); ///是否翻页足够快
@@ -273,6 +274,7 @@
                 int layerIndex=(int)[self.layer.sublayers indexOfObject:_dragging_layer];
                 CGFloat newRotateDegree=[self _calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:previousPageIndex];
                 CGFloat duration=fabsf(newRotateDegree-_dragging_layer.rotateDegree)/180.0f*durationFull;
+//            CGFloat duration=10.0f;
                 ///快速时因为角度很小，所以要缩短时间
                 if (quick_drag_flip){
                     duration=0.3f;
@@ -321,6 +323,7 @@
             int layerIndex=(int)[self.layer.sublayers indexOfObject:_dragging_layer];
             CGFloat newRotateDegree=[self _calculateRotateDegreeForLayerIndex:layerIndex toTargetPageIndex:nextPageIndex];
             CGFloat duration=fabsf(newRotateDegree-_dragging_layer.rotateDegree)/180.0f*durationFull;
+//            CGFloat duration=10.0f;
             ///快速翻页时因为角度很小，要缩小时间
             if (quick_drag_flip){
                 duration=0.3f;
@@ -354,7 +357,7 @@
         return;
     ///一开始的时候要知道是在拖动那一页
     if (!_dragging_layer){
-//        NSLog(@"get dragging layer");
+        NSLog(@"get dragging layer");
         int layersNumber=[self numbersOfLayers];
         int stopLayerIndexAtTop=layersNumber-1-self.flipsView.pageIndex;
         int stopLayerIndexAtBottom=stopLayerIndexAtTop-1;
@@ -482,8 +485,6 @@
 }
 ///动画是否被取消
 @property (nonatomic,assign) BOOL isAnimationCancelled;
-///正在取消拖动时，记录当前的位置
-@property (nonatomic,assign) CATransform3D cancelledTransform;
 @end
 @implementation WKFlipsLayer
 @dynamic rotateDegree;
@@ -594,6 +595,7 @@
 -(void)cancelDragAnimation{
     if ([self animationForKey:WKFLIPSLAYER_FLIP_ANIMATION]){
         self.rotateDegree=[[self presentationLayer] rotateDegree];
+        self.isAnimationCancelled=YES;
         [self removeAnimationForKey:WKFLIPSLAYER_FLIP_ANIMATION];
         NSLog(@"cancel");
     }
@@ -616,7 +618,13 @@
     flipAnimation.fromValue=@(self.rotateDegree);
 //    flipAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
     [CATransaction setCompletionBlock:^{
-        completion();
+        if (self.isAnimationCancelled){
+            self.isAnimationCancelled=NO;
+        }
+        else{
+            self.isAnimationCancelled=NO;
+            completion();
+        }
     }];
     [self addAnimation:flipAnimation forKey:WKFLIPSLAYER_FLIP_ANIMATION];
     self.rotateDegree=rotateDegree;
