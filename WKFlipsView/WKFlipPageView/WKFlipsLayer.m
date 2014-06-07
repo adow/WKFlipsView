@@ -245,6 +245,15 @@
 //    NSLog(@"dragEnded");
     if (self.runState!=WKFlipsLayerViewRunStateDragging)
         return;
+    ///拖动手势可能直接从began 到 end，如果拖动速度很快的话，这时没有拖动的页面，应该立刻结束拖动状态
+    if (_dragging_layer==nil){
+        NSLog(@"end drag with empty layer");
+//        if ([self.flipsView.delegate respondsToSelector:@selector(flipsView:didFlippedToPageIndex:)]){
+//            [self.flipsView.delegate flipsView:self.flipsView didFlippedToPageIndex:self.flipsView.pageIndex];
+//        }
+        self.runState=WKFlipsLayerViewRunStateStop;
+        return;
+    }
     CGFloat durationFull=1.0f;
 //    CGFloat durationFull=10.0f;
     double drag_duration=fabsl([[NSDate date] timeIntervalSince1970]-_drag_start_time);
@@ -357,19 +366,19 @@
         return;
     ///一开始的时候要知道是在拖动那一页
     if (!_dragging_layer){
-        NSLog(@"get dragging layer");
+//        NSLog(@"get dragging layer");
         int layersNumber=[self numbersOfLayers];
         int stopLayerIndexAtTop=layersNumber-1-self.flipsView.pageIndex;
         int stopLayerIndexAtBottom=stopLayerIndexAtTop-1;
         if (translation.y>0){
             _dragging_layer=self.layer.sublayers[stopLayerIndexAtTop];
             _dragging_position=WKFlipsLayerDragAtPositionTop;
-            NSLog(@"dragging Top layerIndex:%d",stopLayerIndexAtTop);
+//            NSLog(@"dragging Top layerIndex:%d",stopLayerIndexAtTop);
         }
         else{
             _dragging_layer=self.layer.sublayers[stopLayerIndexAtBottom];
             _dragging_position=WKFlipsLayerDragAtPositionBottom;
-            NSLog(@"dragging Bottom layerIndex:%d",stopLayerIndexAtBottom);
+//            NSLog(@"dragging Bottom layerIndex:%d",stopLayerIndexAtBottom);
         }
         ///为图层设置隐藏关系，多图层会引起动画很卡，只要当前翻页的几张能显示就可以了，其他图层隐藏
         for (long layerIndex=self.layer.sublayers.count-1; layerIndex>=0; layerIndex--) {

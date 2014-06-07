@@ -319,5 +319,8 @@
     else if (recognizer.state==UIGestureRecognizerStateChanged){        
         [self.flippingLayersView draggingWithTranslation:translation];
     }
+    else if (recognizer.state==UIGestureRecognizerStateFailed){
+        NSLog(@"recognizer failed");
+    }
 }
 @end

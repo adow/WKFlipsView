@@ -28,7 +28,7 @@
 #pragma mark - Action
 ///开始页面贴图，指定优先页面
 -(void)startWithPriorPageIndex:(int)pageIndex inSecnods:(NSTimeInterval)seconds{
-    NSLog(@"PasterService start");
+//    NSLog(@"PasterService start");
     _runSecnods=seconds;
     _startTime=CFAbsoluteTimeGetCurrent();
 //    int totalPages=self.flipsLayerView.totalPages;
@@ -46,7 +46,7 @@
 -(void)stop{
     [_timer invalidate];    
 //    [_timer release];
-    NSLog(@"PasterService stop");
+//    NSLog(@"PasterService stop");
 }
 ///排序贴图页面顺序
 -(NSArray*)_sortedPagesForPriorPageIndex:(int)priorPageIndex{
@@ -82,7 +82,7 @@
     int totalPages=self.flipsLayerView.totalPages;
     int pageIndex=[_taskList[0] intValue];
     [_taskList removeObjectAtIndex:0];
-    NSLog(@"paster work:%d",pageIndex);
+//    NSLog(@"paster work:%d",pageIndex);
     int layerIndexForTop=totalPages-pageIndex;
     int layerIndexForBottom=layerIndexForTop-1;
     WKFlipsLayer* layerForTop=self.flipsLayerView.layer.sublayers[layerIndexForTop];

@@ -54,7 +54,7 @@ static inline CATransform3D WKFlipCATransform3DPerspectSimpleWithRotate(CGFloat 
 }
 ///为UIView创建一个截图
 static inline UIImage* WKFlip_make_image_for_view(UIView* view){
-    double startTime=CFAbsoluteTimeGetCurrent();
+//    double startTime=CFAbsoluteTimeGetCurrent();
     if(UIGraphicsBeginImageContextWithOptions != NULL){
         UIGraphicsBeginImageContextWithOptions(view.frame.size, NO, 0.0);
     } else {
@@ -69,7 +69,7 @@ static inline UIImage* WKFlip_make_image_for_view(UIView* view){
     //
     UIImage* image=UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
-    NSLog(@"makeImage duration:%f", CFAbsoluteTimeGetCurrent()-startTime);
+//    NSLog(@"makeImage duration:%f", CFAbsoluteTimeGetCurrent()-startTime);
     return image;
 }
 ///分割图片
