@@ -51,7 +51,7 @@
     [buttonInsert setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     buttonInsert.backgroundColor=[UIColor lightGrayColor];
     [buttonInsert addTarget:self action:@selector(onButtonInsert:) forControlEvents:UIControlEventTouchUpInside];
-//    [self.view addSubview:buttonInsert];
+    [self.view addSubview:buttonInsert];
     
     UIButton* buttonUpdate=[UIButton buttonWithType:UIButtonTypeCustom];
     buttonUpdate.frame=CGRectMake(10.0f, 420.0f, 300.0f, 50.0f);
@@ -59,7 +59,7 @@
     [buttonUpdate setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     buttonUpdate.backgroundColor=[UIColor lightGrayColor];
     [buttonUpdate addTarget:self action:@selector(onButtonUpdate:) forControlEvents:UIControlEventTouchUpInside];
-    //[self.view addSubview:buttonUpdate];
+    [self.view addSubview:buttonUpdate];
 
     [_flipsView flipToPageIndex:9 delay:1.0f completion:^{
         
@@ -78,7 +78,7 @@
 }
 -(IBAction)onButtonNext:(id)sender{
 //    [_flipsView flipToPageIndex:_flipsView.pageIndex+1];
-    int pageIndex=RandomBetween(0, 100);
+    int pageIndex=RandomBetween(0, 23);
     [_flipsView flipToPageIndex:pageIndex completion:^{
         
     }];
@@ -103,13 +103,13 @@
     TestImagePageView* pageView=(TestImagePageView*)[flipsView dequeueReusablePageWithReuseIdentifier:identity isThumbCopy:isThumbCopy];
     UIImage* image=[UIImage imageNamed:_images[pageIndex]];
     pageView.testImageView.image=image;
-//    UIButton* button=[UIButton buttonWithType:UIButtonTypeCustom];
-//    button.frame=CGRectMake(10.0f, 30.0f+20*pageIndex, 300.0f, 50.0f);
-//    [button setTitle:@"delete" forState:UIControlStateNormal];
-//    [button setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
-//    button.backgroundColor=[UIColor whiteColor];
-//    [button addTarget:self action:@selector(onButtonDelete:) forControlEvents:UIControlEventTouchUpInside];
-//    [pageView addSubview:button];
+    UIButton* button=[UIButton buttonWithType:UIButtonTypeCustom];
+    button.frame=CGRectMake(10.0f, 30.0f+20*pageIndex, 300.0f, 50.0f);
+    [button setTitle:@"delete" forState:UIControlStateNormal];
+    [button setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
+    button.backgroundColor=[UIColor whiteColor];
+    [button addTarget:self action:@selector(onButtonDelete:) forControlEvents:UIControlEventTouchUpInside];
+    [pageView addSubview:button];
     return pageView;
 
 }
@@ -164,9 +164,9 @@
     }
     else{
         NSLog(@"new images");
-        for (int a=0; a<100; a++) {
-//            [_images addObject:[NSString stringWithFormat:@"%d.png",a]];
-            [_images addObject:@"1.png"];
+        for (int a=0; a<23; a++) {
+            [_images addObject:[NSString stringWithFormat:@"%d.png",a]];
+//            [_images addObject:@"1.png"];
         }
         [self testWriteImages];
     }
