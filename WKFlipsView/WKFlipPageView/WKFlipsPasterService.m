@@ -89,7 +89,7 @@
     WKFlipsLayer* layerForBottom=self.flipsLayerView.layer.sublayers[layerIndexForBottom];
     ///已经有贴图了
     if (layerForTop.backLayer.contents && layerForBottom.frontLayer.contents){
-        NSLog(@"pasted images exixted");
+        NSLog(@"pasted images existed");
         return;
     }
     ///用作缩略图的页面内容
