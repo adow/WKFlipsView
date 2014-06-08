@@ -13,7 +13,7 @@
 ///重建页面时的贴图时间
 #define WKFlipsLayerView_PasteImageDuration_When_Rebuild 1.0f
 ///翻页结束时的贴图时间
-#define WKFlipsLayerView_PasteImageDuration_After_Flipped 1.0f
+#define WKFlipsLayerView_PasteImageDuration_After_Flipped 2.0f
 ///在主线程中延时贴图的时间
 #define WKFlipsLayerView_PasteImage_Delay 0.01f
 @interface WKFlipsLayerView(){
@@ -38,7 +38,7 @@
         self.userInteractionEnabled=NO;
         self.flipsView=flipsView;
         self.opaque=YES;
-        self.pasterService=[[_WKFlipsPasterService alloc]initWithFlipsLayerView:self];
+        _pasterService=[[_WKFlipsPasterService alloc]initWithFlipsLayerView:self];
         //[self buildLayers];
     }
     return self;
@@ -385,7 +385,7 @@
 //            WKFlipsLayer* layer=self.layer.sublayers[layerIndex];
 //            NSLog(@"%ld,%f",layerIndex,layer.rotateDegree);
             WKFlipsLayer* layer=self.layer.sublayers[layerIndex];
-            if (abs(stopLayerIndexAtBottom-layerIndex)>2 || abs(stopLayerIndexAtTop-layerIndex)>2){
+            if (abs(stopLayerIndexAtBottom-(int)layerIndex)>2 || abs(stopLayerIndexAtTop-(int)layerIndex)>2){
                 layer.hidden=YES;
             }
             else{

@@ -25,7 +25,7 @@
 #define WKFLIPS_STATUSBAR_HEIGHT 20.0f
 
 #define WKFLIPS_IPOD [[UIDevice currentDevice].model rangeOfString:@"iPod"].location!=NSNotFound
-static float RandomBetween(float smallNumber, float bigNumber)
+static inline float RandomBetween(float smallNumber, float bigNumber)
 {
     float diff = bigNumber - smallNumber;
     return (((float) rand() / RAND_MAX) * diff) + smallNumber;

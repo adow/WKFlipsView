@@ -277,7 +277,7 @@
     ///重建页面
     [self reloadPages];
     ///重建完后自动翻页到最后一页
-    [self flipToPageIndex:[self.dataSource numberOfPagesForFlipsView:self]-1 delay:0.01f completion:^{
+    [self flipToPageIndex:(int)[self.dataSource numberOfPagesForFlipsView:self]-1 delay:0.01f completion:^{
         if ([self.delegate respondsToSelector:@selector(didAppendPageIntoFlipsView:)]){
             [self.delegate didAppendPageIntoFlipsView:self];
         }

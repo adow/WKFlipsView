@@ -82,13 +82,14 @@
     int totalPages=self.flipsLayerView.totalPages;
     int pageIndex=[_taskList[0] intValue];
     [_taskList removeObjectAtIndex:0];
-//    NSLog(@"paster work:%d",pageIndex);
+    NSLog(@"paster work:%d",pageIndex);
     int layerIndexForTop=totalPages-pageIndex;
     int layerIndexForBottom=layerIndexForTop-1;
     WKFlipsLayer* layerForTop=self.flipsLayerView.layer.sublayers[layerIndexForTop];
     WKFlipsLayer* layerForBottom=self.flipsLayerView.layer.sublayers[layerIndexForBottom];
     ///已经有贴图了
     if (layerForTop.backLayer.contents && layerForBottom.frontLayer.contents){
+        NSLog(@"pasted images exixted");
         return;
     }
     ///用作缩略图的页面内容
@@ -100,11 +101,16 @@
         if (!pageCache.topImage){
             images=[page makeHSnapShotImages];
             [pageCache setTopImage:images[0]];
+            NSLog(@"new image pasted from snapshot");
+        }
+        else{
+            NSLog(@"new image pasted form cache file");
         }
         layerForTop.backLayer.contents=(id)pageCache.topImage.CGImage;
-        //NSLog(@"new image pasted");
+        
     }
     else{
+        
     }
     if (!layerForBottom.frontLayer.contents){
         if (!pageCache.bottomImage){
@@ -113,11 +119,16 @@
                 images=[page makeHSnapShotImages];
             }
             [pageCache setBottomImage:images[1]];
+            NSLog(@"new images pasted from snapshot");
+        }
+        else{
+            NSLog(@"new image pasted from cache file");
         }
         layerForBottom.frontLayer.contents=(id)pageCache.bottomImage.CGImage;
-        //NSLog(@"new images pasted");
+        
     }
     else{
+        
     }
     
 }
