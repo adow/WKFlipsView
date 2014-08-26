@@ -79,6 +79,12 @@ typedef enum WKFlipsLayerDragAtPosition:NSUInteger{
 
 @property (nonatomic,retain) CALayer* frontLayer;
 @property (nonatomic,retain) CALayer* backLayer;
+/**
+ *  是否贴图了
+ */
+@property (nonatomic,assign) BOOL frontLayerContent;
+@property (nonatomic,assign) BOOL backLayerContent;
+
 -(id)initWithFrame:(CGRect)frame;
 ///设置翻转角度，因为一开始的位置是在底部，所以在底部时0度，翻转到上面时变成180度
 @property (nonatomic,assign) CGFloat rotateDegree;

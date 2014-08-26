@@ -19,4 +19,10 @@
 -(instancetype)initWithFlipsLayerView:(WKFlipsLayerView*)flipsLayerView;
 -(void)startWithPriorPageIndex:(int)pageIndex inSecnods:(NSTimeInterval)seconds;
 -(void)stop;
+/**
+ *  为一个具体的页面完成贴图工作
+ *
+ *  @param pageIndex 
+ */
+-(void)pasterWorkAtPageIndex:(int)pageIndex;
 @end

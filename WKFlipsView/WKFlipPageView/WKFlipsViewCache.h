@@ -54,4 +54,6 @@
 -(void)remove;
 ///删除页面缓存
 +(void)removeIdentity:(NSString*)identity;
+///缓存文件大小
++(unsigned long long)cacheSize;
 @end

@@ -51,6 +51,7 @@
     int _pageIndex;
     ///_operateAvailable
     BOOL __operateAvailable;
+    BOOL _pageIndexVisible;
 }
 -(id)initWithFrame:(CGRect)frame atPageIndex:(int)pageIndex withCacheIdentity:(NSString*)cacheIdentity;
 ///数据源
@@ -66,6 +67,10 @@
 #pragma mark - page
 ///用来显示页面
 @property (nonatomic,retain) UIView* currentPageView;
+///显示页面编号
+@property (nonatomic,retain) UILabel* pageIndexLabel;
+///是否显示页面编号
+@property (nonatomic,assign) BOOL pageIndexVisible;
 ///正在显示的页面
 @property (nonatomic,readonly) WKFlipPageView* currentFlipPageView;
 ///当前的页面,不能直接由外部设置这个页面，因为没有重新计算角度，这个方法只能有_flippingLayersView在flip结束后进行更新
@@ -85,6 +90,13 @@
 -(void)flipToPageIndex:(int)pageIndex delay:(CGFloat)delay completion:(void (^)())completion;
 ///是否可以进行翻页操作，包括拖动和动画翻页,一般由外部控制这里是否可以翻页
 @property (nonatomic,assign) BOOL flipable;
+///由外部来停止贴图队列
+-(void)stopPasterService;
+#pragma mark pageindex
+///隐藏显示页面编号
+-(void)hidePageIndex;
+///更新显示页面编号
+-(void)showPageIndex;
 #pragma mark create update and delete
 ///删除当前这个位置的页面
 -(void)deleteCurrentPage;

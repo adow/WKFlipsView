@@ -22,6 +22,13 @@
         _currentPageView=[[UIView alloc]initWithFrame:self.bounds];
         _currentPageView.opaque=YES;
         [self addSubview:_currentPageView];
+        _pageIndexLabel=[[UILabel alloc]initWithFrame:CGRectMake(frame.size.width-60.0f,
+                                                                 frame.size.height-40.0f, 50.0f, 50.0f)];
+        _pageIndexLabel.textColor=[UIColor lightGrayColor];
+        _pageIndexLabel.textAlignment=NSTextAlignmentRight;
+        _pageIndexLabel.text=[NSString stringWithFormat:@"%d",pageIndex];
+        [self addSubview:_pageIndexLabel];
+        self.pageIndexVisible=NO;
         self.pageIndex=pageIndex;
         _flippingLayersView=[[WKFlipsLayerView alloc] initWithFlipsView:self];
         [self addSubview:_flippingLayersView];
@@ -32,12 +39,17 @@
     return self;
 }
 -(void)dealloc{
+//    NSLog(@"WKFlipsView release");
+    [self stopPasterService];//先停止timer
+    [_flippingLayersView release];
     [_reusedPageViewDictionary release];
     [_reusedPageViewDictionaryCopy release];
     [_currentPageView release];
+    [_pageIndexLabel release];
     [_cache release];
     //[_testCacheView release];
     [super dealloc];
+//    NSLog(@"WKFlipsView release complete");
 }
 #pragma mark - state
 -(void)set_operateAvailable:(BOOL)_operateAvailable{
@@ -84,6 +96,9 @@
 -(void)reloadPages{    
     [_flippingLayersView buildLayers];
 }
+-(void)stopPasterService{
+    [self.flippingLayersView.pasterService stop];
+}
 #pragma mark pageIndex
 -(int)pageIndex{
     return _pageIndex;
@@ -109,6 +124,7 @@
     }
     return nil;
 }
+#pragma mark flip
 -(void)flipToPageIndex:(int)pageIndex{
     if (!self.flipable){
         NSLog(@"not flipable");
@@ -148,6 +164,21 @@
             [self flipToPageIndex:pageIndex completion:completion];
         });
     }
+}
+#pragma mark page index visible
+-(void)hidePageIndex{
+    _pageIndexLabel.hidden=YES;
+}
+-(void)showPageIndex{
+    _pageIndexLabel.text=[NSString stringWithFormat:@"%d",(self.pageIndex+1)];
+    _pageIndexLabel.hidden=!_pageIndexVisible;
+}
+-(void)setPageIndexVisible:(BOOL)pageIndexVisible{
+    _pageIndexVisible=pageIndexVisible;
+    _pageIndexLabel.hidden=!pageIndexVisible;
+}
+-(BOOL)pageIndexVisible{
+    return _pageIndexVisible;
 }
 #pragma mark create update and detele
 -(void)deleteCurrentPage{
@@ -254,7 +285,7 @@
     ///重建页面
     [self reloadPages];
     ///翻页到插入的这个页面
-    [self flipToPageIndex:to_pageIndex delay:0.01f completion:^{
+    [self flipToPageIndex:to_pageIndex delay:1.0f completion:^{
         if ([self.delegate respondsToSelector:@selector(flipsView:didInsertPageAtPageIndex:)]){
             [self.delegate flipsView:self didInsertPageAtPageIndex:to_pageIndex];
         }
@@ -277,7 +308,7 @@
     ///重建页面
     [self reloadPages];
     ///重建完后自动翻页到最后一页
-    [self flipToPageIndex:(int)[self.dataSource numberOfPagesForFlipsView:self]-1 delay:0.01f completion:^{
+    [self flipToPageIndex:(int)[self.dataSource numberOfPagesForFlipsView:self]-1 delay:1.0f completion:^{
         if ([self.delegate respondsToSelector:@selector(didAppendPageIntoFlipsView:)]){
             [self.delegate didAppendPageIntoFlipsView:self];
         }

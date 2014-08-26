@@ -13,7 +13,7 @@
 ///重建页面时的贴图时间
 #define WKFlipsLayerView_PasteImageDuration_When_Rebuild 1.0f
 ///翻页结束时的贴图时间
-#define WKFlipsLayerView_PasteImageDuration_After_Flipped 2.0f
+#define WKFlipsLayerView_PasteImageDuration_After_Flipped 1.0f
 ///在主线程中延时贴图的时间
 #define WKFlipsLayerView_PasteImage_Delay 0.01f
 @interface WKFlipsLayerView(){
@@ -54,17 +54,20 @@
             self.hidden=NO;
             self.flipsView.currentPageView.hidden=YES;
             self.flipsView._operateAvailable=NO;
+            [self.flipsView hidePageIndex];
             break;
         case WKFlipsLayerViewRunStateDragging:
             self.hidden=NO;
             self.flipsView.currentPageView.hidden=YES;
             self.flipsView._operateAvailable=NO;
+            [self.flipsView hidePageIndex];
             break;
         case WKFlipsLayerViewRunStateStop:
             [self _removeShadowOnDraggngLayer];
             self.hidden=YES;
             self.flipsView.currentPageView.hidden=NO;
             self.flipsView._operateAvailable=YES;
+            [self.flipsView showPageIndex];
             break;
         default:
             break;
@@ -103,17 +106,17 @@
 //        layer.backLayer.contents=(id)[UIImage imageNamed:@"weather-default-bg"].CGImage;
         #ifdef DEBUG
         ///在页面上输出图层编号和页面编号,绘制文字会消耗不少时间
-        [layer drawWords:[NSString stringWithFormat:@"layer:%d-front,page:%d",(layersNumber-a-1),a-1] onPosition:0];
-        [layer drawWords:[NSString stringWithFormat:@"layer:%d-back,page:%d",(layersNumber-a-1),a] onPosition:1];
+//        [layer drawWords:[NSString stringWithFormat:@"layer:%d-front,page:%d",(layersNumber-a-1),a-1] onPosition:0];
+//        [layer drawWords:[NSString stringWithFormat:@"layer:%d-back,page:%d",(layersNumber-a-1),a] onPosition:1];
         #endif
         layer.rotateDegree=0.0f;
     }
-//    NSLog(@"buildLayers duration:%f",CFAbsoluteTimeGetCurrent()-startTime);
-//    [self _pasteImagesToLayersForTargetPageIndex:self.flipsView.pageIndex inSeconds:WKFlipsLayerView_PasteImageDuration_When_Rebuild];///重建时可以使用更多的时间来贴图
-    [self.pasterService startWithPriorPageIndex:self.flipsView.pageIndex inSecnods:WKFlipsLayerView_PasteImageDuration_When_Rebuild];
-    
+
+    //为当前的页面进行贴图
+    [self.pasterService pasterWorkAtPageIndex:self.flipsView.pageIndex];
     ///直接已经翻页到现在的页面
     [self flipToPageIndex:self.flipsView.pageIndex];
+
 }
 #pragma mark - flips
 ///无动画的翻页
@@ -145,13 +148,15 @@
     if ([self.flipsView.delegate respondsToSelector:@selector(flipsView:didFlippedToPageIndex:)]){
         [self.flipsView.delegate flipsView:self.flipsView didFlippedToPageIndex:self.flipsView.pageIndex];
     }
+    [self.pasterService startWithPriorPageIndex:self.flipsView.pageIndex inSecnods:WKFlipsLayerView_PasteImageDuration_When_Rebuild];
+    self.runState=WKFlipsLayerViewRunStateStop;
 }
 -(void)flipToPageIndex:(int)pageIndex completion:(void (^)(BOOL completed))completionBlock{
     if(self.runState!=WKFlipsLayerViewRunStateStop)
         return;
     pageIndex=MIN(pageIndex, (int)[self.flipsView.dataSource numberOfPagesForFlipsView:self.flipsView]-1);
     pageIndex=MAX(pageIndex, 0);
-    if (pageIndex==self.flipsView.pageIndex)
+    if (pageIndex && pageIndex==self.flipsView.pageIndex)
         return;
     [self.pasterService stop];///动画开始时结束贴图
     self.runState=WKFlipsLayerViewRunStateAnimation;
@@ -433,7 +438,7 @@
 -(void)_showShadowOnDraggingLayer{
     ///当前正在拖动的这层有一个固定明度的阴影
     //[_dragging_layer showShadowOpacity:_dragging_layer.rotateDegree/180.0f*0.3 onLayer:0];
-    [_dragging_layer showShadowOpacity:0.03];
+    [_dragging_layer showShadowOpacity:0.06];
     NSUInteger layerIndex=[self.layer.sublayers indexOfObject:_dragging_layer];
     WKFlipsLayer* shadowLayer_bottom=nil;
     if (layerIndex>0){
@@ -497,6 +502,16 @@
 @end
 @implementation WKFlipsLayer
 @dynamic rotateDegree;
++(NSArray*)sharedBackgroundImagesWithRect:(CGRect)rect{
+    static NSArray *images=nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        UIImage *backgroundImage=WKFlip_line_radial_image(rect);
+        images=[WKFlip_make_hsplit_images_for_image(backgroundImage) retain];
+        NSLog(@"shared background image");
+    });
+    return images;
+}
 -(id)initWithFrame:(CGRect)frame{
     self=[super init];
     if (self){
@@ -505,25 +520,32 @@
         self.anchorPoint=CGPointMake(0.5, 0.0f);
         self.position=CGPointMake(self.position.x,
                                   self.position.y-self.frame.size.height/2);
+        
+        CGRect rect=CGRectMake(0.0f, 0.0f, frame.size.width, frame.size.height*2);
+        UIImage *image_1=[WKFlipsLayer sharedBackgroundImagesWithRect:rect][0];
+        UIImage *image_2=[WKFlipsLayer sharedBackgroundImagesWithRect:rect][1];
+        
         _frontLayer=[[CALayer alloc]init];
         _frontLayer.frame=self.bounds;
-//        _frontLayer.backgroundColor=[UIColor grayColor].CGColor;
         _frontLayer.backgroundColor=[UIColor whiteColor].CGColor;
         _frontLayer.doubleSided=NO;
         _frontLayer.name=@"frontLayer";
         _frontLayer.opaque=YES;
+        _frontLayer.contents=(id)image_2.CGImage;
         
         _backLayer=[[CALayer alloc]init];
         _backLayer.frame=self.bounds;
         _backLayer.backgroundColor=[UIColor whiteColor].CGColor;
         _backLayer.doubleSided=YES;
         _backLayer.name=@"backLayer";
+        _backLayer.contents=(id)image_1.CGImage;
         _backLayer.transform=WKFlipCATransform3DPerspectSimpleWithRotate(180.0f);
         _backLayer.opaque=YES;
-        
-        [self insertSublayer:_frontLayer atIndex:0];
-        [self insertSublayer:_backLayer atIndex:0];
-        
+   
+        [self addSublayer:_backLayer];
+        [self addSublayer:_frontLayer];
+        self.frontLayerContent=NO;
+        self.backLayerContent=NO;
     }
     return self;
 }
@@ -651,8 +673,8 @@
         _shadowOnBackLayer.frame=self.bounds;
         [self.frontLayer addSublayer:_shadowOnFronLayer];
         [self.backLayer addSublayer:_shadowOnBackLayer];
-        _shadowOnBackLayer.backgroundColor=[UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:0.9f].CGColor;
-        _shadowOnFronLayer.backgroundColor=[UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:0.9f].CGColor;
+        _shadowOnBackLayer.backgroundColor=[UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:1.0f].CGColor;
+        _shadowOnFronLayer.backgroundColor=[UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:1.0f].CGColor;
     }
     [CATransaction setDisableActions:YES];
     _shadowOnBackLayer.opacity=opacity;

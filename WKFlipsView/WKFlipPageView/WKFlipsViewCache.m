@@ -154,6 +154,18 @@
     WKFlipsViewCache* cache=[[[WKFlipsViewCache alloc]initWithIdentity:identity] autorelease];
     [cache remove];
 }
++(unsigned long long)cacheSize{
+    unsigned long long fileSize = 0;
+    NSFileManager* fileManager=[NSFileManager defaultManager];
+    NSArray* dir=[[NSFileManager defaultManager] subpathsOfDirectoryAtPath:WKFLIPS_PATH_TEMP error:nil];
+    for(NSString* one_folder in dir){
+        if ([one_folder.pathExtension isEqualToString:@"png"] || [[one_folder lastPathComponent] isEqualToString:@"index"]){
+            NSDictionary* dict=[fileManager attributesOfItemAtPath:[WKFLIPS_PATH_TEMP stringByAppendingPathComponent:one_folder] error:nil];
+            fileSize+=[dict fileSize];
+        }
+    }
+    return fileSize;
+}
 #pragma mark - pageCache
 -(WKFlipPageViewCache*)pageCacheAtPageIndex:(int)pageIndex{
     if (pageIndex<0 || pageIndex>=self.pageIdentityArray.count)

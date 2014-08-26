@@ -28,25 +28,48 @@
 #pragma mark - Action
 ///开始页面贴图，指定优先页面
 -(void)startWithPriorPageIndex:(int)pageIndex inSecnods:(NSTimeInterval)seconds{
-//    NSLog(@"PasterService start");
+    ///如果任务队列正在运行，那先结束任务
+    if (self.timer.isValid){
+        [self stop];
+    }
+    NSLog(@"PasterService start");
     _runSecnods=seconds;
     _startTime=CFAbsoluteTimeGetCurrent();
-//    int totalPages=self.flipsLayerView.totalPages;
     ///检查缓存索引键是否完全
     [self.flipsLayerView preparePageCache];
     ///更新任务队列，保存的是每个页面编码
     [_taskList removeAllObjects];
     [_taskList addObjectsFromArray:[self _sortedPagesForPriorPageIndex:pageIndex]];
-    ///开始计时器
-    if (!self.timer.isValid){
-        self.timer=[NSTimer scheduledTimerWithTimeInterval:0.1f target:self selector:@selector(_timerPasterWork) userInfo:nil repeats:YES];
+    //检查当前这一页，还有前后两页是否有贴图了，有就跳过
+    BOOL cancel_work=YES;
+    for (int a=0; a<MIN(2, _taskList.count); a++) {
+        int testPageIndex=[_taskList[a] intValue];
+        NSLog(@"testPageIndex:%d",testPageIndex);
+        NSArray *layers=[self _layersAtPageIndex:testPageIndex];
+        if (!layers){
+            NSLog(@"no layers");
+            cancel_work=NO;
+            break;
+        }
+        WKFlipsLayer *layerTop=layers[0];
+        WKFlipsLayer *layerBottom=layers[1];
+        //有任意一个图层没有贴图，就要进行贴图任务，如果最近三张页面都有贴图，那就取消任务
+        if (!layerTop.backLayerContent || !layerBottom.frontLayerContent){
+            cancel_work=NO;
+            break;
+        }
     }
+    if(cancel_work){
+        NSLog(@"PasterService canceled");
+        return;
+    }
+    self.timer=[NSTimer scheduledTimerWithTimeInterval:0.03f target:self selector:@selector(_timerPasterWork) userInfo:nil repeats:YES];
 }
 ///结束贴图任务
 -(void)stop{
     [_timer invalidate];    
 //    [_timer release];
-//    NSLog(@"PasterService stop");
+    NSLog(@"PasterService stop");
 }
 ///排序贴图页面顺序
 -(NSArray*)_sortedPagesForPriorPageIndex:(int)priorPageIndex{
@@ -79,57 +102,90 @@
         [self stop];
         return;
     }
-    int totalPages=self.flipsLayerView.totalPages;
     int pageIndex=[_taskList[0] intValue];
     [_taskList removeObjectAtIndex:0];
-    NSLog(@"paster work:%d",pageIndex);
+    [self pasterWorkAtPageIndex:pageIndex];
+    
+}
+/**
+ *  去的一页中对应的图层
+ *
+ *  @param pageIndex
+ *
+ *  @return layerForTop, layerForBottom
+ */
+-(NSArray*)_layersAtPageIndex:(int)pageIndex{
+    int totalPages=self.flipsLayerView.totalPages;
+    if (pageIndex>=totalPages){
+        return nil;
+    }
     int layerIndexForTop=totalPages-pageIndex;
     int layerIndexForBottom=layerIndexForTop-1;
     WKFlipsLayer* layerForTop=self.flipsLayerView.layer.sublayers[layerIndexForTop];
     WKFlipsLayer* layerForBottom=self.flipsLayerView.layer.sublayers[layerIndexForBottom];
+    return @[layerForTop,layerForBottom];
+}
+-(void)pasterWorkAtPageIndex:(int)pageIndex{
+    NSLog(@"paster work for pageIndex:%d",pageIndex);
+//    int totalPages=self.flipsLayerView.totalPages;
+//    if (pageIndex>=totalPages){
+//        return;
+//    }
+//    int layerIndexForTop=totalPages-pageIndex;
+//    int layerIndexForBottom=layerIndexForTop-1;
+//    WKFlipsLayer* layerForTop=self.flipsLayerView.layer.sublayers[layerIndexForTop];
+//    WKFlipsLayer* layerForBottom=self.flipsLayerView.layer.sublayers[layerIndexForBottom];
+    NSArray *layers=[self _layersAtPageIndex:pageIndex];
+    if (!layers)
+        return;
+    WKFlipsLayer *layerForTop=layers[0];
+    WKFlipsLayer *layerForBottom=layers[1];
     ///已经有贴图了
-    if (layerForTop.backLayer.contents && layerForBottom.frontLayer.contents){
-        NSLog(@"pasted images existed");
+    if (layerForTop.backLayerContent && layerForBottom.frontLayerContent){
+//        NSLog(@"pasted images existed");
         return;
     }
     ///用作缩略图的页面内容
     WKFlipPageView* page=[self.flipsLayerView.flipsView.dataSource flipsView:self.flipsLayerView.flipsView pageAtPageIndex:pageIndex isThumbCopy:YES];
     WKFlipPageViewCache* pageCache=[self.flipsLayerView.flipsView.cache pageCacheAtPageIndex:pageIndex];
+    if (!pageCache){
+        NSLog(@"no page cache");
+        return;
+    }
     NSArray* images=nil;
-    if (!layerForTop.backLayer.contents){
+    if (!layerForTop.backLayerContent){
         ///没有缓存
         if (!pageCache.topImage){
             images=[page makeHSnapShotImages];
             [pageCache setTopImage:images[0]];
-            NSLog(@"new image pasted from snapshot");
+//            NSLog(@"new image pasted from snapshot");
         }
         else{
-            NSLog(@"new image pasted form cache file");
+//            NSLog(@"new image pasted form cache file");
         }
         layerForTop.backLayer.contents=(id)pageCache.topImage.CGImage;
-        
+        layerForTop.backLayerContent=YES;
     }
     else{
         
     }
-    if (!layerForBottom.frontLayer.contents){
+    if (!layerForBottom.frontLayerContent){
         if (!pageCache.bottomImage){
             ///如果已经有截图了就不要重新创建了
             if (!images){
                 images=[page makeHSnapShotImages];
             }
             [pageCache setBottomImage:images[1]];
-            NSLog(@"new images pasted from snapshot");
+//            NSLog(@"new images pasted from snapshot");
         }
         else{
-            NSLog(@"new image pasted from cache file");
+//            NSLog(@"new image pasted from cache file");
         }
         layerForBottom.frontLayer.contents=(id)pageCache.bottomImage.CGImage;
-        
+        layerForBottom.frontLayerContent=YES;
     }
     else{
         
     }
-    
 }
 @end

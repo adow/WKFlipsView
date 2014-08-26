@@ -105,4 +105,71 @@ static inline NSArray* WKFlip_make_hsplit_images_for_view(UIView* view){
     UIImage* image=WKFlip_make_image_for_view(view);
     return WKFlip_make_hsplit_images_for_image(image);
 }
+/**
+ *  线性背景图
+ *
+ *  @param rect
+ *
+ *  @return
+ */
+static inline UIImage *WKFlip_line_gradient_image(CGRect rect){
+    if(UIGraphicsBeginImageContextWithOptions != NULL){
+        UIGraphicsBeginImageContextWithOptions(rect.size, NO, 0.0);
+    } else {
+        UIGraphicsBeginImageContext(rect.size);
+    }
+    CGContextRef context = UIGraphicsGetCurrentContext(); // 1-1
+    CGContextSaveGState(context);
+    CGGradientRef myGradient;
+    CGColorSpaceRef myColorspace;
+    size_t num_locations = 2;
+    CGFloat locations[2] = { 0.0, 1.0 };
+    CGFloat components[8] = { 1.0,1.0,1.0, 1.0,  // Start color
+        0.0,0.0,0.0,0.3}; // End color
+    myColorspace = CGColorSpaceCreateDeviceRGB();
+    myGradient = CGGradientCreateWithColorComponents (myColorspace, components,
+                                                      locations, num_locations);
+    CGContextDrawLinearGradient(context, myGradient, CGPointMake(rect.size.width/2, 0.0f),
+                                CGPointMake(rect.size.width/2, rect.size.height*2.0f), kCGGradientDrawsAfterEndLocation);
+    
+    CGContextRestoreGState(context);
+    CGColorSpaceRelease(myColorspace);
+    CGGradientRelease(myGradient);
+    
+    UIImage* image=UIGraphicsGetImageFromCurrentImageContext();
+    return image;
+}
+static inline UIImage *WKFlip_line_radial_image(CGRect rect){
+    // Drawing code
+    if(UIGraphicsBeginImageContextWithOptions != NULL){
+        UIGraphicsBeginImageContextWithOptions(rect.size, NO, 0.0);
+    } else {
+        UIGraphicsBeginImageContext(rect.size);
+    }
+    CGContextRef context = UIGraphicsGetCurrentContext(); // 1-1
+    CGContextSaveGState(context);
+    CGGradientRef myGradient;
+    CGColorSpaceRef myColorspace;
+    size_t num_locations = 2;
+    CGFloat locations[2] = { 0.0, 1.0 };
+    CGFloat components[8] = { 1.0,1.0,1.0, 1.0,  // Start color
+        0.8,0.8,0.8,1.0}; // End color
+    myColorspace = CGColorSpaceCreateDeviceRGB();
+    myGradient = CGGradientCreateWithColorComponents (myColorspace, components,
+                                                      locations, num_locations);
+    CGPoint myStartPoint={rect.size.width/2,
+        rect.size.height/3};
+    CGFloat myStartRadius=0, myEndRadius=rect.size.height*1.0;
+    CGContextDrawRadialGradient (context, myGradient, myStartPoint,
+                                 myStartRadius, myStartPoint, myEndRadius,
+                                 kCGGradientDrawsAfterEndLocation);
+    
+    CGContextRestoreGState(context);
+    CGColorSpaceRelease(myColorspace);
+    CGGradientRelease(myGradient);
+    
+    UIImage* image=UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return image;
+}
 #endif
